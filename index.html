@@ -49,7 +49,7 @@ th,td{padding:6px 8px;border-bottom:1px solid var(--bd);text-align:left;white-sp
 .vr{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;margin-bottom:6px}.vr>div{flex:1 1 130px}.vr>.x{margin-bottom:6px}
 .tabs{display:flex;gap:4px;flex-wrap:wrap;margin:12px 0 10px}.tab{border:1px solid var(--bd);background:var(--bg);color:var(--tx);border-radius:7px;padding:6px 11px;cursor:pointer}.tab[aria-pressed=true]{background:var(--ac);color:var(--on);border-color:var(--ac)}
 .bk{margin-top:8px;font-size:.85rem;width:auto}.bk td{padding:2px 8px 2px 0;border:0}.bk td:last-child{text-align:right}.bk tr.k td{border-top:1px solid var(--bd);font-weight:600}
-.oc{border-left:4px solid var(--bd)}.oc.late{border-left-color:#c0392b}.oc.done{opacity:.6}.tag{display:inline-block;border-radius:6px;padding:1px 8px;font-size:.8rem;background:var(--tot)}.tag.late{background:#c0392b;color:#fff}.oc textarea{background:var(--bg);border:1px solid var(--bd);border-radius:7px;padding:7px 9px;width:100%;min-height:54px;resize:vertical}.ocnt{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px}.ocnt select{width:auto}
+.oc{border-left:4px solid var(--bd)}.oc.late{border-left-color:#c0392b}.oc.done{opacity:.6}.tag{display:inline-block;border-radius:6px;padding:1px 8px;font-size:.8rem;background:var(--tot)}.tag.late{background:#c0392b;color:#fff}.oc textarea{background:var(--bg);border:1px solid var(--bd);border-radius:7px;padding:7px 9px;width:100%;min-height:54px;resize:vertical}.ocnt{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px}.ocnt select{width:auto}.fl{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;padding:5px 0;border-bottom:1px solid var(--bd)}.fl .btn{padding:4px 10px;font-size:.85rem}
 .lg{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:16px;z-index:50}.lg .card{width:100%;max-width:380px;margin:0}.lg.hide{display:none}.lg h2{margin:0 0 8px;font-size:1.2rem}.err{color:#c0392b}
 @media(max-width:700px){input,select,textarea{font-size:16px}main{padding:10px}}
 </style>
@@ -62,7 +62,7 @@ th,td{padding:6px 8px;border-bottom:1px solid var(--bd);text-align:left;white-sp
 <button data-t="calc" aria-pressed="true">Orçamento</button>
 <button data-t="cat" aria-pressed="false">Catálogo</button>
 <button data-t="pers" aria-pressed="false">Personalização e preços</button>
-<button data-t="enc" aria-pressed="false" id="tabenc">Encomendas</button>
+<button data-t="enc" aria-pressed="false" id="tabenc">Folhas de Obra</button>
 </nav>
 
 <section id="calc">
@@ -81,7 +81,7 @@ th,td{padding:6px 8px;border-bottom:1px solid var(--bd);text-align:left;white-sp
 <div class="res"><span>Total sem IVA</span><b class="num" id="gb"></b></div>
 <div class="res"><span>IVA final (<span id="gip"></span> %)</span><b class="num" id="gi"></b></div>
 <div class="res"><span class="grand">Total final</span><b class="num grand" id="gt"></b></div>
-<p><button class="btn" id="copy">Copiar resumo para o cliente</button> <button class="btn" id="mko">Criar encomenda deste orçamento</button> <button class="btn ghost" id="clr">Limpar orçamento</button> <span class="mu" id="cm"></span></p>
+<p><button class="btn" id="copy">Copiar resumo para o cliente</button> <button class="btn" id="mko">Criar folha de obra deste orçamento</button> <button class="btn ghost" id="clr">Limpar orçamento</button> <span class="mu" id="cm"></span></p>
 </div>
 <p class="mu" id="empty">Procure um produto acima para começar o orçamento.</p>
 </section>
@@ -142,8 +142,8 @@ th,td{padding:6px 8px;border-bottom:1px solid var(--bd);text-align:left;white-sp
 </section>
 <section id="enc" class="hide">
 <div class="card">
-<div class="ocnt"><button class="btn" id="neo">+ Nova encomenda</button><div style="min-width:170px"><label for="of">Mostrar</label><select id="of"><option value="open">Em aberto</option><option value="all">Todas</option><option value="Por encomendar">Por encomendar</option><option value="Encomendado">Encomendado ao fornecedor</option><option value="Em produção">Em produção</option><option value="Pronto">Pronto</option><option value="Entregue">Entregues</option></select></div><div style="flex:1 1 180px"><label for="oq">Pesquisar (cliente, artigo, nota)</label><input id="oq" autocomplete="off"></div><button class="btn ghost" id="oexp">Exportar encomendas (CSV)</button></div>
-<p class="mu" id="osum" style="margin:0"></p>
+<div class="ocnt"><button class="btn" id="neo">+ Nova folha de obra</button><div style="min-width:170px"><label for="of">Mostrar</label><select id="of"><option value="open">Em aberto</option><option value="all">Todas</option><option value="Por encomendar">Por encomendar</option><option value="Encomendado">Encomendado ao fornecedor</option><option value="Em produção">Em produção</option><option value="Pronto">Pronto</option><option value="Entregue">Entregues</option></select></div><div style="flex:1 1 180px"><label for="oq">Pesquisar (cliente, contacto, artigo, nota)</label><input id="oq" autocomplete="off"></div><button class="btn ghost" id="oexp">Exportar folhas de obra (CSV)</button></div>
+<p class="mu" id="osum" style="margin:0"></p><p class="mu" id="ost" style="margin:4px 0 0"></p>
 </div>
 <div id="ols"></div>
 </section>
@@ -195,7 +195,7 @@ var k=Math.min(l.tab||0,l.pos.length-1),x=l.pos[k],t=S.techs.find(function(y){re
 var tabs=l.pos.map(function(z,j){var on=z.tid||(z.pers!==""&&z.pers!=null);return '<button class="tab" data-a="tab" data-k="'+j+'" aria-pressed="'+(j===k)+'">'+esc(z.name)+(on?" ●":"")+'</button>'}).join("")+'<button class="tab" data-a="addpos" aria-label="Adicionar posição">+</button>';
 return '<div class="card" data-i="'+i+'"><button class="x" data-a="del" aria-label="Remover linha">×</button><b>'+esc(p.name)+'</b> <span class="mu">'+esc(p.ref)+' · '+esc(p.sup)+' · custo '+eur(num(p.cost))+'</span>'+(imgOk(p.img)?' <a href="'+esc(p.img)+'" target="_blank" rel="noopener noreferrer">ver imagem</a>':'')+
 qtyBlock(l,p)+
-'<div class="row" style="margin-top:10px"><div><label>IVA do artigo (%)</label><input data-f="iva" inputmode="decimal" value="'+esc(l.iva==null?S.cfg.iva:l.iva)+'"></div></div>'+
+'<div class="row" style="margin-top:10px"><div><label>IVA do artigo (%)</label><input data-f="iva" inputmode="decimal" value="'+esc(l.iva==null?S.cfg.iva:l.iva)+'"></div><div><label>Cor pedida pelo cliente</label><input data-f="color" list="cl_'+i+'" autocomplete="off" placeholder="Escolher ou escrever" value="'+esc(l.color)+'"><datalist id="cl_'+i+'">'+plist(p.colors).map(function(c){return '<option value="'+esc(c)+'">'}).join("")+'</datalist></div></div>'+
 '<div class="tabs" role="group" aria-label="Posições de personalização">'+tabs+'</div>'+
 '<div class="row"><div><label>Nome da posição</label><input data-p="name" value="'+esc(x.name)+'"></div>'+
 '<div><label>Personalização</label><select data-p="tid"><option value="">Sem personalização</option>'+S.techs.map(function(y){return '<option value="'+y.id+'"'+(y.id===x.tid?" selected":"")+'>'+esc(y.name)+'</option>'}).join("")+'</select></div>'+
@@ -217,7 +217,7 @@ if(d.p==="tid"){save();rLines();return}}else return;save();upd()};
 $("#lines").onclick=function(e){var b=e.target.closest("[data-a]");if(!b)return;var c=b.closest(".card"),l=S.lines[+c.dataset.i],a=b.dataset.a;
 if(a==="del")S.lines.splice(+c.dataset.i,1);else if(a==="tab")l.tab=+b.dataset.k;else if(a==="addv")vrows(l).push({c:"",s:"",n:""});else if(a==="delv")vrows(l).splice(+b.closest(".vr").dataset.j,1);else if(a==="addpos"){l.pos.push(blank("Posição "+(l.pos.length+1)));l.tab=l.pos.length-1}save();rLines()};
 $("#clr").onclick=function(){S.lines=[];save();rLines()};
-$("#copy").onclick=function(){var t="Orçamento (valores sem IVA)\n\n",gt=0;S.lines.forEach(function(l){var r=calc(l);if(!r.p)return;gt+=r.tot;t+="• "+r.p.name+" ("+r.p.ref+")\n  "+r.q+" un. · "+eur(r.unit)+"/un. · total "+eur(r.tot)+"\n"+vtxt(l,r);r.det.forEach(function(d){t+="  - "+d.x.name+": "+(d.t?d.t.name:"personalização")+(d.t&&WH(d.t)?" ("+num(d.x.w)+" × "+num(d.x.h)+" cm)":d.t&&d.t.kind==="bordado"?" ("+num(d.x.pts)+" pontos)":"")+"\n"})});var gv=gt*num(S.cfg.iva)/100;t+="\nTotal sem IVA: "+eur(gt)+"\nIVA ("+num(S.cfg.iva)+"%): "+eur(gv)+"\nTOTAL com IVA: "+eur(gt+gv)+"\n";
+$("#copy").onclick=function(){var t="Orçamento (valores sem IVA)\n\n",gt=0;S.lines.forEach(function(l){var r=calc(l);if(!r.p)return;gt+=r.tot;t+="• "+r.p.name+" ("+r.p.ref+")\n  "+r.q+" un. · "+eur(r.unit)+"/un. · total "+eur(r.tot)+"\n"+(l.color?"  Cor: "+l.color+"\n":"")+vtxt(l,r);r.det.forEach(function(d){t+="  - "+d.x.name+": "+(d.t?d.t.name:"personalização")+(d.t&&WH(d.t)?" ("+num(d.x.w)+" × "+num(d.x.h)+" cm)":d.t&&d.t.kind==="bordado"?" ("+num(d.x.pts)+" pontos)":"")+"\n"})});var gv=gt*num(S.cfg.iva)/100;t+="\nTotal sem IVA: "+eur(gt)+"\nIVA ("+num(S.cfg.iva)+"%): "+eur(gv)+"\nTOTAL com IVA: "+eur(gt+gv)+"\n";
 function done(){$("#cm").textContent="Copiado."}
 try{navigator.clipboard.writeText(t).then(done,function(){fb()})}catch(e){fb()}
 function fb(){var a=document.createElement("textarea");a.value=t;document.body.appendChild(a);a.select();try{document.execCommand("copy");done()}catch(e){$("#cm").textContent="Não foi possível copiar."}a.remove()}};
@@ -279,26 +279,41 @@ function fdate(s){if(!s)return"sem data";var a=s.split("-");return a.length===3?
 function late(o){return o.est!=="Entregue"&&o.ent&&o.ent<today()}
 function openCount(){var n=0;S.orders.forEach(function(o){if(o.est!=="Entregue")n++});return n}
 function lateCount(){var n=0;S.orders.forEach(function(o){if(late(o))n++});return n}
-function badge(){var n=openCount(),m=lateCount();$("#tabenc").textContent="Encomendas"+(n?" ("+n+(m?" · "+m+" atrasadas":"")+")":"")}
+function badge(){var n=openCount(),m=lateCount();$("#tabenc").textContent="Folhas de Obra"+(n?" ("+n+(m?" · "+m+" atrasadas":"")+")":"")}
 function rEnc(){var f=$("#of").value,q=$("#oq").value.toLowerCase().trim();
  var list=S.orders.filter(function(o){if(f==="open"&&o.est==="Entregue")return false;if(f!=="open"&&f!=="all"&&o.est!==f)return false;
-  if(q&&[o.cli,o.desc,o.forn,o.nota,o.num].join(" ").toLowerCase().indexOf(q)<0)return false;return true});
+  if(q&&[o.cli,o.contacto,o.desc,o.forn,o.nota,o.num,o.texto].join(" ").toLowerCase().indexOf(q)<0)return false;return true});
  list.sort(function(a,b){var x=a.ent||"9999",y=b.ent||"9999";return x<y?-1:x>y?1:0});
- $("#ols").innerHTML=list.map(function(o){return '<div class="card oc'+(late(o)?" late":"")+(o.est==="Entregue"?" done":"")+'" data-oid="'+o.id+'"><button class="x" data-a="odel" aria-label="Apagar encomenda">×</button>'+
+ $("#ols").innerHTML=list.map(function(o){return '<div class="card oc'+(late(o)?" late":"")+(o.est==="Entregue"?" done":"")+'" data-oid="'+o.id+'"><button class="x" data-a="odel" aria-label="Apagar folha de obra">×</button>'+
  '<div style="margin-bottom:8px"><span class="tag'+(late(o)?" late":"")+'">'+(late(o)?"Atrasada · ":"")+esc(o.est)+'</span> <span class="mu">entrega '+fdate(o.ent)+'</span></div>'+
- '<div class="row"><div><label>Cliente</label><input data-o="cli" value="'+esc(o.cli)+'"></div><div><label>N.º encomenda / orçamento</label><input data-o="num" value="'+esc(o.num)+'"></div><div><label>Fornecedor(es)</label><input data-o="forn" value="'+esc(o.forn)+'"></div><div><label>Valor c/ IVA (€)</label><input data-o="val" inputmode="decimal" value="'+esc(o.val)+'"></div>'+
+ '<div class="row"><div><label>Cliente</label><input data-o="cli" value="'+esc(o.cli)+'"></div><div><label>Contacto do cliente</label><input data-o="contacto" placeholder="Telemóvel / email" value="'+esc(o.contacto)+'"></div><div><label>N.º encomenda / orçamento</label><input data-o="num" value="'+esc(o.num)+'"></div><div><label>Fornecedor(es)</label><input data-o="forn" value="'+esc(o.forn)+'"></div><div><label>Valor c/ IVA (€)</label><input data-o="val" inputmode="decimal" value="'+esc(o.val)+'"></div>'+
  '<div><label>Data da encomenda</label><input type="date" data-o="dat" data-r="1" value="'+esc(o.dat)+'"></div><div><label>Data de entrega</label><input type="date" data-o="ent" data-r="1" value="'+esc(o.ent)+'"></div><div><label>Estado</label><select data-o="est" data-r="1">'+ST.map(function(s){return '<option'+(s===o.est?" selected":"")+'>'+s+'</option>'}).join("")+'</select></div></div>'+
- '<div style="margin-top:8px"><label>Artigos / descrição</label><textarea data-o="desc">'+esc(o.desc)+'</textarea></div><div style="margin-top:8px"><label>Notas</label><input data-o="nota" value="'+esc(o.nota)+'"></div></div>'}).join("")||'<p class="mu">Sem encomendas nesta vista.</p>';
- var m=lateCount();$("#osum").textContent=openCount()+" encomendas em aberto"+(m?" · "+m+" com a entrega atrasada":"")+" · "+S.orders.length+" no total.";badge()}
-function newOrder(d){var o={id:uid(),cli:"",num:"",forn:"",val:"",dat:today(),ent:"",est:"Por encomendar",desc:"",nota:""};if(d)Object.keys(d).forEach(function(k){o[k]=d[k]});S.orders.unshift(o);save();$("#of").value="open";$("#oq").value="";rEnc()}
+ '<div style="margin-top:8px"><label>Artigos / descrição</label><textarea data-o="desc">'+esc(o.desc)+'</textarea></div><div style="margin-top:8px"><label>Notas</label><input data-o="nota" value="'+esc(o.nota)+'"></div>'+
+ '<div style="margin-top:8px"><label>Texto da folha de obra (instruções, medidas, detalhes)</label><textarea data-o="texto" style="min-height:110px">'+esc(o.texto)+'</textarea></div>'+
+ '<div style="margin-top:8px"><label>Ficheiros (artes, fotos, PDF…)</label>'+(o.files||[]).map(function(f,j){return '<div class="fl"><span>'+esc(f.name)+' <span class="mu">'+fsize(f.size)+'</span></span><span><button class="btn ghost" data-a="ofdl" data-fi="'+j+'">Descarregar</button> <button class="btn ghost" data-a="ofdel" data-fi="'+j+'">Remover</button></span></div>'}).join("")+'<input type="file" multiple data-a="ofile"></div></div>'}).join("")||'<p class="mu">Sem folhas de obra nesta vista.</p>';
+ var m=lateCount();$("#osum").textContent=openCount()+" folhas de obra em aberto"+(m?" · "+m+" com a entrega atrasada":"")+" · "+S.orders.length+" no total.";badge()}
+function newOrder(d){var o={id:uid(),cli:"",num:"",forn:"",val:"",dat:today(),ent:"",est:"Por encomendar",desc:"",nota:"",contacto:"",texto:"",files:[]};if(d)Object.keys(d).forEach(function(k){o[k]=d[k]});S.orders.unshift(o);save();$("#of").value="open";$("#oq").value="";rEnc()}
 $("#neo").onclick=function(){newOrder()};
 $("#of").onchange=rEnc;$("#oq").oninput=rEnc;
 $("#ols").oninput=function(e){var k=e.target.dataset.o;if(!k||e.target.dataset.r)return;var c=e.target.closest(".card"),o=S.orders.find(function(x){return x.id===c.dataset.oid});if(o){o[k]=e.target.value;save();badge()}};
-$("#ols").onchange=function(e){var k=e.target.dataset.o;if(!k||!e.target.dataset.r)return;var c=e.target.closest(".card"),o=S.orders.find(function(x){return x.id===c.dataset.oid});if(o){o[k]=e.target.value;save();rEnc()}};
-$("#ols").onclick=function(e){if(e.target.dataset.a!=="odel")return;var c=e.target.closest(".card"),o=S.orders.find(function(x){return x.id===c.dataset.oid});if(o&&confirm("Apagar a encomenda de "+(o.cli||"sem cliente")+"?")){S.orders=S.orders.filter(function(x){return x!==o});save();rEnc()}};
-$("#oexp").onclick=function(){var t="cliente;numero;fornecedores;valor_com_iva;data_encomenda;data_entrega;estado;artigos;notas\n"+S.orders.map(function(o){return [o.cli,o.num,o.forn,o.val,o.dat,o.ent,o.est,o.desc,o.nota].map(qcsv).join(";")}).join("\n");dl("encomendas.csv",t)};
-$("#mko").onclick=function(){var d=[],sups=[],gt=0;S.lines.forEach(function(l){var r=calc(l);if(!r.p)return;gt+=r.tot;if(sups.indexOf(r.p.sup)<0)sups.push(r.p.sup);d.push(r.p.name+" ("+r.p.ref+") × "+r.q+" un.")});
- if(!d.length)return;document.querySelector('#tabs button[data-t="enc"]').click();newOrder({forn:sups.join(", "),val:(gt*(1+num(S.cfg.iva)/100)).toFixed(2).replace(".",","),desc:d.join("\n")})};
+$("#ols").onchange=function(e){if(e.target.dataset.a==="ofile"){var c0=e.target.closest(".card"),o0=S.orders.find(function(x){return x.id===c0.dataset.oid}),fl=Array.prototype.slice.call(e.target.files);e.target.value="";if(o0&&fl.length)upFiles(o0,fl);return}var k=e.target.dataset.o;if(!k||!e.target.dataset.r)return;var c=e.target.closest(".card"),o=S.orders.find(function(x){return x.id===c.dataset.oid});if(o){o[k]=e.target.value;save();rEnc()}};
+function fsize(n){n=+n||0;return n>=1048576?(n/1048576).toFixed(1)+" MB":Math.max(1,Math.round(n/1024))+" KB"}
+function fsafe(n){return String(n).normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^A-Za-z0-9._-]+/g,"_").slice(-80)}
+function ost(m,bad){var e=$("#ost");e.textContent=m||"";e.className=bad?"err":"mu"}
+var FHINT=" Se for a primeira vez, execute o ficheiro supabase-folhas-obra.sql no SQL Editor do Supabase.";
+async function upFiles(o,list){if(!SB||!SYNC.on){ost("Sem ligação à base de dados: não é possível carregar ficheiros.",1);return}var n=0;o.files=o.files||[];
+ for(var i=0;i<list.length;i++){var f=list[i];if(f.size>52428800){ost("“"+f.name+"” tem mais de 50 MB e não foi carregado.",1);continue}ost("A carregar "+f.name+" ("+(i+1)+" de "+list.length+")…");
+  var path=o.id+"/"+uid()+"_"+fsafe(f.name);var r=await SB.storage.from("folhas").upload(path,f,{contentType:f.type||"application/octet-stream"});
+  if(r.error){ost("Erro ao carregar “"+f.name+"”: "+r.error.message+"."+FHINT,1);break}o.files.push({name:f.name,path:path,size:f.size,date:today()});n++}
+ if(n){save();ost(n+" ficheiro(s) carregado(s).");rEnc()}}
+async function dlFile(f){if(!SB||!SYNC.on){ost("Sem ligação à base de dados.",1);return}ost("A preparar "+f.name+"…");var r=await SB.storage.from("folhas").download(f.path);if(r.error||!r.data){ost("Não foi possível descarregar: "+(r.error&&r.error.message||"erro"),1);return}var a=document.createElement("a");a.href=URL.createObjectURL(r.data);a.download=f.name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},1000);ost("")}
+$("#ols").onclick=function(e){var b=e.target.closest("[data-a]");if(!b)return;var a=b.dataset.a,c=b.closest(".card"),o=c&&S.orders.find(function(x){return x.id===c.dataset.oid});if(!o)return;
+ if(a==="odel"){if(confirm("Apagar a folha de obra de "+(o.cli||"sem cliente")+"?"+((o.files||[]).length?"\nOs "+o.files.length+" ficheiros anexados também são apagados.":""))){if(SB&&(o.files||[]).length){try{SB.storage.from("folhas").remove(o.files.map(function(f){return f.path}))}catch(x){}}S.orders=S.orders.filter(function(x){return x!==o});save();rEnc()}}
+ else if(a==="ofdl"){var f=(o.files||[])[+b.dataset.fi];if(f)dlFile(f)}
+ else if(a==="ofdel"){var j=+b.dataset.fi,g=(o.files||[])[j];if(g&&confirm("Remover o ficheiro “"+g.name+"”?")){if(SB){try{SB.storage.from("folhas").remove([g.path])}catch(x){}}o.files.splice(j,1);save();rEnc()}}};
+$("#oexp").onclick=function(){var t="cliente;contacto;numero;fornecedores;valor_com_iva;data_encomenda;data_entrega;estado;artigos;notas;texto;ficheiros\n"+S.orders.map(function(o){return [o.cli,o.contacto,o.num,o.forn,o.val,o.dat,o.ent,o.est,o.desc,o.nota,o.texto,(o.files||[]).map(function(f){return f.name}).join(" | ")].map(qcsv).join(";")}).join("\n");dl("folhas-de-obra.csv",t)};
+$("#mko").onclick=function(){var d=[],sups=[],gt=0;S.lines.forEach(function(l){var r=calc(l);if(!r.p)return;gt+=r.tot;if(sups.indexOf(r.p.sup)<0)sups.push(r.p.sup);var t=r.p.name+" ("+r.p.ref+") — "+r.q+" un.\n"+(l.color?"  Cor: "+l.color+"\n":"")+vtxt(l,r);r.det.forEach(function(x){t+="  "+x.x.name+": "+(x.t?x.t.name:"personalização")+(x.t&&WH(x.t)?" ("+num(x.x.w)+" × "+num(x.x.h)+" cm)":x.t&&x.t.kind==="bordado"?" ("+num(x.x.pts)+" pontos)":"")+"\n"});d.push(t.replace(/\n+$/,""))});
+ if(!d.length)return;document.querySelector('#tabs button[data-t="enc"]').click();newOrder({forn:sups.join(", "),val:(gt*(1+num(S.cfg.iva)/100)).toFixed(2).replace(".",","),desc:d.join("\n\n")})};
 badge();
 
 /* sincronização (Supabase) */
@@ -377,9 +392,9 @@ async function syncRun(){if(!SYNC.on)return;if(SYNC.busy){SYNC.again=true;return
   var tdel=[];SYNC.snap.t.forEach(function(v,id){if(!tseen.has(id))tdel.push(id)});
   if(tdel.length){chk(await SB.from("techs").delete().in("id",tdel),"técnicas: ");tdel.forEach(function(id){SYNC.snap.t.delete(id);SYNC.tpos.delete(id)})}
   var oseen=new Set(),oup=[];S.orders.forEach(function(o){oseen.add(o.id);var r=oRow(o),k=sk(r);if(SYNC.snap.o.get(o.id)!==k)oup.push([r,k])});
-  if(oup.length){chk(await SB.from("orders").upsert(oup.map(function(x){return x[0]})),"encomendas: ");oup.forEach(function(x){SYNC.snap.o.set(x[0].id,x[1])})}
+  if(oup.length){chk(await SB.from("orders").upsert(oup.map(function(x){return x[0]})),"folhas de obra: ");oup.forEach(function(x){SYNC.snap.o.set(x[0].id,x[1])})}
   var odel=[];SYNC.snap.o.forEach(function(v,id){if(!oseen.has(id))odel.push(id)});
-  if(odel.length){chk(await SB.from("orders").delete().in("id",odel),"encomendas: ");odel.forEach(function(id){SYNC.snap.o.delete(id)})}
+  if(odel.length){chk(await SB.from("orders").delete().in("id",odel),"folhas de obra: ");odel.forEach(function(id){SYNC.snap.o.delete(id)})}
   var ck=sk(cfgVal());if(SYNC.snap.c!==ck){chk(await SB.from("settings").upsert({key:"cfg",value:cfgVal()}),"definições: ");SYNC.snap.c=ck}
   setSt("Sincronizado às "+hhmm()+(SYNC.email?" · "+SYNC.email:""))
  }catch(e){setSt("Erro ao gravar: "+(e&&e.message||e)+" — nova tentativa em 15 s.","err");clearTimeout(SYNC.tm);SYNC.tm=setTimeout(syncRun,15000)}
@@ -404,7 +419,7 @@ function startApp(){var ok=SBCFG.url&&SBCFG.key&&SBCFG.url.indexOf("__")<0&&wind
  $("#sbak").onclick=function(){var d={app:"calculadora-orcamentos",v:2,saved:new Date().toISOString(),data:{cfg:cfgVal(),products:S.products.map(pRow),techs:S.techs,orders:S.orders}};dlf("calculadora-copia-"+today()+".json",JSON.stringify(d))};
  $("#sres").onclick=function(){$("#sresf").click()};
  $("#sresf").onchange=function(){var f=this.files[0],inp=this;if(!f)return;var rd=new FileReader();rd.onload=function(){try{var j=JSON.parse(String(rd.result).replace(/^﻿/,"")),d=j.data||j;if(!d.products&&!d.orders)throw new Error("ficheiro não reconhecido");
-  if(!confirm("Restaurar a cópia: "+(d.products||[]).length+" produtos, "+(d.techs||[]).length+" técnicas, "+(d.orders||[]).length+" encomendas.\n\nOs itens da cópia substituem os que têm o mesmo identificador, e nada é apagado. Continuar?"))return;
+  if(!confirm("Restaurar a cópia: "+(d.products||[]).length+" produtos, "+(d.techs||[]).length+" técnicas, "+(d.orders||[]).length+" folhas de obra.\n\nOs itens da cópia substituem os que têm o mesmo identificador, e nada é apagado. Continuar?"))return;
   var up=function(arr,list,mk){(list||[]).forEach(function(x){var o=mk(x),i=arr.findIndex(function(y){return y.id===o.id});if(i<0)arr.push(o);else arr[i]=o})};
   up(S.products,d.products,pRow);up(S.techs,d.techs,function(x){return x});up(S.orders,d.orders,function(x){return x});if(d.cfg)S.cfg=Object.assign({mult:2,iva:23},d.cfg);
   save();rCat();rPers();rEnc();rLines();setSt("Cópia restaurada. A gravar na base de dados…")}catch(e){alert("Não foi possível restaurar: "+e.message)}inp.value=""};rd.readAsText(f)};
