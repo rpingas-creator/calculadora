@@ -49,7 +49,12 @@ th,td{padding:6px 8px;border-bottom:1px solid var(--bd);text-align:left;white-sp
 .vr{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;margin-bottom:6px}.vr>div{flex:1 1 110px}.vr>.x{margin-bottom:6px}
 .tabs{display:flex;gap:4px;flex-wrap:wrap;margin:12px 0 10px}.tab{border:1px solid var(--bd);background:var(--bg);color:var(--tx);border-radius:7px;padding:6px 11px;cursor:pointer}.tab[aria-pressed=true]{background:var(--ac);color:var(--on);border-color:var(--ac)}
 .bk{margin-top:8px;font-size:.85rem;width:auto}.bk td{padding:2px 8px 2px 0;border:0}.bk td:last-child{text-align:right}.bk tr.k td{border-top:1px solid var(--bd);font-weight:600}
-.oc{border-left:4px solid var(--bd)}.oc.late{border-left-color:#c0392b}.oc.done{opacity:.6}.tag{display:inline-block;border-radius:6px;padding:1px 8px;font-size:.8rem;background:var(--tot)}.tag.late{background:#c0392b;color:#fff}.oc textarea{background:var(--bg);border:1px solid var(--bd);border-radius:7px;padding:7px 9px;width:100%;min-height:54px;resize:vertical}.ocnt{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px}.ocnt select{width:auto}textarea{background:var(--bg);border:1px solid var(--bd);border-radius:7px;padding:7px 9px;width:100%;resize:vertical}.orow{display:grid;gap:10px;grid-template-columns:repeat(4,minmax(0,1fr));align-items:end}.orow .sp3{grid-column:span 3}@media(max-width:700px){.orow{grid-template-columns:repeat(2,minmax(0,1fr))}.orow .sp3{grid-column:span 1}}.fl{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;padding:5px 0;border-bottom:1px solid var(--bd)}.fl .btn{padding:4px 10px;font-size:.85rem}
+.oc{border-left:4px solid var(--bd)}.oc.late{border-left-color:#c0392b}.oc.done{opacity:.6}.tag{display:inline-block;border-radius:6px;padding:1px 8px;font-size:.8rem;background:var(--tot)}.tag.late{background:#c0392b;color:#fff}.oc textarea{background:var(--bg);border:1px solid var(--bd);border-radius:7px;padding:7px 9px;width:100%;min-height:54px;resize:vertical}.ocnt{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px}.ocnt select{width:auto}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}.cal .h{font-size:.75rem;color:var(--mu);text-align:center;padding:2px 0}.cal .d{min-height:92px;border:1px solid var(--bd);border-radius:7px;padding:4px;background:var(--card);cursor:pointer;min-width:0}.cal .d.o{opacity:.4;background:transparent;border-style:dashed;cursor:default}.cal .d.t{outline:2px solid var(--ac);outline-offset:-1px}.cal .d.s{background:var(--tot)}.cal .n{font-size:.75rem;color:var(--mu)}
+.chip{display:block;width:100%;text-align:left;border:0;border-radius:5px;padding:2px 5px;margin-top:3px;font-size:.72rem;cursor:pointer;background:var(--tot);color:var(--tx);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.chip.late{background:#c0392b;color:#fff}.chip.done{opacity:.55;text-decoration:line-through}
+.kpis{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));margin-bottom:12px}.kpi{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:12px 14px}.kl{font-size:.8rem;color:var(--mu)}.kv{font-size:1.45rem;font-weight:600;margin:2px 0}
+.hb{display:grid;grid-template-columns:minmax(70px,140px) 1fr auto;gap:8px;align-items:center;margin:5px 0;font-size:.9rem}.hl{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.hbar{height:14px;background:var(--tot);border-radius:7px;overflow:hidden}.hbar i{display:block;height:100%;background:var(--ac);border-radius:7px}.sw{display:inline-block;width:10px;height:10px;border-radius:2px;vertical-align:middle}
+@media(max-width:700px){.cal .d{min-height:62px;padding:2px}.chip{font-size:.62rem;padding:1px 3px}.kv{font-size:1.2rem}}textarea{background:var(--bg);border:1px solid var(--bd);border-radius:7px;padding:7px 9px;width:100%;resize:vertical}.orow{display:grid;gap:10px;grid-template-columns:repeat(4,minmax(0,1fr));align-items:end}.orow .sp3{grid-column:span 3}@media(max-width:700px){.orow{grid-template-columns:repeat(2,minmax(0,1fr))}.orow .sp3{grid-column:span 1}}.fl{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;padding:5px 0;border-bottom:1px solid var(--bd)}.fl .btn{padding:4px 10px;font-size:.85rem}
 .lg{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:16px;z-index:50}.lg .card{width:100%;max-width:380px;margin:0}.lg.hide{display:none}.lg h2{margin:0 0 8px;font-size:1.2rem}.err{color:#c0392b}
 @media(max-width:700px){input,select,textarea{font-size:16px}main{padding:10px}}
 </style>
@@ -58,12 +63,15 @@ th,td{padding:6px 8px;border-bottom:1px solid var(--bd);text-align:left;white-sp
 <main>
 <h1>Calculadora de orçamentos</h1>
 <div class="card" id="sbar" style="padding:10px 14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center"><span id="sst" class="mu" style="flex:1 1 220px">A iniciar…</span><button class="btn ghost" id="sref">Atualizar</button><button class="btn ghost" id="sbak">Cópia de segurança</button><button class="btn ghost" id="sres">Restaurar cópia</button><button class="btn ghost" id="sout">Sair</button><input type="file" id="sresf" accept=".json" hidden></div>
+<div class="card hide" id="alr" style="border-left:4px solid #c0392b;padding:10px 14px"></div>
 <nav id="tabs">
 <button data-t="calc" aria-pressed="true">Orçamento</button>
 <button data-t="cli" aria-pressed="false">Clientes</button>
 <button data-t="cat" aria-pressed="false">Catálogo</button>
 <button data-t="pers" aria-pressed="false">Personalização e preços</button>
 <button data-t="enc" aria-pressed="false" id="tabenc">Folhas de Obra</button>
+<button data-t="cal" aria-pressed="false">Calendário</button>
+<button data-t="res" aria-pressed="false">Resultados</button>
 </nav>
 
 <section id="calc">
@@ -165,10 +173,18 @@ th,td{padding:6px 8px;border-bottom:1px solid var(--bd);text-align:left;white-sp
 </section>
 <section id="enc" class="hide">
 <div class="card">
-<div class="ocnt"><button class="btn" id="neo">+ Nova folha de obra</button><div style="min-width:170px"><label for="of">Mostrar</label><select id="of"><option value="open">Em aberto</option><option value="all">Todas</option><option value="Por encomendar">Por encomendar</option><option value="Encomendado">Encomendado ao fornecedor</option><option value="Em produção">Em produção</option><option value="Pronto">Pronto</option><option value="Entregue">Entregues</option></select></div><div style="flex:1 1 180px"><label for="oq">Pesquisar (cliente, contacto, artigo, nota)</label><input id="oq" autocomplete="off"></div><button class="btn ghost" id="oexp">Exportar folhas de obra (CSV)</button></div>
+<div class="ocnt"><button class="btn" id="neo">+ Nova folha de obra</button><div style="min-width:170px"><label for="of">Mostrar</label><select id="of"><option value="open">Em aberto</option><option value="all">Todas</option><option value="Por encomendar">Por encomendar</option><option value="Encomendado">Encomendado ao fornecedor</option><option value="Em produção">Em produção</option><option value="Pronto">Pronto</option><option value="Entregue">Entregues</option></select></div><div style="flex:1 1 180px"><label for="oq">Pesquisar (cliente, contacto, artigo, nota)</label><input id="oq" autocomplete="off"></div><button class="btn ghost hide" id="oclr">Ver todas as folhas de obra</button><button class="btn ghost" id="oexp">Exportar folhas de obra (CSV)</button></div>
 <p class="mu" id="osum" style="margin:0"></p><p class="mu" id="ost" style="margin:4px 0 0"></p>
 </div>
 <div id="ols"></div>
+</section>
+<section id="cal" class="hide">
+<div class="card"><div class="ocnt"><button class="btn ghost" id="cprev" aria-label="Mês anterior">‹</button><b id="ctit" style="min-width:150px;text-align:center"></b><button class="btn ghost" id="cnext" aria-label="Mês seguinte">›</button><button class="btn ghost" id="ctoday">Hoje</button></div><div class="cal" id="cgrid"></div></div>
+<div id="cdet"></div>
+</section>
+<section id="res" class="hide">
+<div class="card"><div class="ocnt"><div style="min-width:210px"><label for="rp">Período</label><select id="rp"><option value="last12">Últimos 12 meses</option><option value="year">Ano atual</option><option value="prev">Ano anterior</option><option value="all">Desde o início</option></select></div></div><p class="mu" style="margin:0">As vendas somam o valor sem IVA das folhas de obra, pela data da encomenda. O orçado soma os orçamentos guardados.</p></div>
+<div id="rbody"></div>
 </section>
 </main>
 <div id="login" class="lg"><div class="card"><h2>Calculadora de orçamentos</h2><p class="mu" id="lgm"></p><label for="lge">Email</label><input id="lge" type="email" autocomplete="username"><label for="lgp" style="margin-top:8px">Palavra-passe</label><input id="lgp" type="password" autocomplete="current-password"><p style="margin-bottom:0"><button class="btn" id="lgb">Entrar</button></p></div></div>
@@ -208,7 +224,7 @@ l.pos.forEach(function(x){var t=S.techs.find(function(y){return y.id===x.tid});v
 var ia=(l.iva==null)?num(S.cfg.iva):num(l.iva),iat=cs*ia/100;var bruto=cs+iat+cs+pu*q+su,dsc=ddisc(l.disc,l.dtype,bruto),base=bruto-dsc;return{p:p,vs:vs,sq:sq,q:q,cost:cs/q,pu:pu,su:su,det:det,ia:ia,iat:iat,bruto:bruto,dsc:dsc,dl:dsc>0?dlabel(l.disc,l.dtype):"",base:base,tot:base,unit:base/q}}
 
 /* tabs */
-document.querySelectorAll("#tabs button").forEach(function(b){b.onclick=function(){document.querySelectorAll("#tabs button").forEach(function(x){x.setAttribute("aria-pressed",x===b)});["calc","cli","cat","pers","enc"].forEach(function(id){$("#"+id).classList.toggle("hide",id!==b.dataset.t)});if(b.dataset.t==="cat")rCat();if(b.dataset.t==="pers")rPers();if(b.dataset.t==="calc"){rLines();curLoad()}if(b.dataset.t==="cli")rCli();if(b.dataset.t==="enc")rEnc()}});
+document.querySelectorAll("#tabs button").forEach(function(b){b.onclick=function(){document.querySelectorAll("#tabs button").forEach(function(x){x.setAttribute("aria-pressed",x===b)});["calc","cli","cat","pers","enc","cal","res"].forEach(function(id){$("#"+id).classList.toggle("hide",id!==b.dataset.t)});if(b.dataset.t==="cat")rCat();if(b.dataset.t==="pers")rPers();if(b.dataset.t==="calc"){rLines();curLoad()}if(b.dataset.t==="cli")rCli();if(b.dataset.t==="cal")rCal();if(b.dataset.t==="res")rRes();if(b.dataset.t==="enc")rEnc()}});
 
 /* orçamento */
 var SF=["s_s","s_r","s_n","s_c"];
@@ -308,11 +324,12 @@ function openCount(){var n=0;S.orders.forEach(function(o){if(o.est!=="Entregue")
 function lateCount(){var n=0;S.orders.forEach(function(o){if(late(o))n++});return n}
 function mny(n){return n.toFixed(2).replace(".",",")}
 function vsi(o){if(o.valsi!=null&&o.valsi!=="")return o.valsi;return o.val!==""&&o.val!=null?mny(num(o.val)/(1+num(S.cfg.iva)/100)):""}
-function badge(){var n=openCount(),m=lateCount();$("#tabenc").textContent="Folhas de Obra"+(n?" ("+n+(m?" · "+m+" atrasadas":"")+")":"")}
+function badge(){rAlr();var n=openCount(),m=lateCount();$("#tabenc").textContent="Folhas de Obra"+(n?" ("+n+(m?" · "+m+" atrasadas":"")+")":"")}
 function rEnc(){var f=$("#of").value,q=$("#oq").value.toLowerCase().trim();
  var list=S.orders.filter(function(o){if(f==="open"&&o.est==="Entregue")return false;if(f!=="open"&&f!=="all"&&o.est!==f)return false;
   if(q&&[o.cli,o.contacto,o.desc,o.forn,o.nota,o.num,o.texto].join(" ").toLowerCase().indexOf(q)<0)return false;return true});
  function nn(o){var m=String(o.num==null?"":o.num).match(/\d+/);return m?parseInt(m[0],10):1e12}
+ if(OID)list=S.orders.filter(function(o){return o.id===OID});
  list.sort(function(a,b){var d=nn(a)-nn(b);if(d)return d;var x=a.ent||"9999",y=b.ent||"9999";return x<y?-1:x>y?1:0});
  $("#ols").innerHTML=list.map(function(o){return '<div class="card oc'+(late(o)?" late":"")+(o.est==="Entregue"?" done":"")+'" data-oid="'+o.id+'"><button class="x" data-a="odel" aria-label="Apagar folha de obra">×</button>'+
  '<div style="margin-bottom:8px"><span class="tag'+(late(o)?" late":"")+'">'+(late(o)?"Atrasada · ":"")+esc(o.est)+'</span> <span class="mu">entrega '+fdate(o.ent)+'</span>'+(o.quoteId&&S.quotes.some(function(q){return q.id===o.quoteId})?' <button class="btn ghost" data-a="oq" style="padding:4px 12px;font-size:.85rem">Abrir orçamento</button>':'')+' <button class="btn ghost" data-a="opdf" style="float:right;margin-right:30px;padding:4px 12px;font-size:.85rem">Descarregar PDF</button></div>'+
@@ -322,11 +339,11 @@ function rEnc(){var f=$("#of").value,q=$("#oq").value.toLowerCase().trim();
  '<div style="margin-top:8px"><label>Artigos / descrição</label><textarea data-o="desc">'+esc(o.desc)+'</textarea></div>'+
  '<div style="margin-top:8px"><label>Texto da folha de obra (instruções, medidas, detalhes)</label><textarea data-o="texto" style="min-height:110px">'+esc(o.texto)+'</textarea></div>'+
  fichasHtml(o)+'<div style="margin-top:8px"><label>Ficheiros (artes, fotos, PDF…)</label>'+(o.files||[]).map(function(f,j){return '<div class="fl"><span>'+esc(f.name)+' <span class="mu">'+fsize(f.size)+'</span></span><span><button class="btn ghost" data-a="ofdl" data-fi="'+j+'">Descarregar</button> <button class="btn ghost" data-a="ofdel" data-fi="'+j+'">Remover</button></span></div>'}).join("")+'<input type="file" multiple data-a="ofile"></div></div>'}).join("")||'<p class="mu">Sem folhas de obra nesta vista.</p>';
- var m=lateCount();$("#osum").textContent=openCount()+" folhas de obra em aberto"+(m?" · "+m+" com a entrega atrasada":"")+" · "+S.orders.length+" no total.";badge()}
+ $("#oclr").classList.toggle("hide",!OID);var m=lateCount();$("#osum").textContent=openCount()+" folhas de obra em aberto"+(m?" · "+m+" com a entrega atrasada":"")+" · "+S.orders.length+" no total.";badge()}
 function nextNum(){var m=S.cfg.seq==null||S.cfg.seq===""?6:num(S.cfg.seq);var f=function(x){if(/^\s*\d+\s*$/.test(String(x.num==null?"":x.num)))m=Math.max(m,parseInt(x.num,10))};S.orders.forEach(f);(S.quotes||[]).forEach(f);m++;S.cfg.seq=m;return String(m)}
 function newOrder(d){var o={id:uid(),cli:"",num:"",forn:"",val:"",dat:today(),ent:"",est:"Por encomendar",desc:"",nota:"",contacto:"",texto:"",files:[],quoteId:"",fichas:[]};if(d)Object.keys(d).forEach(function(k){o[k]=d[k]});if(!o.num)o.num=nextNum();S.orders.unshift(o);save();$("#of").value="open";$("#oq").value="";rEnc()}
 $("#neo").onclick=function(){newOrder()};
-$("#of").onchange=rEnc;$("#oq").oninput=rEnc;
+$("#of").onchange=function(){OID=null;rEnc()};$("#oq").oninput=function(){OID=null;rEnc()};$("#oclr").onclick=function(){OID=null;rEnc()};
 $("#ols").oninput=function(e){var k=e.target.dataset.o;if(!k||e.target.dataset.r)return;var c=e.target.closest(".card"),o=S.orders.find(function(x){return x.id===c.dataset.oid});if(o){o[k]=e.target.value;if(k==="val"||k==="valsi"){var f=1+num(S.cfg.iva)/100,oth=k==="val"?"valsi":"val",v=e.target.value.trim();o[oth]=v===""?"":mny(k==="val"?num(v)/f:num(v)*f);var ip=c.querySelector('[data-o="'+oth+'"]');if(ip)ip.value=o[oth]}save();badge()}};
 $("#ols").onchange=function(e){if(e.target.dataset.a==="ofile"){var c0=e.target.closest(".card"),o0=S.orders.find(function(x){return x.id===c0.dataset.oid}),fl=Array.prototype.slice.call(e.target.files);e.target.value="";if(o0&&fl.length)upFiles(o0,fl);return}var k=e.target.dataset.o;if(k==="cli"){var c1=e.target.closest(".card"),o1=S.orders.find(function(x){return x.id===c1.dataset.oid}),cl=findClient(e.target.value);if(o1&&cl&&cl.contacto&&!o1.contacto){o1.contacto=cl.contacto;save();rEnc()}return}if(!k||!e.target.dataset.r)return;var c=e.target.closest(".card"),o=S.orders.find(function(x){return x.id===c.dataset.oid});if(o){o[k]=e.target.value;save();rEnc()}};
 function fsize(n){n=+n||0;return n>=1048576?(n/1048576).toFixed(1)+" MB":Math.max(1,Math.round(n/1024))+" KB"}
@@ -489,6 +506,74 @@ $("#bk_l").onclick=async function(e){var b=e.target.closest('[data-a="bkres"]');
   save();rCat();rPers();rEnc();rLines();rCli();rClis();$("#bk_m").textContent="Cópia restaurada. A gravar na base de dados…"}
  catch(x){$("#bk_m").className="err";$("#bk_m").textContent="Não foi possível restaurar: "+(x&&x.message||x)}};
 
+/* ===== calendário, avisos e resultados ===== */
+function pad2(n){return ("0"+n).slice(-2)}
+function ymd(y,m,d){return y+"-"+pad2(m+1)+"-"+pad2(d)}
+function addDays(s,n){var a=s.split("-"),d=new Date(+a[0],+a[1]-1,+a[2]+n);return ymd(d.getFullYear(),d.getMonth(),d.getDate())}
+function dayDiff(a,b){var x=a.split("-"),y=b.split("-");return Math.round((Date.UTC(+y[0],+y[1]-1,+y[2])-Date.UTC(+x[0],+x[1]-1,+x[2]))/864e5)}
+function olabel(o){return (o.num?"N.º "+o.num+" · ":"")+(o.cli||"sem cliente")}
+var OID=null;
+function showOrder(id){OID=id;$("#of").value="all";$("#oq").value="";document.querySelector('#tabs button[data-t="enc"]').click();var c=document.querySelector('#ols [data-oid="'+id+'"]');if(c)c.scrollIntoView({block:"center"})}
+/* aviso global de atrasos */
+function rAlr(){var e=$("#alr");if(!e)return;var td=today(),tm=addDays(td,1),lt=[],h=0,a=0;S.orders.forEach(function(o){if(o.est==="Entregue"||!o.ent)return;if(o.ent<td)lt.push(o);else if(o.ent===td)h++;else if(o.ent===tm)a++});
+ if(!lt.length&&!h&&!a){e.classList.add("hide");return}lt.sort(function(x,y){return x.ent<y.ent?-1:1});
+ var p=[];if(lt.length)p.push('<b style="color:#c0392b">'+lt.length+(lt.length===1?" folha de obra atrasada":" folhas de obra atrasadas")+'</b> ('+lt.slice(0,4).map(function(o){return esc(olabel(o))+", "+dayDiff(o.ent,td)+" d"}).join("; ")+(lt.length>4?"…":"")+')');
+ if(h)p.push("<b>"+h+(h===1?" entrega hoje":" entregas hoje")+"</b>");if(a)p.push(a+(a===1?" entrega amanhã":" entregas amanhã"));
+ e.innerHTML='<span>'+p.join(" · ")+'</span> <button class="btn ghost" data-a="vcal" style="padding:3px 10px;font-size:.85rem;margin-left:6px">Ver calendário</button>';e.classList.remove("hide")}
+$("#alr").onclick=function(e){if(e.target.closest('[data-a="vcal"]'))document.querySelector('#tabs button[data-t="cal"]').click()};
+/* calendário */
+var CAL={y:null,m:null,sel:""};
+function rCal(){var td=today();if(CAL.y==null){var t=td.split("-");CAL.y=+t[0];CAL.m=+t[1]-1}var y=CAL.y,m=CAL.m,off=(new Date(y,m,1).getDay()+6)%7,dim=new Date(y,m+1,0).getDate(),by={};
+ S.orders.forEach(function(o){if(o.ent){(by[o.ent]=by[o.ent]||[]).push(o)}});
+ var tit=new Date(y,m,1).toLocaleDateString("pt-PT",{month:"long",year:"numeric"});$("#ctit").textContent=tit.charAt(0).toUpperCase()+tit.slice(1);
+ var h="",W=["Seg","Ter","Qua","Qui","Sex","Sáb","Dom"];W.forEach(function(w){h+='<div class="h">'+w+'</div>'});
+ var cells=Math.ceil((off+dim)/7)*7;
+ for(var i=0;i<cells;i++){var dn=i-off+1,out=dn<1||dn>dim,dt=out?"":ymd(y,m,dn);
+  if(out){h+='<div class="d o"></div>';continue}
+  var L=by[dt]||[];h+='<div class="d'+(dt===td?' t':'')+(dt===CAL.sel?' s':'')+'" data-day="'+dt+'"><div class="n">'+dn+'</div>'+L.slice(0,3).map(function(o){var lt=late(o);return '<button class="chip'+(lt?' late':'')+(o.est==="Entregue"?' done':'')+'" data-oid="'+o.id+'" title="'+esc(olabel(o)+" · "+o.est)+'">'+esc(o.num?o.num+" · "+(o.cli||""):(o.cli||"sem cliente"))+'</button>'}).join("")+(L.length>3?'<div class="n">+'+(L.length-3)+' mais</div>':'')+'</div>'}
+ $("#cgrid").innerHTML=h;
+ function line(o){var d=o.ent?dayDiff(td,o.ent):null;return '<div class="fl"><span><b>'+esc(olabel(o))+'</b> <span class="mu">'+esc(o.est)+(o.ent?' · entrega '+fdate(o.ent)+(d<0&&o.est!=="Entregue"?' · '+(-d)+(d===-1?' dia':' dias')+' de atraso':d===0?' · hoje':d===1?' · amanhã':''):'')+'</span></span><button class="btn ghost" data-a="copen" data-oid="'+o.id+'">Abrir</button></div>'}
+ var open=S.orders.filter(function(o){return o.est!=="Entregue"}),lt=open.filter(function(o){return o.ent&&o.ent<td}).sort(function(a,b){return a.ent<b.ent?-1:1}),
+  nx=open.filter(function(o){return o.ent&&o.ent>=td&&o.ent<=addDays(td,7)}).sort(function(a,b){return a.ent<b.ent?-1:1}),nd=open.filter(function(o){return !o.ent});
+ var d="";if(CAL.sel){var sl=by[CAL.sel]||[];d+='<div class="card"><b>Entregas de '+fdate(CAL.sel)+'</b>'+(sl.length?sl.map(line).join(""):'<p class="mu" style="margin:6px 0 0">Sem entregas neste dia.</p>')+'</div>'}
+ d+='<div class="card"><b style="color:'+(lt.length?'#c0392b':'inherit')+'">Atrasadas ('+lt.length+')</b>'+(lt.length?lt.map(line).join(""):'<p class="mu" style="margin:6px 0 0">Nenhuma folha de obra atrasada.</p>')+'</div>';
+ d+='<div class="card"><b>Próximos 7 dias ('+nx.length+')</b>'+(nx.length?nx.map(line).join(""):'<p class="mu" style="margin:6px 0 0">Sem entregas previstas.</p>')+'</div>';
+ if(nd.length)d+='<div class="card"><b>Em aberto sem data de entrega ('+nd.length+')</b>'+nd.map(line).join("")+'</div>';
+ $("#cdet").innerHTML=d}
+$("#cprev").onclick=function(){CAL.m--;if(CAL.m<0){CAL.m=11;CAL.y--}CAL.sel="";rCal()};
+$("#cnext").onclick=function(){CAL.m++;if(CAL.m>11){CAL.m=0;CAL.y++}CAL.sel="";rCal()};
+$("#ctoday").onclick=function(){CAL.y=null;CAL.sel="";rCal()};
+$("#cgrid").onclick=function(e){var c=e.target.closest(".chip");if(c){showOrder(c.dataset.oid);return}var d=e.target.closest("[data-day]");if(d){CAL.sel=CAL.sel===d.dataset.day?"":d.dataset.day;rCal()}};
+$("#cdet").onclick=function(e){var b=e.target.closest('[data-a="copen"]');if(b)showOrder(b.dataset.oid)};
+/* resultados */
+var MES=["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
+function kf(n){return n>=1000?(n/1000).toLocaleString("pt-PT",{maximumFractionDigits:1})+"k":String(Math.round(n))}
+function rngOf(sel){var t=today().split("-"),y=+t[0],m=+t[1]-1,ms=[],from,to,i;
+ if(sel==="year"||sel==="prev"){var yy=sel==="year"?y:y-1;for(i=0;i<12;i++)ms.push(yy+"-"+pad2(i+1));from=yy+"-01";to=yy+"-12"}
+ else if(sel==="all"){var mn=ymd(y,m,1).slice(0,7),mk=function(s){return s&&/^\d{4}-\d{2}/.test(s)?s.slice(0,7):""};S.orders.forEach(function(o){var k=mk(o.dat);if(k&&k<mn)mn=k});S.quotes.forEach(function(q){var k=mk(q.date);if(k&&k<mn)mn=k});
+  var a=mn.split("-"),cy=+a[0],cm=+a[1]-1;var cur=ymd(y,m,1).slice(0,7);while(ms.length<60){var k2=cy+"-"+pad2(cm+1);ms.push(k2);if(k2>=cur)break;cm++;if(cm>11){cm=0;cy++}}ms=ms.slice(-36);from=ms[0];to=ms[ms.length-1]}
+ else{for(i=11;i>=0;i--){var d=new Date(y,m-i,1);ms.push(d.getFullYear()+"-"+pad2(d.getMonth()+1))}from=ms[0];to=ms[11]}
+ return {ms:ms,from:from,to:to}}
+function svgMonths(ms,A,B){var W=680,H=230,pl=6,pr=6,pt=24,pb=28,n=ms.length,bw=(W-pl-pr)/n,max=Math.max.apply(null,A.concat(B).concat([1])),ph=H-pt-pb,g=Math.min(bw*0.8,60),b=g/2,s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Orçado e vendido por mês (sem IVA)" style="width:100%;height:auto;display:block">';
+ s+='<line x1="'+pl+'" x2="'+(W-pr)+'" y1="'+(H-pb)+'" y2="'+(H-pb)+'" stroke="var(--bd)"/>';
+ ms.forEach(function(k,i){var x=pl+i*bw+(bw-g)/2,a=A[i],v=B[i],ha=a/max*ph,hv=v/max*ph,mm=+k.slice(5)-1;
+  s+='<g><title>'+MES[mm]+' '+k.slice(0,4)+': orçado '+eur(a)+' · vendido '+eur(v)+'</title><rect x="'+x.toFixed(1)+'" y="'+(H-pb-ha).toFixed(1)+'" width="'+(b-1).toFixed(1)+'" height="'+ha.toFixed(1)+'" rx="2" fill="var(--mu)" opacity=".4"/><rect x="'+(x+b).toFixed(1)+'" y="'+(H-pb-hv).toFixed(1)+'" width="'+(b-1).toFixed(1)+'" height="'+hv.toFixed(1)+'" rx="2" fill="var(--ac)"/>';
+  if(v>0)s+='<text x="'+(x+b+(b-1)/2).toFixed(1)+'" y="'+(H-pb-hv-5).toFixed(1)+'" text-anchor="middle" font-size="10" fill="var(--tx)">'+kf(v)+'</text>';
+  s+='<text x="'+(pl+i*bw+bw/2).toFixed(1)+'" y="'+(H-pb+15)+'" text-anchor="middle" font-size="10.5" fill="var(--mu)">'+MES[mm]+(mm===0||i===0?" "+k.slice(2,4):"")+'</text></g>'});
+ return s+'</svg>'}
+function hbars(items,fmt){var max=Math.max.apply(null,items.map(function(x){return x.v}).concat([1]));return items.length?items.map(function(x){return '<div class="hb"><span class="hl" title="'+esc(x.l)+'">'+esc(x.l)+'</span><span class="hbar"><i style="width:'+Math.max(x.v>0?2:0,x.v/max*100).toFixed(1)+'%"></i></span><b class="num">'+fmt(x.v)+'</b></div>'}).join(""):'<p class="mu" style="margin:6px 0 0">Sem dados no período.</p>'}
+function rRes(){var R=rngOf($("#rp").value),idx={};R.ms.forEach(function(k,i){idx[k]=i});var n=R.ms.length,V=new Array(n).fill(0),O=new Array(n).fill(0),nf=0,tv=0,cl={},st={};
+ ST.forEach(function(s){st[s]=0});
+ S.orders.forEach(function(o){var k=o.dat?String(o.dat).slice(0,7):"";if(!(k in idx))return;var v=num(vsi(o));V[idx[k]]+=v;tv+=v;nf++;var c=(o.cli||"").trim()||"Sem cliente";cl[c]=(cl[c]||0)+v;if(st[o.est]!=null)st[o.est]++});
+ var nq=0,tq=0,cv=0;S.quotes.forEach(function(q){var k=q.date?String(q.date).slice(0,7):"";if(!(k in idx))return;var v=num(q.tot);O[idx[k]]+=v;tq+=v;nq++;if(S.orders.some(function(o){return o.quoteId===q.id}))cv++});
+ var open=S.orders.filter(function(o){return o.est!=="Entregue"}),ov=0;open.forEach(function(o){ov+=num(vsi(o))});var lt=lateCount();
+ function kpi(l,v,s,bad){return '<div class="kpi"><div class="kl">'+l+'</div><div class="kv num"'+(bad?' style="color:#c0392b"':'')+'>'+v+'</div>'+(s?'<div class="mu">'+s+'</div>':'')+'</div>'}
+ var top=Object.keys(cl).map(function(k){return {l:k,v:cl[k]}}).sort(function(a,b){return b.v-a.v}).slice(0,8),sts=ST.map(function(s){return {l:s,v:st[s]}});
+ $("#rbody").innerHTML='<div class="kpis">'+kpi("Vendas (s/ IVA)",eur(tv),nf+(nf===1?" folha de obra":" folhas de obra"))+kpi("Valor médio por folha",eur(nf?tv/nf:0),"")+kpi("Orçado (s/ IVA)",eur(tq),nq+(nq===1?" orçamento":" orçamentos"))+kpi("Orçamentos que viraram folha",nq?Math.round(cv/nq*100)+" %":"—",nq?cv+" de "+nq:"")+kpi("Por entregar",eur(ov),open.length+(open.length===1?" folha em aberto":" folhas em aberto"))+kpi("Atrasadas",String(lt),lt?"entrega já passou":"tudo em dia",lt>0)+'</div>'+
+ '<div class="card"><b>Por mês (valores sem IVA)</b><p class="mu" style="margin:4px 0 8px"><span class="sw" style="background:var(--mu);opacity:.4"></span> Orçado &nbsp; <span class="sw" style="background:var(--ac)"></span> Vendido (folhas de obra, pela data da encomenda)</p>'+((tv||tq)?svgMonths(R.ms,O,V):'<p class="mu">Sem dados no período.</p>')+'</div>'+
+ '<div class="row" style="align-items:start"><div class="card" style="margin:0"><b>Melhores clientes (vendas s/ IVA)</b><div style="margin-top:8px">'+hbars(top,eur)+'</div></div><div class="card" style="margin:0"><b>Folhas de obra por estado (período)</b><div style="margin-top:8px">'+hbars(sts,function(v){return String(v)})+'</div></div></div>'}
+$("#rp").onchange=rRes;
+
 /* sincronização (Supabase) */
 var SBCFG={url:"https://mocvrclxtuvdlowaihgd.supabase.co",key:"sb_publishable_v8lxMKraPxlZtyYRlPqxlQ_Lq4q6jsI"};
 var SB=null,SYNC={ok:{quotes:true,clients:true},on:false,busy:false,again:false,tm:null,ur:null,rt:null,rq:[],ch:null,uid:"",email:"",snap:{p:new Map(),t:new Map(),o:new Map(),q:new Map(),cl:new Map(),c:""},tpos:new Map(),last:{products:"",techs:"",orders:"",settings:"",quotes:"",clients:""}};
@@ -536,6 +621,7 @@ function uiRefresh(){var defer=false;
  if(shown("pers")){if(busyIn("#pers"))defer=true;else rPers()}
  if(shown("enc")){if(busyIn("#enc"))defer=true;else rEnc()}
  if(shown("cli")){if(busyIn("#cli"))defer=true;else rCli()}
+ if(shown("cal"))rCal();if(shown("res")&&!busyIn("#res"))rRes();
  rClis();if(shown("calc")&&!$("#qbox").classList.contains("hide")&&!busyIn("#qbox"))rQl();
  badge();clearTimeout(SYNC.ur);if(defer)SYNC.ur=setTimeout(uiRefresh,4000)}
 function rtPush(p){SYNC.rq.push(p);clearTimeout(SYNC.rt);SYNC.rt=setTimeout(rtFlush,300)}
