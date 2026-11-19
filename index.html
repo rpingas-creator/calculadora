@@ -85,6 +85,9 @@ th,td{padding:6px 8px;border-bottom:1px solid var(--bd);text-align:left;white-sp
 </div>
 <div id="lines"></div>
 <div class="card hide" id="sum">
+<div class="res hide" id="rsub"><span>Subtotal sem IVA</span><b class="num" id="gsub"></b></div>
+<div class="row" style="margin:10px 0"><div><label for="q_disc">Desconto no total</label><input id="q_disc" inputmode="decimal" placeholder="0"></div><div style="max-width:110px"><label for="q_dt">Tipo</label><select id="q_dt"><option value="%">%</option><option value="€">€</option></select></div></div>
+<div class="res hide" id="rdis"><span>Desconto (<span id="gdl"></span>)</span><b class="num" id="gdis"></b></div>
 <div class="res"><span>Total sem IVA</span><b class="num" id="gb"></b></div>
 <div class="res"><span>IVA final (<span id="gip"></span> %)</span><b class="num" id="gi"></b></div>
 <div class="res"><span class="grand">Total final</span><b class="num grand" id="gt"></b></div>
@@ -197,9 +200,12 @@ function qtyBlock(l,p){var vs=vars(p);if(!vs.has)return '<div class="vr" style="
 var C=plist(p.colors),Z=plist(p.sizes),R=vrows(l);if(!R.length)R.push({c:"",s:"",n:""});
 return '<div style="margin-top:10px">'+R.map(function(v,j){return '<div class="vr" data-j="'+j+'">'+(Z.length?'<div><label>Tamanho</label>'+sel(Z,v.s,'data-w="s"',"Escolher tamanho")+'</div>':'')+'<div style="flex:.6 1 90px"><label>Quantidade</label><input data-w="n" inputmode="numeric" value="'+esc(v.n)+'"></div><div><label>Cor</label><input data-w="c" list="cl_'+l.id+'" autocomplete="off" placeholder="Escolher ou escrever" value="'+esc(v.c)+'"></div><button class="x" data-a="delv" aria-label="Remover variante" style="float:none;flex:0 0 auto">×</button></div>'}).join("")+'</div>'+cdl(l,p)+'<p style="margin:6px 0 0"><button class="btn ghost" data-a="addv">+ Adicionar cor/tamanho</button> <span class="mu">Total: <b data-o="vt"></b></span></p>'}
 function vtxt(l,r){if(!r.vs.has)return"";var a=[];vrows(l).forEach(function(v){var n=num(v.n);if(n>0)a.push([v.c,v.s].filter(Boolean).join(" ")+" × "+n)});return a.length?"  Variantes: "+a.join(" · ")+"\n":""}
+function ddisc(v,t,base){var n=Math.max(0,num(v));return t==="€"?Math.min(n,Math.max(0,base)):base*Math.min(n,100)/100}
+function dlabel(v,t){return t==="€"?eur(num(v)):num(v)+" %"}
+function totals(lines,cur){var sub=0;(lines||S.lines).forEach(function(l){sub+=calc(l).base});cur=cur||S.cur;var td=ddisc(cur.disc,cur.dtype,sub),gb=sub-td,iva=num(S.cfg.iva);return{sub:sub,td:td,gb:gb,iva:iva,iv:gb*iva/100,gt:gb*(1+iva/100),dl:td>0?dlabel(cur.disc,cur.dtype):""}}
 function calc(l){norm(l);var p=S.products.find(function(x){return x.id===l.pid});var vs=vars(p),cost=p?num(p.cost):0,q=Math.max(1,num(l.qty)),cs=cost*q,sq=num(l.qty);if(vs.has){sq=0;cs=0;vrows(l).forEach(function(v){var n=Math.max(0,num(v.n));sq+=n;cs+=n*cost});q=Math.max(1,sq);if(!sq)cs=cost}var pu=0,su=0,det=[];
 l.pos.forEach(function(x){var t=S.techs.find(function(y){return y.id===x.tid});var has=x.pers!==""&&x.pers!=null;if(!t&&!has)return;var u=has?num(x.pers):tp(t,x,q);var s=x.setup!==""&&x.setup!=null?num(x.setup):(t?num(t.setup):0);pu+=u;su+=s;det.push({x:x,t:t,u:u,s:s})});
-var ia=(l.iva==null)?num(S.cfg.iva):num(l.iva),iat=cs*ia/100;var base=cs+iat+cs+pu*q+su;return{p:p,vs:vs,sq:sq,q:q,cost:cs/q,pu:pu,su:su,det:det,ia:ia,iat:iat,base:base,tot:base,unit:base/q}}
+var ia=(l.iva==null)?num(S.cfg.iva):num(l.iva),iat=cs*ia/100;var bruto=cs+iat+cs+pu*q+su,dsc=ddisc(l.disc,l.dtype,bruto),base=bruto-dsc;return{p:p,vs:vs,sq:sq,q:q,cost:cs/q,pu:pu,su:su,det:det,ia:ia,iat:iat,bruto:bruto,dsc:dsc,dl:dsc>0?dlabel(l.disc,l.dtype):"",base:base,tot:base,unit:base/q}}
 
 /* tabs */
 document.querySelectorAll("#tabs button").forEach(function(b){b.onclick=function(){document.querySelectorAll("#tabs button").forEach(function(x){x.setAttribute("aria-pressed",x===b)});["calc","cli","cat","pers","enc"].forEach(function(id){$("#"+id).classList.toggle("hide",id!==b.dataset.t)});if(b.dataset.t==="cat")rCat();if(b.dataset.t==="pers")rPers();if(b.dataset.t==="calc"){rLines();curLoad()}if(b.dataset.t==="cli")rCli();if(b.dataset.t==="enc")rEnc()}});
@@ -217,7 +223,7 @@ var k=Math.min(l.tab||0,l.pos.length-1),x=l.pos[k],t=S.techs.find(function(y){re
 var tabs=l.pos.map(function(z,j){var on=z.tid||(z.pers!==""&&z.pers!=null);return '<button class="tab" data-a="tab" data-k="'+j+'" aria-pressed="'+(j===k)+'">'+esc(z.name)+(on?" ●":"")+'</button>'}).join("")+'<button class="tab" data-a="addpos" aria-label="Adicionar posição">+</button>';
 return '<div class="card" data-i="'+i+'"><button class="x" data-a="del" aria-label="Remover linha">×</button><b>'+esc(p.name)+'</b> <span class="mu">'+esc(p.ref)+' · '+esc(p.sup)+' · custo '+eur(num(p.cost))+'</span>'+(imgOk(p.img)?' <a href="'+esc(p.img)+'" target="_blank" rel="noopener noreferrer">ver imagem</a>':'')+(ficha(p)?' · <a href="'+esc(ficha(p))+'" target="_blank" rel="noopener noreferrer">ficha técnica</a>':'')+
 qtyBlock(l,p)+
-'<div class="row" style="margin-top:10px"><div><label>IVA do artigo (%)</label><input data-f="iva" inputmode="decimal" value="'+esc(l.iva==null?S.cfg.iva:l.iva)+'"></div></div>'+
+'<div class="row" style="margin-top:10px"><div><label>IVA do artigo (%)</label><input data-f="iva" inputmode="decimal" value="'+esc(l.iva==null?S.cfg.iva:l.iva)+'"></div><div><label>Desconto do artigo</label><input data-f="disc" inputmode="decimal" placeholder="0" value="'+esc(l.disc)+'"></div><div style="max-width:110px"><label>Tipo</label><select data-f="dtype"><option value="%"'+(l.dtype==="€"?"":" selected")+'>%</option><option value="€"'+(l.dtype==="€"?" selected":"")+'>€</option></select></div></div>'+
 '<div class="tabs" role="group" aria-label="Posições de personalização">'+tabs+'</div>'+
 '<div class="row"><div><label>Nome da posição</label><input data-p="name" value="'+esc(x.name)+'"></div>'+
 '<div><label>Personalização</label><select data-p="tid"><option value="">Sem personalização</option>'+S.techs.map(function(y){return '<option value="'+y.id+'"'+(y.id===x.tid?" selected":"")+'>'+esc(y.name)+'</option>'}).join("")+'</select></div>'+
@@ -230,15 +236,15 @@ $("#empty").classList.toggle("hide",S.lines.length>0);upd()}
 function upd(){var gb=0,gi=0;document.querySelectorAll("#lines .card").forEach(function(c){var r=calc(S.lines[+c.dataset.i]);var vt=c.querySelector('[data-o="vt"]');if(vt)vt.textContent=r.sq+" un.";c.querySelector('[data-o="u"]').textContent=eur(r.unit);c.querySelector('[data-o="t"]').textContent=eur(r.tot);
 var iv=num(S.cfg.iva),h='<table class="bk"><tr><td>Custo do produto</td><td class="num">'+eur(r.cost)+'</td></tr><tr><td>+ percentagem ('+r.ia+'% sobre o custo)</td><td class="num">'+eur(r.cost*r.ia/100)+'</td></tr><tr><td>+ custo do produto</td><td class="num">'+eur(r.cost)+'</td></tr>';
 r.det.forEach(function(d){var dim=d.t&&WH(d.t)?" "+num(d.x.w)+" × "+num(d.x.h)+" cm":d.t&&d.t.kind==="bordado"?" "+num(d.x.pts)+" pontos":"";h+='<tr><td>+ '+esc(d.x.name)+': '+esc(d.t?d.t.name:"valor manual")+dim+' (por unidade)</td><td class="num">'+eur(d.u)+'</td></tr>'});
-var pu0=r.cost*2+r.cost*r.ia/100+r.pu;h+='<tr class="k"><td>= preço por unidade, sem IVA final</td><td class="num">'+eur(pu0)+'</td></tr><tr><td>× quantidade ('+r.q+')</td><td class="num">'+eur(pu0*r.q)+'</td></tr><tr><td>+ arranques (uma só vez)</td><td class="num">'+eur(r.su)+'</td></tr><tr class="k"><td>= total da linha, sem IVA final</td><td class="num">'+eur(r.base)+'</td></tr><tr><td>÷ quantidade = preço unitário (arranques diluídos)</td><td class="num">'+eur(r.unit)+'</td></tr></table>';c.querySelector('[data-o="b"]').innerHTML=h});
-S.lines.forEach(function(l){var r=calc(l);gb+=r.base});gi=gb*num(S.cfg.iva)/100;$("#gip").textContent=num(S.cfg.iva);$("#sum").classList.toggle("hide",!S.lines.length);$("#gb").textContent=eur(gb);$("#gi").textContent=eur(gi);$("#gt").textContent=eur(gb+gi)}
+var pu0=r.cost*2+r.cost*r.ia/100+r.pu;h+='<tr class="k"><td>= preço por unidade, sem IVA final</td><td class="num">'+eur(pu0)+'</td></tr><tr><td>× quantidade ('+r.q+')</td><td class="num">'+eur(pu0*r.q)+'</td></tr><tr><td>+ arranques (uma só vez)</td><td class="num">'+eur(r.su)+'</td></tr><tr'+(r.dsc>0?'':' class="k"')+'><td>= total da linha'+(r.dsc>0?' antes de desconto':', sem IVA final')+'</td><td class="num">'+eur(r.bruto)+'</td></tr>'+(r.dsc>0?'<tr><td>− desconto ('+r.dl+')</td><td class="num">− '+eur(r.dsc)+'</td></tr><tr class="k"><td>= total da linha, sem IVA final</td><td class="num">'+eur(r.base)+'</td></tr>':'')+'<tr><td>÷ quantidade = preço unitário (arranques diluídos)</td><td class="num">'+eur(r.unit)+'</td></tr></table>';c.querySelector('[data-o="b"]').innerHTML=h});
+var T=totals();$("#gip").textContent=T.iva;$("#sum").classList.toggle("hide",!S.lines.length);$("#rsub").classList.toggle("hide",!(T.td>0));$("#rdis").classList.toggle("hide",!(T.td>0));$("#gsub").textContent=eur(T.sub);$("#gdis").textContent="− "+eur(T.td);$("#gdl").textContent=T.dl;$("#gb").textContent=eur(T.gb);$("#gi").textContent=eur(T.iv);$("#gt").textContent=eur(T.gt)}
 $("#lines").oninput=function(e){var c=e.target.closest(".card");if(!c)return;var l=S.lines[+c.dataset.i],d=e.target.dataset;
 if(d.f)l[d.f]=e.target.value;else if(d.w){vrows(l)[+e.target.closest(".vr").dataset.j][d.w]=e.target.value}else if(d.p){var x=l.pos[Math.min(l.tab||0,l.pos.length-1)];x[d.p]=e.target.value;
 if(d.p==="name"){var b=c.querySelector('.tab[aria-pressed="true"]');b.textContent=x.name+(x.tid||(x.pers!==""&&x.pers!=null)?" ●":"")}
 if(d.p==="tid"){save();rLines();return}}else return;save();upd()};
 $("#lines").onclick=function(e){var b=e.target.closest("[data-a]");if(!b)return;var c=b.closest(".card"),l=S.lines[+c.dataset.i],a=b.dataset.a;
 if(a==="del")S.lines.splice(+c.dataset.i,1);else if(a==="tab")l.tab=+b.dataset.k;else if(a==="addv")vrows(l).push({c:"",s:"",n:""});else if(a==="delv")vrows(l).splice(+b.closest(".vr").dataset.j,1);else if(a==="addpos"){l.pos.push(blank("Posição "+(l.pos.length+1)));l.tab=l.pos.length-1}save();rLines()};
-$("#copy").onclick=function(){var t="Orçamento (valores sem IVA)\n\n",gt=0;S.lines.forEach(function(l){var r=calc(l);if(!r.p)return;gt+=r.tot;t+="• "+r.p.name+" ("+r.p.ref+")\n  "+r.q+" un. · "+eur(r.unit)+"/un. · total "+eur(r.tot)+"\n"+(l.color?"  Cor: "+l.color+"\n":"")+vtxt(l,r);r.det.forEach(function(d){t+="  - "+d.x.name+": "+(d.t?d.t.name:"personalização")+(d.t&&WH(d.t)?" ("+num(d.x.w)+" × "+num(d.x.h)+" cm)":d.t&&d.t.kind==="bordado"?" ("+num(d.x.pts)+" pontos)":"")+"\n"})});var gv=gt*num(S.cfg.iva)/100;t+="\nTotal sem IVA: "+eur(gt)+"\nIVA ("+num(S.cfg.iva)+"%): "+eur(gv)+"\nTOTAL com IVA: "+eur(gt+gv)+"\n";
+$("#copy").onclick=function(){var t="Orçamento (valores sem IVA)\n\n",gt=0;S.lines.forEach(function(l){var r=calc(l);if(!r.p)return;gt+=r.tot;t+="• "+r.p.name+" ("+r.p.ref+")\n  "+r.q+" un. · "+eur(r.unit)+"/un. · total "+eur(r.tot)+"\n"+(l.color?"  Cor: "+l.color+"\n":"")+vtxt(l,r)+(r.dsc>0?"  Desconto: "+r.dl+"\n":"");r.det.forEach(function(d){t+="  - "+d.x.name+": "+(d.t?d.t.name:"personalização")+(d.t&&WH(d.t)?" ("+num(d.x.w)+" × "+num(d.x.h)+" cm)":d.t&&d.t.kind==="bordado"?" ("+num(d.x.pts)+" pontos)":"")+"\n"})});var T=totals();t+="\n"+(T.td>0?"Subtotal sem IVA: "+eur(T.sub)+"\nDesconto ("+T.dl+"): − "+eur(T.td)+"\n":"")+"Total sem IVA: "+eur(T.gb)+"\nIVA ("+T.iva+"%): "+eur(T.iv)+"\nTOTAL com IVA: "+eur(T.gt)+"\n";
 function done(){$("#cm").textContent="Copiado."}
 try{navigator.clipboard.writeText(t).then(done,function(){fb()})}catch(e){fb()}
 function fb(){var a=document.createElement("textarea");a.value=t;document.body.appendChild(a);a.select();try{document.execCommand("copy");done()}catch(e){$("#cm").textContent="Não foi possível copiar."}a.remove()}};
@@ -340,9 +346,9 @@ $("#ols").onclick=function(e){var b=e.target.closest("[data-a]");if(!b)return;va
  else if(a==="ofdl"){var f=(o.files||[])[+b.dataset.fi];if(f)dlFile(f)}
  else if(a==="ofdel"){var j=+b.dataset.fi,g=(o.files||[])[j];if(g&&confirm("Remover o ficheiro “"+g.name+"”?")){if(SB){try{SB.storage.from("folhas").remove([g.path])}catch(x){}}o.files.splice(j,1);save();rEnc()}}};
 $("#oexp").onclick=function(){var t="cliente;contacto;numero;fornecedores;valor_sem_iva;valor_com_iva;data_encomenda;data_entrega;estado;artigos;notas;texto;ficheiros\n"+S.orders.map(function(o){return [o.cli,o.contacto,o.num,o.forn,vsi(o),o.val,o.dat,o.ent,o.est,o.desc,o.nota,o.texto,(o.files||[]).map(function(f){return f.name}).join(" | ")].map(qcsv).join(";")}).join("\n");dl("folhas-de-obra.csv",t)};
-$("#mko").onclick=function(){var d=[],sups=[],gt=0,fz=[];S.lines.forEach(function(l){var r=calc(l);if(!r.p)return;gt+=r.tot;if(sups.indexOf(r.p.sup)<0)sups.push(r.p.sup);var u=ficha(r.p);if(u&&!fz.some(function(f){return f.url===u}))fz.push({name:r.p.name+" ("+r.p.ref+")",url:u});var t=r.p.name+" ("+r.p.ref+") — "+r.q+" un.\n"+(l.color?"  Cor: "+l.color+"\n":"")+vtxt(l,r);r.det.forEach(function(x){t+="  "+x.x.name+": "+(x.t?x.t.name:"personalização")+(x.t&&WH(x.t)?" ("+num(x.x.w)+" × "+num(x.x.h)+" cm)":x.t&&x.t.kind==="bordado"?" ("+num(x.x.pts)+" pontos)":"")+"\n"});d.push(t.replace(/\n+$/,""))});
- if(!d.length)return;var saved=saveQuote(true);document.querySelector('#tabs button[data-t="enc"]').click();
- newOrder({cli:S.cur.cli||"",contacto:S.cur.contacto||"",num:S.cur.num||"",quoteId:saved?S.cur.id:"",forn:sups.join(", "),valsi:mny(gt),val:mny(gt*(1+num(S.cfg.iva)/100)),desc:d.join("\n\n"),fichas:fz})};
+$("#mko").onclick=function(){var d=[],sups=[],gt=0,fz=[];S.lines.forEach(function(l){var r=calc(l);if(!r.p)return;gt+=r.tot;if(sups.indexOf(r.p.sup)<0)sups.push(r.p.sup);var u=ficha(r.p);if(u&&!fz.some(function(f){return f.url===u}))fz.push({name:r.p.name+" ("+r.p.ref+")",url:u});var t=r.p.name+" ("+r.p.ref+") — "+r.q+" un.\n"+(l.color?"  Cor: "+l.color+"\n":"")+vtxt(l,r);r.det.forEach(function(x){t+="  "+x.x.name+": "+(x.t?x.t.name:"personalização")+(x.t&&WH(x.t)?" ("+num(x.x.w)+" × "+num(x.x.h)+" cm)":x.t&&x.t.kind==="bordado"?" ("+num(x.x.pts)+" pontos)":"")+"\n"});if(r.dsc>0)t+="  Desconto: "+r.dl+"\n";d.push(t.replace(/\n+$/,""))});
+ if(!d.length)return;var T0=totals();if(T0.td>0)d.push("Desconto no total: "+T0.dl);var saved=saveQuote(true);document.querySelector('#tabs button[data-t="enc"]').click();
+ newOrder({cli:S.cur.cli||"",contacto:S.cur.contacto||"",num:S.cur.num||"",quoteId:saved?S.cur.id:"",forn:sups.join(", "),valsi:mny(T0.gb),val:mny(T0.gt),desc:d.join("\n\n"),fichas:fz})};
 badge();
 
 /* ===== clientes, orçamentos guardados, PDF, fichas ===== */
@@ -372,22 +378,23 @@ $("#cls").onclick=function(e){var b=e.target.closest('[data-a="cdel"]');if(!b)re
  {S.clients=S.clients.filter(function(x){return x!==c});save();rCli()}};
 /* orçamento: cabeçalho, guardar, abrir */
 function qmsg(m,bad){var e=$("#qmsg");e.textContent=m||"";e.className=bad?"err":"mu"}
-function curLoad(){$("#q_cli").value=S.cur.cli||"";$("#q_ct").value=S.cur.contacto||"";$("#q_num").value=S.cur.num||"";$("#qsave").textContent=S.cur.id?"Guardar alterações":"Guardar orçamento"}
-function qTot(lines){var gb=0;(lines||S.lines).forEach(function(l){gb+=calc(l).base});var iva=num(S.cfg.iva);return{gb:gb,iva:iva,gt:gb*(1+iva/100)}}
-function qRec(id){var t=qTot();return {id:id,num:S.cur.num||"",cli:S.cur.cli||"",contacto:S.cur.contacto||"",date:"",lines:JSON.parse(JSON.stringify(S.lines)),iva:t.iva,tot:+t.gb.toFixed(2),totiva:+t.gt.toFixed(2)}}
+function curLoad(){$("#q_cli").value=S.cur.cli||"";$("#q_ct").value=S.cur.contacto||"";$("#q_num").value=S.cur.num||"";$("#q_disc").value=S.cur.disc||"";$("#q_dt").value=S.cur.dtype||"%";$("#qsave").textContent=S.cur.id?"Guardar alterações":"Guardar orçamento"}
+function qTot(lines){var t=totals(lines);return{gb:t.gb,iva:t.iva,gt:t.gt}}
+function qRec(id){var t=qTot();return {id:id,num:S.cur.num||"",cli:S.cur.cli||"",contacto:S.cur.contacto||"",disc:S.cur.disc||"",dtype:S.cur.dtype||"%",date:"",lines:JSON.parse(JSON.stringify(S.lines)),iva:t.iva,tot:+t.gb.toFixed(2),totiva:+t.gt.toFixed(2)}}
 function updateCurQuote(){if(!S.cur.id)return;var i=S.quotes.findIndex(function(x){return x.id===S.cur.id});if(i<0)return;var r=qRec(S.cur.id);r.date=S.quotes[i].date;S.quotes[i]=r}
 function saveQuote(silent){if(SYNC.ok.quotes===false){qmsg("Falta executar o ficheiro supabase-atualizacao.sql no Supabase para guardar orçamentos.",1);return false}
  if(!S.lines.length){qmsg("Adicione pelo menos um produto ao orçamento.",1);return false}
  if(!S.cur.num)S.cur.num=nextNum();var id=S.cur.id||uid();S.cur.id=id;var r=qRec(id),i=S.quotes.findIndex(function(x){return x.id===id});r.date=i>=0?S.quotes[i].date:today();if(i>=0)S.quotes[i]=r;else S.quotes.unshift(r);
  ensureClient(S.cur.cli,S.cur.contacto);save();curLoad();if(!silent)qmsg("Orçamento n.º "+S.cur.num+" guardado.");rClis();if(!$("#qbox").classList.contains("hide"))rQl();return true}
-function newQuote(){S.lines=[];S.cur={id:"",cli:"",contacto:"",num:""};save();curLoad();rLines();qmsg("")}
+function newQuote(){S.lines=[];S.cur={id:"",cli:"",contacto:"",num:"",disc:"",dtype:"%"};save();curLoad();rLines();qmsg("")}
 $("#qnew").onclick=function(){if(S.lines.length&&!S.cur.id&&!confirm("O orçamento em curso ainda não foi guardado. Começar um novo orçamento mesmo assim?"))return;newQuote()};
 $("#qsave").onclick=function(){saveQuote()};
 $("#q_cli").oninput=function(){S.cur.cli=this.value;save()};
 $("#q_cli").onchange=function(){var c=findClient(this.value);if(c&&c.contacto&&!S.cur.contacto){S.cur.contacto=c.contacto;$("#q_ct").value=c.contacto;save()}};
 $("#q_ct").oninput=function(){S.cur.contacto=this.value;save()};
+$("#q_disc").oninput=function(){S.cur.disc=this.value;save();upd()};$("#q_dt").onchange=function(){S.cur.dtype=this.value;save();upd()};
 function openQuote(id){var q=S.quotes.find(function(x){return x.id===id});if(!q)return;if(S.lines.length&&!S.cur.id&&!confirm("O orçamento em curso ainda não foi guardado e vai ser substituído. Continuar?"))return;
- S.lines=JSON.parse(JSON.stringify(q.lines||[])).map(norm);S.cur={id:q.id,cli:q.cli||"",contacto:q.contacto||"",num:q.num||""};save();document.querySelector('#tabs button[data-t="calc"]').click();curLoad();qmsg("Orçamento n.º "+(q.num||"")+" aberto.")}
+ S.lines=JSON.parse(JSON.stringify(q.lines||[])).map(norm);S.cur={id:q.id,cli:q.cli||"",contacto:q.contacto||"",num:q.num||"",disc:q.disc||"",dtype:q.dtype||"%"};save();document.querySelector('#tabs button[data-t="calc"]').click();curLoad();qmsg("Orçamento n.º "+(q.num||"")+" aberto.")}
 function rQl(){var f=cname($("#ql_q").value);var list=S.quotes.filter(function(q){return !f||[q.cli,q.num,q.contacto].join(" ").toLowerCase().indexOf(f)>-1});
  list.sort(function(a,b){return (parseInt(b.num,10)||0)-(parseInt(a.num,10)||0)});
  $("#ql_n").textContent=S.quotes.length+" orçamentos guardados"+(f?" · "+list.length+" correspondem":"")+".";
@@ -396,8 +403,8 @@ $("#qlist").onclick=function(){var b=$("#qbox");b.classList.toggle("hide");if(!b
 $("#ql_q").oninput=rQl;
 $("#ql").onclick=function(e){var b=e.target.closest("[data-a]");if(!b)return;var id=b.closest(".fl").dataset.qid,q=S.quotes.find(function(x){return x.id===id});if(!q)return;var a=b.dataset.a;
  if(a==="qopen")openQuote(id);
- else if(a==="qpdf"){var ls=JSON.parse(JSON.stringify(q.lines||[])).map(norm);dlBlob(pdfOrc({num:q.num,cli:q.cli,contacto:q.contacto,date:q.date},ls),pdfName("Orcamento",q.num,q.cli))}
- else if(a==="qdup"){if(S.lines.length&&!S.cur.id&&!confirm("O orçamento em curso ainda não foi guardado e vai ser substituído. Continuar?"))return;S.lines=JSON.parse(JSON.stringify(q.lines||[])).map(norm);S.cur={id:"",cli:q.cli||"",contacto:q.contacto||"",num:""};save();document.querySelector('#tabs button[data-t="calc"]').click();curLoad();qmsg("Cópia do orçamento n.º "+q.num+": ao guardar recebe um número novo.")}
+ else if(a==="qpdf"){var ls=JSON.parse(JSON.stringify(q.lines||[])).map(norm);dlBlob(pdfOrc({num:q.num,cli:q.cli,contacto:q.contacto,date:q.date,disc:q.disc,dtype:q.dtype},ls),pdfName("Orcamento",q.num,q.cli))}
+ else if(a==="qdup"){if(S.lines.length&&!S.cur.id&&!confirm("O orçamento em curso ainda não foi guardado e vai ser substituído. Continuar?"))return;S.lines=JSON.parse(JSON.stringify(q.lines||[])).map(norm);S.cur={id:"",cli:q.cli||"",contacto:q.contacto||"",num:"",disc:q.disc||"",dtype:q.dtype||"%"};save();document.querySelector('#tabs button[data-t="calc"]').click();curLoad();qmsg("Cópia do orçamento n.º "+q.num+": ao guardar recebe um número novo.")}
  else if(a==="qdel"){if(confirm("Apagar o orçamento n.º "+q.num+" de "+(q.cli||"sem cliente")+"?")){S.quotes=S.quotes.filter(function(x){return x!==q});if(S.cur.id===id){S.cur.id="";curLoad()}save();rQl()}}};
 function pdfName(pre,num,cli){return pre+"_"+(num?num+"_":"")+(fsafe(cli||"sem_cliente").replace(/^_+|_+$/g,"")||"sem_cliente")+"_"+today()+".pdf"}
 /* empresa (dados do PDF) */
@@ -448,7 +455,7 @@ function pdfFolha(o){var d=pdfNew(),M=d.M;d.put("FOLHA DE OBRA",M,20,true);d.y-=
  if((o.files||[]).length){d.head("Ficheiros anexados");o.files.forEach(function(f){d.para("• "+f.name+"  ("+fsize(f.size)+")",10,13)})}
  return pdfEnd(d,(o.cli?o.cli+"  ·  ":"")+"Folha de obra  ·  gerada em "+fdate(today()))}
 function dlPdf(o){var nm=pdfName("Folha_de_Obra",o.num,o.cli);dlBlob(pdfFolha(o),nm);ost("PDF gerado: "+nm)}
-function lineDet(l,r){var a=[];if(l.color)a.push("Cor: "+l.color);var v=vtxt(l,r).trim();if(v)a.push(v);r.det.forEach(function(x){a.push(x.x.name+": "+(x.t?x.t.name:"personalização")+(x.t&&WH(x.t)?" ("+num(x.x.w)+" × "+num(x.x.h)+" cm)":x.t&&x.t.kind==="bordado"?" ("+num(x.x.pts)+" pontos)":""))});return a}
+function lineDet(l,r){var a=[];if(l.color)a.push("Cor: "+l.color);var v=vtxt(l,r).trim();if(v)a.push(v);if(r.dsc>0)a.push("Desconto: "+r.dl);r.det.forEach(function(x){a.push(x.x.name+": "+(x.t?x.t.name:"personalização")+(x.t&&WH(x.t)?" ("+num(x.x.w)+" × "+num(x.x.h)+" cm)":x.t&&x.t.kind==="bordado"?" ("+num(x.x.pts)+" pontos)":""))});return a}
 function pdfOrc(meta,lines){var d=pdfNew(),M=d.M,W=d.W,c=S.cfg,R=W-M,xq=M+335,xu=M+430;
  if(c.logo&&c.lw&&c.lh){try{d.img={bin:atob(c.logo.split(",")[1]),w:c.lw,h:c.lh}}catch(e){d.img=null}}
  var top=d.y,hh=0;if(d.img){var lh=50,lw=lh*d.img.w/d.img.h;if(lw>170){lw=170;lh=lw*d.img.h/d.img.w}d.image(R-lw,top-lh,lw,lh);hh=lh}
@@ -461,11 +468,11 @@ function pdfOrc(meta,lines){var d=pdfNew(),M=d.M,W=d.W,c=S.cfg,R=W-M,xq=M+335,xu
   var h=tl.length*13+dl.length*11+8;if(d.y-h<d.M+90){d.np();head()}
   var y0=d.y-13;d.y=y0;d.putR(String(r.q),xq,10,false);d.putR(eur(r.unit),xu,10,false);d.putR(eur(r.tot),R,10,false);
   tl.forEach(function(t,i){if(i){d.y-=13}d.put(t,M,10,true)});dl.forEach(function(t){d.y-=11;d.put(t,M+8,9,false,0.3)});d.y-=7;d.rule(d.y,0.88)});
- var iva=meta.iva!=null?num(meta.iva):num(c.iva),iv=gb*iva/100;if(d.y-80<d.M+24)d.np();
- d.y-=18;d.putR("Total sem IVA",xu,10,false);d.putR(eur(gb),R,10,false);d.y-=15;d.putR("IVA ("+iva+" %)",xu,10,false);d.putR(eur(iv),R,10,false);d.y-=6;d.rule(d.y,0.5,xq-60,R);d.y-=16;d.putR("TOTAL com IVA",xu,12,true);d.putR(eur(gb+iv),R,12,true);d.y-=10;
+ var iva=meta.iva!=null?num(meta.iva):num(c.iva),iv=gb*iva/100;if(d.y-110<d.M+24)d.np();
+ var td=ddisc(meta.disc,meta.dtype,gb),net=gb-td;iv=net*iva/100;gb=net;d.y-=18;if(td>0){d.putR("Subtotal sem IVA",xu,10,false);d.putR(eur(net+td),R,10,false);d.y-=15;d.putR("Desconto ("+dlabel(meta.disc,meta.dtype)+")",xu,10,false);d.putR("– "+eur(td),R,10,false);d.y-=15}d.putR("Total sem IVA",xu,10,false);d.putR(eur(gb),R,10,false);d.y-=15;d.putR("IVA ("+iva+" %)",xu,10,false);d.putR(eur(iv),R,10,false);d.y-=6;d.rule(d.y,0.5,xq-60,R);d.y-=16;d.putR("TOTAL com IVA",xu,12,true);d.putR(eur(gb+iv),R,12,true);d.y-=10;
  if(String(c.emp_cond||"").trim()){if(d.y-60<d.M+24)d.np();d.y-=14;d.put("Condições",M,10,true);d.y-=2;d.para(c.emp_cond,9,12)}
  return pdfEnd(d,(c.empresa?c.empresa+"  ·  ":"")+"Orçamento"+(meta.num?" n.º "+meta.num:""))}
-$("#qpdf").onclick=function(){if(!S.lines.length)return;dlBlob(pdfOrc({num:S.cur.num,cli:S.cur.cli,contacto:S.cur.contacto,date:S.cur.id?((S.quotes.find(function(x){return x.id===S.cur.id})||{}).date):today()},S.lines),pdfName("Orcamento",S.cur.num,S.cur.cli));$("#cm").textContent="PDF gerado."};
+$("#qpdf").onclick=function(){if(!S.lines.length)return;dlBlob(pdfOrc({num:S.cur.num,cli:S.cur.cli,contacto:S.cur.contacto,disc:S.cur.disc,dtype:S.cur.dtype,date:S.cur.id?((S.quotes.find(function(x){return x.id===S.cur.id})||{}).date):today()},S.lines),pdfName("Orcamento",S.cur.num,S.cur.cli));$("#cm").textContent="PDF gerado."};
 function fichasHtml(o){return (o.fichas||[]).length?'<div style="margin-top:8px"><label>Fichas técnicas dos artigos</label>'+o.fichas.map(function(f){return '<div class="fl"><span>'+esc(f.name)+'</span><a href="'+esc(f.url)+'" target="_blank" rel="noopener noreferrer">Abrir ficha técnica</a></div>'}).join("")+'</div>':''}
 
 /* cópias de segurança automáticas (servidor) */
