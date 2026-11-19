@@ -92,7 +92,6 @@ th,td{padding:6px 8px;border-bottom:1px solid var(--bd);text-align:left;white-sp
 <div class="row">
 <div><label for="f">Importar ficheiro (.xlsx, .xls, .csv, .json do feed Valento)</label><input type="file" id="f" accept=".xlsx,.xls,.csv,.json" multiple></div>
 <div><button class="btn ghost" id="exp">Exportar catálogo (CSV)</button></div>
-<div><button class="btn ghost" id="mergew">Juntar Roly WorkWear em Roly</button></div>
 <div><button class="btn" id="newp">+ Adicionar novo produto</button></div>
 </div>
 <p class="mu" id="im"></p>
@@ -244,15 +243,6 @@ $("#newp").onclick=function(){var b=$("#addbox");b.classList.toggle("hide");if(!
 $("#cancel").onclick=function(){$("#addbox").classList.add("hide")};
 $("#add").onclick=function(){var n=$("#n_n").value.trim();if(!n){$("#im").textContent="Indique pelo menos o nome do produto.";return}
 S.products.push({id:uid(),sup:$("#n_s").value.trim()||"—",ref:$("#n_r").value.trim(),name:n,cat:$("#n_ct").value.trim(),colors:$("#n_cl").value.trim(),sizes:$("#n_tm").value.trim(),cost:num($("#n_c").value)});["#n_s","#n_r","#n_n","#n_ct","#n_c","#n_cl","#n_tm"].forEach(function(x){$(x).value=""});save();$("#addbox").classList.add("hide");rCat();$("#im").textContent="Produto adicionado."};
-$("#mergew").onclick=function(){var key=function(p){return String(p.ref==null?"":p.ref).trim().toLowerCase()},sup=function(p){return String(p.sup==null?"":p.sup).trim().toLowerCase()};
- var W=S.products.filter(function(p){return sup(p)==="roly workwear"});if(!W.length){$("#im").textContent="Não há produtos de Roly WorkWear no catálogo.";return}
- var R=new Map();S.products.forEach(function(p){if(sup(p)==="roly"&&key(p))R.set(key(p),p)});var dups=[],mv=[],diff=0;
- W.forEach(function(w){var r=key(w)&&R.get(key(w));if(r){dups.push([w,r]);if(num(w.cost)!==num(r.cost))diff++}else mv.push(w)});
- if(!confirm("Roly WorkWear: "+W.length+" produtos.\n\n• "+mv.length+" passam para o fornecedor Roly.\n• "+dups.length+" já existem na Roly (mesma referência) e são eliminados"+(diff?", dos quais "+diff+" têm preço diferente: fica o preço que já está na Roly":"")+".\n\nOs orçamentos em curso passam para o produto da Roly. Recomenda-se fazer primeiro uma cópia de segurança. Continuar?"))return;
- var byId=new Map();dups.forEach(function(x){byId.set(x[0].id,x[1].id)});
- S.lines.forEach(function(l){if(byId.has(l.pid))l.pid=byId.get(l.pid)});
- mv.forEach(function(p){p.sup="Roly"});S.products=S.products.filter(function(p){return !byId.has(p.id)});
- save();rCat();$("#im").textContent="Roly WorkWear juntado em Roly: "+mv.length+" produtos passaram e "+dups.length+" duplicados foram eliminados."};
 function pick(row,keys){var out="";Object.keys(row).forEach(function(k){var nk=k.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim();if(!out&&keys.some(function(x){return nk.indexOf(x)>-1})&&row[k]!=="")out=row[k]});return out}
 $("#f").onchange=function(){var file=this.files[0];if(!file)return;var inp=this;if(/\.json$/i.test(file.name)){importJSON(Array.prototype.slice.call(this.files));inp.value="";return}if(typeof XLSX==="undefined"){$("#im").textContent="Não foi possível carregar o leitor de Excel. Verifique a ligação à internet.";return}
 var rd=new FileReader(),csv=/\.csv$/i.test(file.name);rd.onload=function(){try{var wb;if(csv){var tx=rd.result;wb=XLSX.read(tx,{type:"string",FS:tx.split("\n")[0].indexOf(";")>-1?";":","})}else wb=XLSX.read(rd.result,{type:"array"});
