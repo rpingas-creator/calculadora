@@ -288,7 +288,7 @@ function rEnc(){var f=$("#of").value,q=$("#oq").value.toLowerCase().trim();
   if(q&&[o.cli,o.contacto,o.desc,o.forn,o.nota,o.num,o.texto].join(" ").toLowerCase().indexOf(q)<0)return false;return true});
  list.sort(function(a,b){var x=a.ent||"9999",y=b.ent||"9999";return x<y?-1:x>y?1:0});
  $("#ols").innerHTML=list.map(function(o){return '<div class="card oc'+(late(o)?" late":"")+(o.est==="Entregue"?" done":"")+'" data-oid="'+o.id+'"><button class="x" data-a="odel" aria-label="Apagar folha de obra">×</button>'+
- '<div style="margin-bottom:8px"><span class="tag'+(late(o)?" late":"")+'">'+(late(o)?"Atrasada · ":"")+esc(o.est)+'</span> <span class="mu">entrega '+fdate(o.ent)+'</span></div>'+
+ '<div style="margin-bottom:8px"><span class="tag'+(late(o)?" late":"")+'">'+(late(o)?"Atrasada · ":"")+esc(o.est)+'</span> <span class="mu">entrega '+fdate(o.ent)+'</span> <button class="btn ghost" data-a="opdf" style="float:right;margin-right:30px;padding:4px 12px;font-size:.85rem">Descarregar PDF</button></div>'+
  '<div class="orow"><div><label>Cliente</label><input data-o="cli" value="'+esc(o.cli)+'"></div><div><label>Contacto do cliente</label><input data-o="contacto" placeholder="Telemóvel / email" value="'+esc(o.contacto)+'"></div><div><label>N.º encomenda / orçamento</label><input data-o="num" value="'+esc(o.num)+'"></div><div><label>Valor s/ IVA (€)</label><input data-o="valsi" inputmode="decimal" value="'+esc(vsi(o))+'"></div>'+
  '<div><label>Fornecedor(es)</label><input data-o="forn" value="'+esc(o.forn)+'"></div><div><label>Data da encomenda</label><input type="date" data-o="dat" data-r="1" value="'+esc(o.dat)+'"></div><div><label>Data de entrega</label><input type="date" data-o="ent" data-r="1" value="'+esc(o.ent)+'"></div><div><label>Valor c/ IVA (€)</label><input data-o="val" inputmode="decimal" value="'+esc(o.val)+'"></div>'+
  '<div><label>Estado</label><select data-o="est" data-r="1">'+ST.map(function(s){return '<option'+(s===o.est?" selected":"")+'>'+s+'</option>'}).join("")+'</select></div><div class="sp3"><label>Notas</label><input data-o="nota" value="'+esc(o.nota)+'"></div></div>'+
@@ -313,8 +313,46 @@ async function upFiles(o,list){if(!SB||!SYNC.on){ost("Sem ligação à base de d
 async function dlFile(f){if(!SB||!SYNC.on){ost("Sem ligação à base de dados.",1);return}ost("A preparar "+f.name+"…");var r=await SB.storage.from("folhas").download(f.path);if(r.error||!r.data){ost("Não foi possível descarregar: "+(r.error&&r.error.message||"erro"),1);return}var a=document.createElement("a");a.href=URL.createObjectURL(r.data);a.download=f.name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},1000);ost("")}
 $("#ols").onclick=function(e){var b=e.target.closest("[data-a]");if(!b)return;var a=b.dataset.a,c=b.closest(".card"),o=c&&S.orders.find(function(x){return x.id===c.dataset.oid});if(!o)return;
  if(a==="odel"){if(confirm("Apagar a folha de obra de "+(o.cli||"sem cliente")+"?"+((o.files||[]).length?"\nOs "+o.files.length+" ficheiros anexados também são apagados.":""))){if(SB&&(o.files||[]).length){try{SB.storage.from("folhas").remove(o.files.map(function(f){return f.path}))}catch(x){}}S.orders=S.orders.filter(function(x){return x!==o});save();rEnc()}}
+ else if(a==="opdf"){dlPdf(o)}
  else if(a==="ofdl"){var f=(o.files||[])[+b.dataset.fi];if(f)dlFile(f)}
  else if(a==="ofdel"){var j=+b.dataset.fi,g=(o.files||[])[j];if(g&&confirm("Remover o ficheiro “"+g.name+"”?")){if(SB){try{SB.storage.from("folhas").remove([g.path])}catch(x){}}o.files.splice(j,1);save();rEnc()}}};
+/* PDF da folha de obra (sem bibliotecas externas) */
+var HU="667,667,722,722,667,611,778,722,278,500,667,556,833,722,778,667,778,722,667,611,722,667,944,667,667,611".split(",").map(Number),HL="556,556,500,556,556,278,556,556,222,222,500,222,833,556,556,556,556,333,500,278,556,500,722,500,500,500".split(",").map(Number),HX={32:278,33:278,34:355,35:556,36:556,37:889,38:667,39:191,40:333,41:333,42:389,43:584,44:278,45:333,46:278,47:278,58:278,59:278,60:584,61:584,62:584,63:556,64:1015,91:278,92:278,93:278,94:469,95:556,96:333,123:334,124:260,125:334,126:584};
+function cw(ch){var c=ch.charCodeAt(0);if(HX[c])return HX[c];if(c>=48&&c<=57)return 556;if(c>=65&&c<=90)return HU[c-65];if(c>=97&&c<=122)return HL[c-97];if(c===215)return 584;if(c===8212)return 1000;if(c===8364)return 556;if(c>127){var b=ch.normalize("NFD").charAt(0);if(b!==ch&&b.charCodeAt(0)<128)return cw(b)}return 556}
+var CP={8364:128,8218:130,8222:132,8230:133,8211:150,8212:151,8216:145,8217:146,8220:147,8221:148,8226:149};
+function penc(s){var o="";for(var i=0;i<s.length;i++){var c=s.charCodeAt(i);if(c===9)c=32;if(c<32)continue;if(CP[c])c=CP[c];else if(c>255)c=63;if(c===40||c===41||c===92)o+="\\"+String.fromCharCode(c);else if(c<127)o+=String.fromCharCode(c);else o+="\\"+("00"+c.toString(8)).slice(-3)}return o}
+function pdfFolha(o){var W=595.28,H=841.89,M=40,CW=W-2*M,pages=[],ops,y;
+ function np(){ops=[];pages.push(ops);y=H-M}
+ function tw(s,sz,b){var w=0;for(var i=0;i<s.length;i++)w+=cw(s.charAt(i));return w*sz/1000*(b?1.07:1)}
+ function put(s,x,sz,b){ops.push("BT /F"+(b?2:1)+" "+sz+" Tf "+x.toFixed(2)+" "+y.toFixed(2)+" Td ("+penc(s)+") Tj ET")}
+ function rule(yy,g){ops.push((g||0.75)+" G 0.6 w "+M+" "+yy.toFixed(2)+" m "+(W-M)+" "+yy.toFixed(2)+" l S 0 G")}
+ function wrap(t,w,sz,b){var out=[];String(t==null?"":t).split(/\r?\n/).forEach(function(par){var ind=par.match(/^\s*/)[0],words=par.trim().split(/\s+/).filter(Boolean);if(!words.length){out.push("");return}var line=ind;
+  words.forEach(function(wd){while(tw(wd,sz,b)>w-tw(ind,sz,b)){var k=wd.length;while(k>1&&tw(wd.slice(0,k),sz,b)>w-tw(ind,sz,b))k--;if(line.trim()){out.push(line);line=ind}out.push(line+wd.slice(0,k));line=ind;wd=wd.slice(k)}
+   var test=line.trim()?line+" "+wd:line+wd;if(tw(test,sz,b)<=w)line=test;else{out.push(line);line=ind+wd}});out.push(line)});return out}
+ function para(t,sz,lh,b){wrap(t,CW,sz,b).forEach(function(l){if(y-lh<M+24)np();y-=lh;put(l,M,sz,b)})}
+ function head(t){if(y-40<M+24)np();y-=24;put(t,M,12,true);y-=5;rule(y)}
+ np();put("FOLHA DE OBRA",M,20,true);y-=16;
+ var ent=o.ent?fdate(o.ent):"sem data";put("Estado: "+(o.est||"")+"   ·   Entrega: "+ent,M,10,false);y-=10;rule(y,0.4);
+ function eur2(v){return v!==""&&v!=null?v+" €":""}
+ var P=[["Cliente",o.cli,"Contacto do cliente",o.contacto],["N.º encomenda / orçamento",o.num,"Fornecedor(es)",o.forn],["Data da encomenda",o.dat?fdate(o.dat):"","Data de entrega",o.ent?fdate(o.ent):""],["Valor s/ IVA",eur2(vsi(o)),"Valor c/ IVA",eur2(o.val)]],cwid=CW/2-10;
+ P.forEach(function(r){var a=wrap(r[1],cwid,11,false),b=wrap(r[3],cwid,11,false),n=Math.max(a.length,b.length,1),h=12+n*14+4;if(y-h<M+24)np();y-=14;ops.push("0.4 g");put(r[0],M,8,false);put(r[2],M+CW/2,8,false);ops.push("0 g");
+  for(var i=0;i<n;i++){y-=14;if(a[i])put(a[i],M,11,false);if(b[i])put(b[i],M+CW/2,11,false)}y-=4});
+ head("Artigos / descrição");para(o.desc||"—",11,14);
+ if(String(o.texto||"").trim()){head("Texto da folha de obra");para(o.texto,11,14)}
+ if(String(o.nota||"").trim()){head("Notas");para(o.nota,11,14)}
+ if((o.files||[]).length){head("Ficheiros anexados");o.files.forEach(function(f){para("• "+f.name+"  ("+fsize(f.size)+")",10,13)})}
+ var total=pages.length,foot=(o.cli?o.cli+"  ·  ":"")+"Folha de obra  ·  gerada em "+fdate(today());
+ pages.forEach(function(p,i){p.push("BT /F1 8 Tf 0.4 g "+M+" 24 Td ("+penc(foot)+") Tj ET");var t="Página "+(i+1)+" de "+total;p.push("BT /F1 8 Tf "+(W-M-tw(t,8,false)).toFixed(2)+" 24 Td ("+penc(t)+") Tj ET")});
+ var parts=[],off=[],pos=0;function add(s){parts.push(s);pos+=s.length}function obj(n,s){off[n]=pos;add(n+" 0 obj\n"+s+"\nendobj\n")}
+ add("%PDF-1.4\n");obj(1,"<< /Type /Catalog /Pages 2 0 R >>");
+ var kids=[];pages.forEach(function(p,i){kids.push((5+i*2)+" 0 R")});
+ obj(2,"<< /Type /Pages /Kids ["+kids.join(" ")+"] /Count "+total+" >>");
+ obj(3,"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>");obj(4,"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>");
+ pages.forEach(function(p,i){var st=p.join("\n");obj(5+i*2,"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 "+W+" "+H+"] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents "+(6+i*2)+" 0 R >>");obj(6+i*2,"<< /Length "+st.length+" >>\nstream\n"+st+"\nendstream")});
+ var n=4+total*2,xr=pos;add("xref\n0 "+(n+1)+"\n0000000000 65535 f \n");for(var k=1;k<=n;k++)add(("0000000000"+off[k]).slice(-10)+" 00000 n \n");
+ add("trailer\n<< /Size "+(n+1)+" /Root 1 0 R >>\nstartxref\n"+xr+"\n%%EOF");
+ var s=parts.join(""),u=new Uint8Array(s.length);for(var q=0;q<s.length;q++)u[q]=s.charCodeAt(q)&255;return new Blob([u],{type:"application/pdf"})}
+function dlPdf(o){var nm="Folha_de_Obra_"+(fsafe(o.cli||"sem_cliente").replace(/^_+|_+$/g,"")||"sem_cliente")+"_"+(o.dat||today())+".pdf";var b=pdfFolha(o),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=nm;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},1000);ost("PDF gerado: "+nm)}
 $("#oexp").onclick=function(){var t="cliente;contacto;numero;fornecedores;valor_sem_iva;valor_com_iva;data_encomenda;data_entrega;estado;artigos;notas;texto;ficheiros\n"+S.orders.map(function(o){return [o.cli,o.contacto,o.num,o.forn,vsi(o),o.val,o.dat,o.ent,o.est,o.desc,o.nota,o.texto,(o.files||[]).map(function(f){return f.name}).join(" | ")].map(qcsv).join(";")}).join("\n");dl("folhas-de-obra.csv",t)};
 $("#mko").onclick=function(){var d=[],sups=[],gt=0;S.lines.forEach(function(l){var r=calc(l);if(!r.p)return;gt+=r.tot;if(sups.indexOf(r.p.sup)<0)sups.push(r.p.sup);var t=r.p.name+" ("+r.p.ref+") — "+r.q+" un.\n"+(l.color?"  Cor: "+l.color+"\n":"")+vtxt(l,r);r.det.forEach(function(x){t+="  "+x.x.name+": "+(x.t?x.t.name:"personalização")+(x.t&&WH(x.t)?" ("+num(x.x.w)+" × "+num(x.x.h)+" cm)":x.t&&x.t.kind==="bordado"?" ("+num(x.x.pts)+" pontos)":"")+"\n"});d.push(t.replace(/\n+$/,""))});
  if(!d.length)return;document.querySelector('#tabs button[data-t="enc"]').click();newOrder({forn:sups.join(", "),valsi:mny(gt),val:mny(gt*(1+num(S.cfg.iva)/100)),desc:d.join("\n\n")})};
