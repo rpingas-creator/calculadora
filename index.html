@@ -150,6 +150,9 @@ th,td{padding:6px 8px;border-bottom:1px solid var(--bd);text-align:left;white-sp
 <div style="margin-top:8px"><label for="emp_ct">Contactos (morada, telefone, email, NIF)</label><textarea id="emp_ct" style="min-height:70px"></textarea></div>
 <div style="margin-top:8px"><label for="emp_cond">Condições (validade, pagamento, prazos…)</label><textarea id="emp_cond" style="min-height:70px"></textarea></div>
 <div style="margin-top:8px"><label for="emp_logo">Logótipo (imagem PNG ou JPG)</label><input type="file" id="emp_logo" accept="image/*"><div style="margin-top:8px"><img id="emp_prev" class="hide" alt="Logótipo" style="max-height:60px;background:#fff;border:1px solid var(--bd);border-radius:6px;padding:4px"> <button class="btn ghost hide" id="emp_lx">Remover logótipo</button> <span class="mu" id="emp_msg"></span></div></div></div>
+<div class="card"><b>Cópias de segurança automáticas</b>
+<p class="mu" style="margin:6px 0 8px">Uma cópia por dia, guardada na base de dados. Ficam as 2 mais recentes: ao criar a 3.ª, a mais antiga é apagada. Não inclui os ficheiros anexados às folhas de obra.</p>
+<div id="bk_l"></div><p class="mu" id="bk_m" style="margin:6px 0 0"></p></div>
 <div id="techs"></div>
 <button class="btn" id="addt">Adicionar técnica</button>
 <p class="mu">Escalões: escreva “quantidade mínima : preço por unidade”, separados por ponto e vírgula. Exemplo: 1:1,80; 100:1,20; 500:0,90. Os valores de exemplo devem ser substituídos pelos seus.</p>
@@ -282,7 +285,7 @@ $("#exp").onclick=function(){var t="fornecedor;referencia;nome;categoria;cores;t
 try{dl("catalogo.csv",t);$("#im").textContent="Catálogo exportado ("+S.products.length+" produtos). O ficheiro está na pasta Transferências."}catch(e){$("#im").textContent="Não foi possível exportar."}};
 
 /* personalização */
-function rPers(){rEmp();$("#iva").value=S.cfg.iva;
+function rPers(){rEmp();rBk();$("#iva").value=S.cfg.iva;
 $("#techs").innerHTML=S.techs.map(function(t,i){return '<div class="card" data-i="'+i+'"><button class="x" data-a="del" aria-label="Apagar técnica">×</button><div class="row"><div><label>Técnica</label><input data-f="name" value="'+esc(t.name)+'"></div><div><label>'+(t.kind==="sub"?"Preparação do ficheiro € (por linha)":"Arranque € (por linha)")+'</label><input data-f="setup" inputmode="decimal" value="'+esc(t.setup)+'"></div>'+(t.kind==="bordado"?'<div><label>Preço por 1000 pontos (€)</label><input data-f="pk" inputmode="decimal" value="'+esc(t.pk)+'"></div><div><label>Arredondar ao milhar?</label><select data-f="rd"><option value="nao"'+(t.rd==="sim"?'':' selected')+'>Não, proporcional</option><option value="sim"'+(t.rd==="sim"?' selected':'')+'>Sim, para cima</option></select></div><div><label>Multiplicador (1 = sem margem)</label><input data-f="mk" inputmode="decimal" value="'+esc(t.mk)+'"></div>':t.kind==="sub"?'<div><label>Papel: preço por metro linear (€)</label><input data-f="pm" inputmode="decimal" value="'+esc(t.pm)+'"></div><div><label>Papel: largura útil do rolo (cm)</label><input data-f="rw" inputmode="decimal" value="'+esc(t.rw)+'"></div><div><label>Tinta: preço por ml (€)</label><input data-f="pi" inputmode="decimal" value="'+esc(t.pi)+'"></div><div><label>Tinta: consumo (ml por m²)</label><input data-f="ci" inputmode="decimal" value="'+esc(t.ci)+'"></div><div><label>Prensagem: tempo por peça (min)</label><input data-f="tm" inputmode="decimal" value="'+esc(t.tm)+'"></div><div><label>Prensagem: custo por hora (€)</label><input data-f="ph" inputmode="decimal" value="'+esc(t.ph)+'"></div><div><label>Desperdício papel e tinta (%)</label><input data-f="waste" inputmode="decimal" value="'+esc(t.waste)+'"></div><div><label>Multiplicador (1 = sem margem)</label><input data-f="mk" inputmode="decimal" value="'+esc(t.mk)+'"></div>': t.kind==="dtf"?'<div><label>Preço por metro linear (€)</label><input data-f="pm" inputmode="decimal" value="'+esc(t.pm)+'"></div><div><label>Largura útil do rolo (cm)</label><input data-f="rw" inputmode="decimal" value="'+esc(t.rw)+'"></div><div><label>Desperdício (%)</label><input data-f="waste" inputmode="decimal" value="'+esc(t.waste)+'"></div><div><label>Multiplicador (1 = sem margem)</label><input data-f="mk" inputmode="decimal" value="'+esc(t.mk)+'"></div>':'<div style="grid-column:span 2"><label>Escalões (qtd mínima : €/un)</label><input data-f="tiers" value="'+esc(t.tiers)+'"></div>')+'</div></div>'}).join("")}
 $("#iva").oninput=function(){S.cfg.iva=this.value;save()};
 $("#techs").oninput=function(e){var c=e.target.closest(".card"),f=e.target.dataset.f;if(c&&f){S.techs[+c.dataset.i][f]=e.target.value;save()}};
@@ -465,6 +468,20 @@ function pdfOrc(meta,lines){var d=pdfNew(),M=d.M,W=d.W,c=S.cfg,R=W-M,xq=M+335,xu
 $("#qpdf").onclick=function(){if(!S.lines.length)return;dlBlob(pdfOrc({num:S.cur.num,cli:S.cur.cli,contacto:S.cur.contacto,date:S.cur.id?((S.quotes.find(function(x){return x.id===S.cur.id})||{}).date):today()},S.lines),pdfName("Orcamento",S.cur.num,S.cur.cli));$("#cm").textContent="PDF gerado."};
 function fichasHtml(o){return (o.fichas||[]).length?'<div style="margin-top:8px"><label>Fichas técnicas dos artigos</label>'+o.fichas.map(function(f){return '<div class="fl"><span>'+esc(f.name)+'</span><a href="'+esc(f.url)+'" target="_blank" rel="noopener noreferrer">Abrir ficha técnica</a></div>'}).join("")+'</div>':''}
 
+/* cópias de segurança automáticas (servidor) */
+function fdt(x){try{return new Date(x).toLocaleString("pt-PT",{dateStyle:"short",timeStyle:"short"})}catch(e){return String(x)}}
+async function loadBk(){if(!SB||!SYNC.on)return;try{var r=chk(await SB.from("backups").select("id,created_at,counts").order("created_at",{ascending:false}),"cópias: ");SYNC.ok.backups=true;SYNC.bk=r.data||[]}catch(e){SYNC.ok.backups=false;SYNC.bk=[]}rBk()}
+async function autoBackup(){if(!SB||!SYNC.on||SYNC.ok.backups===false)return;try{chk(await SB.rpc("fazer_backup",{forcar:false}),"cópia: ")}catch(e){SYNC.ok.backups=false;rBk();return}await loadBk()}
+function rBk(){var e=$("#bk_l");if(!e)return;if(SYNC.ok.backups===false){e.innerHTML='<p class="mu">Falta executar o ficheiro supabase-atualizacao.sql no Supabase para ativar as cópias automáticas.</p>';return}
+ var b=SYNC.bk||[];e.innerHTML=b.length?b.map(function(x){var c=x.counts||{};return '<div class="fl" data-bid="'+x.id+'"><span><b>'+esc(fdt(x.created_at))+'</b> <span class="mu">'+(c.products||0)+' produtos · '+(c.quotes||0)+' orçamentos · '+(c.orders||0)+' folhas de obra · '+(c.clients||0)+' clientes</span></span><button class="btn ghost" data-a="bkres">Restaurar</button></div>'}).join(""):'<p class="mu">Ainda não há cópias. A primeira é criada automaticamente.</p>'}
+function mergeById(arr,list,mk){(list||[]).forEach(function(x){var o=mk(x),i=arr.findIndex(function(y){return y.id===o.id});if(i<0)arr.push(o);else arr[i]=o})}
+$("#bk_l").onclick=async function(e){var b=e.target.closest('[data-a="bkres"]');if(!b)return;var id=b.closest(".fl").dataset.bid;$("#bk_m").className="mu";$("#bk_m").textContent="A ler a cópia…";
+ try{var r=chk(await SB.from("backups").select("created_at,data").eq("id",id).single(),"cópia: "),d=r.data.data||{};
+  if(!confirm("Restaurar a cópia de "+fdt(r.data.created_at)+" ("+(d.products||[]).length+" produtos, "+(d.quotes||[]).length+" orçamentos, "+(d.orders||[]).length+" folhas de obra, "+(d.clients||[]).length+" clientes)?\n\nOs itens da cópia substituem os que têm o mesmo identificador e voltam a aparecer os que entretanto foram apagados. Nada do que existe agora é apagado. Continuar?")){$("#bk_m").textContent="";return}
+  mergeById(S.products,d.products,pRow);mergeById(S.techs,d.techs,tObj);mergeById(S.orders,d.orders,oObj);mergeById(S.quotes,d.quotes,dObj);mergeById(S.clients,d.clients,dObj);
+  save();rCat();rPers();rEnc();rLines();rCli();rClis();$("#bk_m").textContent="Cópia restaurada. A gravar na base de dados…"}
+ catch(x){$("#bk_m").className="err";$("#bk_m").textContent="Não foi possível restaurar: "+(x&&x.message||x)}};
+
 /* sincronização (Supabase) */
 var SBCFG={url:"https://mocvrclxtuvdlowaihgd.supabase.co",key:"sb_publishable_v8lxMKraPxlZtyYRlPqxlQ_Lq4q6jsI"};
 var SB=null,SYNC={ok:{quotes:true,clients:true},on:false,busy:false,again:false,tm:null,ur:null,rt:null,rq:[],ch:null,uid:"",email:"",snap:{p:new Map(),t:new Map(),o:new Map(),q:new Map(),cl:new Map(),c:""},tpos:new Map(),last:{products:"",techs:"",orders:"",settings:"",quotes:"",clients:""}};
@@ -531,7 +548,7 @@ async function loadAll(){SYNC.on=false;setSt("A carregar…");
  SYNC.last={products:"",techs:"",orders:"",settings:"",quotes:"",clients:""};trackLast("products",pr);trackLast("techs",te);trackLast("orders",or);trackLast("settings",se);trackLast("quotes",dlast.quotes);trackLast("clients",dlast.clients);
  var seeded=false;if(!S.techs.length){S.techs=DEFTECHS();seeded=true}if(!c)seeded=true;if(!S.cfg.emp_init){applyEmpDefaults();seeded=true}
  S.lines=S.lines.filter(function(l){return S.products.some(function(p){return p.id===l.pid})});
- SYNC.on=true;subscribe();rLines();rCat();rPers();rEnc();rCli();rClis();curLoad();setSt("Sincronizado às "+hhmm()+(SYNC.email?" · "+SYNC.email:"")+((SYNC.ok.quotes===false||SYNC.ok.clients===false)?" · falta executar supabase-atualizacao.sql (orçamentos e clientes)":""));
+ SYNC.on=true;subscribe();rLines();rCat();rPers();rEnc();rCli();rClis();curLoad();setTimeout(function(){autoBackup()},2500);setSt("Sincronizado às "+hhmm()+(SYNC.email?" · "+SYNC.email:"")+((SYNC.ok.quotes===false||SYNC.ok.clients===false)?" · falta executar supabase-atualizacao.sql (orçamentos e clientes)":""));
  if(seeded)syncRun()}
 function syncQueue(){if(!SYNC.on)return;clearTimeout(SYNC.tm);setSt("Alterações por gravar…");SYNC.tm=setTimeout(syncRun,700)}
 async function syncRun(){if(!SYNC.on)return;if(SYNC.busy){SYNC.again=true;return}SYNC.busy=true;clearTimeout(SYNC.tm);
@@ -566,13 +583,13 @@ async function onSession(sess){var id=sess.user.id;if(SYNC.uid===id&&SYNC.on)ret
 function startApp(){var ok=SBCFG.url&&SBCFG.key&&SBCFG.url.indexOf("__")<0&&window.supabase;
  if(!ok){showLogin(window.supabase?"A calculadora ainda não está ligada ao Supabase (falta o endereço e a chave no ficheiro index.html).":"Não foi possível carregar o Supabase. Verifique a ligação à internet.");$("#lgb").disabled=true;return}
  SB=window.supabase.createClient(SBCFG.url,SBCFG.key,{auth:{persistSession:true,autoRefreshToken:true}});
- SB.auth.onAuthStateChange(function(ev,sess){if(ev==="SIGNED_OUT"){SYNC.on=false;SYNC.uid="";S.products=[];S.techs=[];S.orders=[];S.quotes=[];S.clients=[];rLines();rCat();rPers();rEnc();showLogin("")}});
+ SB.auth.onAuthStateChange(function(ev,sess){if(ev==="SIGNED_OUT"){SYNC.on=false;SYNC.uid="";S.products=[];S.techs=[];S.orders=[];S.quotes=[];S.clients=[];SYNC.bk=[];rLines();rCat();rPers();rEnc();showLogin("")}});
  SB.auth.getSession().then(function(r){if(r&&r.data&&r.data.session)onSession(r.data.session);else showLogin("")});
  var go=async function(){var e=$("#lge").value.trim(),p=$("#lgp").value;if(!e||!p){$("#lgm").textContent="Indique o email e a palavra-passe.";return}$("#lgm").textContent="A entrar…";var r=await SB.auth.signInWithPassword({email:e,password:p});if(r.error||!r.data||!r.data.session){$("#lgm").textContent="Email ou palavra-passe errados.";return}$("#lgp").value="";onSession(r.data.session)};
  $("#lgb").onclick=go;$("#lgp").onkeydown=function(ev){if(ev.key==="Enter")go()};$("#lge").onkeydown=function(ev){if(ev.key==="Enter")$("#lgp").focus()};
  $("#sout").onclick=function(){SB.auth.signOut()};
  $("#sref").onclick=async function(){if(!SYNC.on)return;clearTimeout(SYNC.tm);await syncRun();try{await loadAll()}catch(e){setSt("Erro ao carregar: "+(e&&e.message||e),"err")}};
- document.addEventListener("visibilitychange",function(){if(!document.hidden)refresh()});setInterval(function(){if(!document.hidden)refresh()},90000);
+ document.addEventListener("visibilitychange",function(){if(!document.hidden)refresh()});setInterval(function(){autoBackup()},6*3600*1000);setInterval(function(){if(!document.hidden)refresh()},90000);
  window.addEventListener("online",function(){if(SYNC.on)syncQueue()});
  $("#sbak").onclick=function(){var d={app:"calculadora-orcamentos",v:2,saved:new Date().toISOString(),data:{cfg:cfgVal(),products:S.products.map(pRow),techs:S.techs,orders:S.orders,quotes:S.quotes,clients:S.clients}};dlf("calculadora-copia-"+today()+".json",JSON.stringify(d))};
  $("#sres").onclick=function(){$("#sresf").click()};
