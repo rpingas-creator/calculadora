@@ -516,9 +516,11 @@ $("#bk_l").onclick=async function(e){var b=e.target.closest('[data-a="bkres"]');
 
 /* ===== encomendas a fornecedores ===== */
 function oBlocks(o){var d=(o.desc||"").trim();return d?d.split(/\n\s*\n/).map(function(x){return x.trim()}).filter(function(x){return x&&x.indexOf("Desconto no total:")!==0}):[]}
+function bSup(o,b){var m=o.isup&&o.isup[b];if(m)return m;var f=String(b).split("\n")[0],r=f.match(/^(.+?)\s*\(([^()]+)\)\s+—/);if(r){var nm=r[1].trim().toLowerCase(),rf=r[2].trim().toLowerCase(),c=S.products.filter(function(x){return String(x.ref||"").toLowerCase()===rf});var e=c.find(function(x){return String(x.name||"").trim().toLowerCase()===nm})||c[0];if(e&&e.sup)return e.sup}
+ if(o.forn&&String(o.forn).split(/[,;+\/]/).length===1)return String(o.forn).trim();return o.forn||"Sem fornecedor"}
 function rForn(){var ps=S.orders.filter(function(o){return o.est==="Por encomendar"});function nn(o){var m=String(o.num==null?"":o.num).match(/\d+/);return m?parseInt(m[0],10):1e12}
  ps.sort(function(a,b){return nn(a)-nn(b)});var g={},keys=[],n=0;
- ps.forEach(function(o){var bl=oBlocks(o);if(!bl.length)bl=[""];bl.forEach(function(b,i){var sp=(o.isup&&o.isup[b])||o.forn||"Sem fornecedor";if(!g[sp]){g[sp]=[];keys.push(sp)}g[sp].push({o:o,b:b,i:i,ok:(o.okb||[]).indexOf(b)>=0});n++})});
+ ps.forEach(function(o){var bl=oBlocks(o);if(!bl.length)bl=[""];bl.forEach(function(b,i){var sp=bSup(o,b);if(!g[sp]){g[sp]=[];keys.push(sp)}g[sp].push({o:o,b:b,i:i,ok:(o.okb||[]).indexOf(b)>=0});n++})});
  keys.sort(function(a,b){return a==="Sem fornecedor"?1:b==="Sem fornecedor"?-1:a.localeCompare(b,"pt")});
  $("#fbody").innerHTML=keys.length?keys.map(function(k){var L=g[k],pend=L.filter(function(x){return !x.ok}).length;return '<div class="card"><b>'+esc(k)+'</b> <span class="mu">· '+pend+(pend===1?" artigo por encomendar":" artigos por encomendar")+'</span>'+L.map(function(x){var ln=(x.b||"(folha sem artigos descritos)").split("\n"),o=x.o;
   return '<label class="fi'+(x.ok?" ok":"")+'"><input type="checkbox" data-oid="'+o.id+'" data-bi="'+x.i+'"'+(x.ok?" checked":"")+'><span><b>'+esc(ln[0])+'</b><span class="mu" style="display:block;font-size:.8rem">N.º '+esc(o.num||"–")+' · '+esc(o.cli||"sem cliente")+(o.ent?' · entrega '+fdate(o.ent):'')+'</span>'+(ln.length>1?'<span class="mu" style="display:block;white-space:pre-wrap;font-size:.82rem">'+esc(ln.slice(1).join("\n"))+'</span>':'')+'</span></label>'}).join("")+'</div>'}).join(""):'<div class="card"><p class="mu" style="margin:0">Não há artigos por encomendar. 🎉</p></div>';badge()}
