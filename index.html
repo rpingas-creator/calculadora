@@ -72,6 +72,7 @@ th,td{padding:6px 8px;border-bottom:1px solid var(--bd);text-align:left;white-sp
 <button data-t="pers" aria-pressed="false">Personalização e preços</button>
 <button data-t="enc" aria-pressed="false" id="tabenc">Folhas de Obra</button>
 <button data-t="forn" aria-pressed="false" id="tabforn">Encomendas a fornecedores</button>
+<button data-t="dtf" aria-pressed="false" id="tabdtf">DTF</button>
 <button data-t="cal" aria-pressed="false">Calendário</button>
 <button data-t="res" aria-pressed="false">Resultados</button>
 </nav>
@@ -186,6 +187,11 @@ th,td{padding:6px 8px;border-bottom:1px solid var(--bd);text-align:left;white-sp
 <div class="card"><b>Artigos por encomendar</b><p class="mu" style="margin:4px 0 0">Mostra os artigos das folhas de obra em estado “Por encomendar”, agrupados por fornecedor. Marca cada artigo à medida que o encomendas; quando todos os artigos de uma folha estiverem marcados, a folha passa sozinha para “Encomendado”.</p><p id="fmsg" class="mu" style="margin:8px 0 0"></p></div>
 <div id="fbody"></div>
 </section>
+<section id="dtf" class="hide">
+<div class="card"><b>Notas de DTF a encomendar</b><p class="mu" style="margin:4px 0 8px">Aponta aqui o que precisas de encomendar ao fornecedor de DTF. Quando encomendares, marca a caixa; o item passa para “Já encomendado”.</p>
+<div class="row" style="align-items:end"><div style="flex:3 1 260px"><label for="dtf_t">O que encomendar</label><input id="dtf_t" autocomplete="off" placeholder="ex.: Logo clube 10 × 10 cm"></div><div style="flex:1 1 110px"><label for="dtf_q">Quantidade</label><input id="dtf_q" autocomplete="off" placeholder="ex.: 50 un."></div><div style="flex:2 1 200px"><label for="dtf_o">Folha de obra (opcional)</label><select id="dtf_o"></select></div><div style="flex:none"><button class="btn" id="dtf_add">Adicionar</button></div></div></div>
+<div id="dtf_l"></div>
+</section>
 <section id="cal" class="hide">
 <div class="card"><div class="ocnt"><button class="btn ghost" id="cprev" aria-label="Mês anterior">‹</button><b id="ctit" style="min-width:150px;text-align:center"></b><button class="btn ghost" id="cnext" aria-label="Mês seguinte">›</button><button class="btn ghost" id="ctoday">Hoje</button></div><div class="cal" id="cgrid"></div></div>
 <div id="cdet"></div>
@@ -231,7 +237,7 @@ l.pos.forEach(function(x){var t=S.techs.find(function(y){return y.id===x.tid});v
 var ia=(l.iva==null)?num(S.cfg.iva):num(l.iva),iat=cs*ia/100;var bruto=cs+iat+cs+pu*q+su,dsc=ddisc(l.disc,l.dtype,bruto),base=bruto-dsc;return{p:p,vs:vs,sq:sq,q:q,cost:cs/q,pu:pu,su:su,det:det,ia:ia,iat:iat,bruto:bruto,dsc:dsc,dl:dsc>0?dlabel(l.disc,l.dtype):"",base:base,tot:base,unit:base/q}}
 
 /* tabs */
-document.querySelectorAll("#tabs button").forEach(function(b){b.onclick=function(){document.querySelectorAll("#tabs button").forEach(function(x){x.setAttribute("aria-pressed",x===b)});["calc","cli","cat","pers","enc","forn","cal","res"].forEach(function(id){$("#"+id).classList.toggle("hide",id!==b.dataset.t)});if(b.dataset.t==="cat")rCat();if(b.dataset.t==="pers")rPers();if(b.dataset.t==="calc"){rLines();curLoad()}if(b.dataset.t==="cli")rCli();if(b.dataset.t==="cal")rCal();if(b.dataset.t==="forn")rForn();if(b.dataset.t==="res")rRes();if(b.dataset.t==="enc")rEnc()}});
+document.querySelectorAll("#tabs button").forEach(function(b){b.onclick=function(){document.querySelectorAll("#tabs button").forEach(function(x){x.setAttribute("aria-pressed",x===b)});["calc","cli","cat","pers","enc","forn","dtf","cal","res"].forEach(function(id){$("#"+id).classList.toggle("hide",id!==b.dataset.t)});if(b.dataset.t==="cat")rCat();if(b.dataset.t==="pers")rPers();if(b.dataset.t==="calc"){rLines();curLoad()}if(b.dataset.t==="cli")rCli();if(b.dataset.t==="cal")rCal();if(b.dataset.t==="forn")rForn();if(b.dataset.t==="dtf")rDtf();if(b.dataset.t==="res")rRes();if(b.dataset.t==="enc")rEnc()}});
 
 /* orçamento */
 var SF=["s_s","s_r","s_n","s_c"];
@@ -332,7 +338,7 @@ function openCount(){var n=0;S.orders.forEach(function(o){if(o.est!=="Entregue")
 function lateCount(){var n=0;S.orders.forEach(function(o){if(late(o))n++});return n}
 function mny(n){return n.toFixed(2).replace(".",",")}
 function vsi(o){if(o.valsi!=null&&o.valsi!=="")return o.valsi;return o.val!==""&&o.val!=null?mny(num(o.val)/(1+num(S.cfg.iva)/100)):""}
-function badge(){rAlr();var n=openCount(),m=lateCount(),pf=S.orders.filter(function(o){return o.est==="Por encomendar"}).length;if($("#tabforn"))$("#tabforn").textContent="Encomendas a fornecedores"+(pf?" ("+pf+")":"");$("#tabenc").textContent="Folhas de Obra"+(n?" ("+n+(m?" · "+m+" atrasadas":"")+")":"")}
+function badge(){rAlr();if($("#tabdtf")){var np=(S.cfg.dtf||[]).filter(function(x){return !x.done}).length;$("#tabdtf").textContent="DTF"+(np?" ("+np+")":"")}var n=openCount(),m=lateCount(),pf=S.orders.filter(function(o){return o.est==="Por encomendar"}).length;if($("#tabforn"))$("#tabforn").textContent="Encomendas a fornecedores"+(pf?" ("+pf+")":"");$("#tabenc").textContent="Folhas de Obra"+(n?" ("+n+(m?" · "+m+" atrasadas":"")+")":"")}
 
 /* ===== cores ===== */
 var CBASE="Branco #ffffff|Preto #111111|Cinza #9e9e9e|Cinza claro #d3d3d3|Cinza escuro #555555|Cinza mesclado #b5b5b5|Cinza chumbo #51565c|Antracite #3a3d40|Grafite #4b4f54|Chumbo #51565c|Prata #c0c0c0|Ouro #d4af37|Dourado #d4af37|Bronze #b08d57|Vermelho #d71920|Vermelho escuro #8b0000|Bordeaux #6d0f1f|Bordô #6d0f1f|Grená #7b1e2b|Vinho #722f37|Rosa #f4a6c0|Rosa claro #f8cfe0|Rosa choque #ff1f8e|Rosa fluorescente #ff2f92|Fúcsia #e5007d|Magenta #d6006f|Coral #ff6f61|Salmão #fa8072|Laranja #f58220|Laranja fluorescente #ff6a13|Amarelo #ffd400|Amarelo fluorescente #e6ff00|Amarelo ouro #f5b800|Mostarda #d9a521|Limão #cddc39|Verde #2e9a3f|Verde claro #8fd16f|Verde escuro #0b5d2a|Verde garrafa #0b3d2e|Verde militar #4b5320|Verde tropa #4b5320|Verde lima #a4d233|Verde fluorescente #39ff14|Verde maçã #8cc63f|Verde menta #98e0c0|Verde floresta #1e5a3a|Verde oliva #6b7b2e|Caqui #a39a62|Turquesa #1ab5b0|Água #7fd6d0|Azul #1f5fbf|Azul royal #1b3f9c|Azul marinho #12234b|Azul escuro #12234b|Azul navy #12234b|Azul claro #7fb7e6|Azul céu #87ceeb|Azul bebé #a7d3f0|Azul turquesa #00a5b5|Azul petróleo #0f5a6b|Azul ganga #4a6fa5|Azul aço #4682b4|Azul cobalto #0047ab|Azul elétrico #0066ff|Lilás #b79ad6|Roxo #6a2c91|Violeta #7f3fbf|Púrpura #6a2c91|Castanho #6b4226|Castanho claro #a0724a|Chocolate #4e2a1a|Café #4b3621|Bege #e3d3b3|Areia #d9c39a|Creme #f3ead0|Marfim #f5f0dc|Natural #eadfc8|Cru #efe6d2|Camel #c19a6b|Terracota #c8643c|Tijolo #a8442a|Ferrugem #b7410e|Nude #e8c4a8|Pêssego #ffcba4|Champanhe #f1dfba|"+
@@ -575,6 +581,21 @@ $("#bk_l").onclick=async function(e){var b=e.target.closest('[data-a="bkres"]');
  catch(x){$("#bk_m").className="err";$("#bk_m").textContent="Não foi possível restaurar: "+(x&&x.message||x)}};
 
 
+/* ===== DTF: notas de encomenda ===== */
+function dtfOrd(id){var o=S.orders.find(function(x){return x.id===id});return o?"N.º "+(o.num||"–")+" · "+(o.cli||"sem cliente"):""}
+function dtfRow(x,done){return '<div class="fl dtfr" data-id="'+x.id+'" style="align-items:flex-start;gap:10px"><label class="fi" style="border:0;padding:0;flex:1;opacity:'+(done?.6:1)+'"><input type="checkbox" data-d="done"'+(done?" checked":"")+'><span style="flex:1;min-width:0"><input data-d="t" value="'+esc(x.t)+'" style="width:100%;margin-bottom:4px"><span style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><input data-d="q" value="'+esc(x.q||"")+'" placeholder="Quantidade" style="width:130px"><span class="mu" style="font-size:.82rem">'+(x.oid&&dtfOrd(x.oid)?esc(dtfOrd(x.oid))+" · ":"")+(done&&x.dd?"encomendado em "+fdate(x.dd):"anotado em "+fdate(x.d))+'</span></span></span></label><button class="btn ghost" data-a="ddel" title="Apagar">✕</button></div>'}
+function rDtf(){var L=S.cfg.dtf||[],pend=L.filter(function(x){return !x.done}),dn=L.filter(function(x){return x.done}).sort(function(a,b){return (b.dd||"")<(a.dd||"")?-1:1});
+ var sel=$("#dtf_o"),cur=sel.value;sel.innerHTML='<option value="">— sem folha —</option>'+S.orders.filter(function(o){return o.est!=="Entregue"}).sort(function(a,b){return (+b.num||0)-(+a.num||0)}).map(function(o){return '<option value="'+o.id+'">'+esc(dtfOrd(o.id))+'</option>'}).join("");sel.value=cur;
+ $("#dtf_l").innerHTML='<div class="card"><b>Por encomendar ('+pend.length+')</b>'+(pend.length?'<span style="float:right"><button class="btn ghost" data-a="dcopy" style="padding:4px 12px;font-size:.85rem">Copiar lista</button></span>'+pend.map(function(x){return dtfRow(x,false)}).join(""):'<p class="mu" style="margin:6px 0 0">Nada por encomendar.</p>')+'<p id="dtf_msg" class="mu" style="margin:8px 0 0"></p></div>'+
+ (dn.length?'<div class="card"><b>Já encomendado ('+dn.length+')</b><span style="float:right"><button class="btn ghost" data-a="dclr" style="padding:4px 12px;font-size:.85rem">Limpar encomendados</button></span>'+dn.map(function(x){return dtfRow(x,true)}).join("")+'</div>':'');badge()}
+function dtfAdd(){var t=$("#dtf_t").value.trim();if(!t){$("#dtf_t").focus();return}S.cfg.dtf=S.cfg.dtf||[];S.cfg.dtf.unshift({id:uid(),t:t,q:$("#dtf_q").value.trim(),oid:$("#dtf_o").value,done:false,d:today(),dd:""});$("#dtf_t").value="";$("#dtf_q").value="";$("#dtf_o").value="";save();rDtf();$("#dtf_t").focus()}
+$("#dtf_add").onclick=dtfAdd;$("#dtf_t").onkeydown=function(e){if(e.key==="Enter")dtfAdd()};$("#dtf_q").onkeydown=function(e){if(e.key==="Enter")dtfAdd()};
+$("#dtf_l").oninput=function(e){var k=e.target.dataset.d,r=e.target.closest(".dtfr");if(!r||(k!=="t"&&k!=="q"))return;var x=(S.cfg.dtf||[]).find(function(y){return y.id===r.dataset.id});if(x){x[k]=e.target.value;save()}};
+$("#dtf_l").onchange=function(e){if(e.target.dataset.d!=="done")return;var r=e.target.closest(".dtfr"),x=(S.cfg.dtf||[]).find(function(y){return y.id===r.dataset.id});if(!x)return;x.done=e.target.checked;x.dd=x.done?today():"";save();rDtf()};
+$("#dtf_l").onclick=function(e){var b=e.target.closest("[data-a]");if(!b)return;var a=b.dataset.a,L=S.cfg.dtf||[];
+ if(a==="ddel"){var r=b.closest(".dtfr");S.cfg.dtf=L.filter(function(y){return y.id!==r.dataset.id});save();rDtf()}
+ else if(a==="dclr"){if(confirm("Apagar da lista os itens já encomendados?")){S.cfg.dtf=L.filter(function(y){return !y.done});save();rDtf()}}
+ else if(a==="dcopy"){var t="Encomenda DTF:\n"+L.filter(function(y){return !y.done}).slice().reverse().map(function(y){return "- "+y.t+(y.q?" — "+y.q:"")}).join("\n");var m=function(ok){$("#dtf_msg").textContent=ok?"Lista copiada.":"Não foi possível copiar; seleciona o texto manualmente."};if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(function(){m(1)},function(){m(0)});else m(0)}};
 /* ===== encomendas a fornecedores ===== */
 function oBlocks(o){var d=(o.desc||"").trim();return d?d.split(/\n\s*\n/).map(function(x){return x.trim()}).filter(function(x){return x&&x.indexOf("Desconto no total:")!==0}):[]}
 function bSup(o,b){var m=o.isup&&o.isup[b];if(m)return m;var f=String(b).split("\n")[0],r=f.match(/^(.+?)\s*\(([^()]+)\)\s+—/);if(r){var nm=r[1].trim().toLowerCase(),rf=r[2].trim().toLowerCase(),c=S.products.filter(function(x){return String(x.ref||"").toLowerCase()===rf});var e=c.find(function(x){return String(x.name||"").trim().toLowerCase()===nm})||c[0];if(e&&e.sup)return e.sup}
@@ -677,7 +698,7 @@ function s_(x){return x==null?"":String(x)}
 function pRow(p){return {id:p.id,sup:s_(p.sup),ref:s_(p.ref),name:s_(p.name),cat:s_(p.cat),colors:s_(p.colors),sizes:s_(p.sizes),cost:num(p.cost),img:s_(p.img)}}
 function tRow(t,i){return {id:t.id,pos:i,data:t}}
 function oRow(o){return {id:o.id,data:o}}
-function cfgVal(){return {mult:S.cfg.mult,iva:S.cfg.iva,seq:S.cfg.seq==null?6:S.cfg.seq,empresa:S.cfg.empresa||"",emp_ct:S.cfg.emp_ct||"",emp_cond:S.cfg.emp_cond||"",emp_init:S.cfg.emp_init||0,logo:S.cfg.logo||"",lw:S.cfg.lw||0,lh:S.cfg.lh||0,cores:S.cfg.cores||[]}}
+function cfgVal(){return {mult:S.cfg.mult,iva:S.cfg.iva,seq:S.cfg.seq==null?6:S.cfg.seq,empresa:S.cfg.empresa||"",emp_ct:S.cfg.emp_ct||"",emp_cond:S.cfg.emp_cond||"",emp_init:S.cfg.emp_init||0,logo:S.cfg.logo||"",lw:S.cfg.lw||0,lh:S.cfg.lh||0,cores:S.cfg.cores||[],dtf:S.cfg.dtf||[]}}
 function hhmm(){var d=new Date();return ("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2)}
 function setSt(m,c){var e=$("#sst");if(e){e.textContent=m;e.className=c||"mu"}}
 function chk(r,w){if(r&&r.error){var e=new Error((w||"")+(r.error.message||"erro"));e.code=r.error.code;throw e}return r}
@@ -716,7 +737,7 @@ function uiRefresh(){var defer=false;
  if(shown("pers")){if(busyIn("#pers"))defer=true;else rPers()}
  if(shown("enc")){if(busyIn("#enc"))defer=true;else rEnc()}
  if(shown("cli")){if(busyIn("#cli"))defer=true;else rCli()}
- if(shown("cal"))rCal();if(shown("forn")&&!busyIn("#forn"))rForn();if(shown("res")&&!busyIn("#res"))rRes();
+ if(shown("cal"))rCal();if(shown("forn")&&!busyIn("#forn"))rForn();if(shown("dtf")&&!busyIn("#dtf"))rDtf();if(shown("res")&&!busyIn("#res"))rRes();
  rClis();if(shown("calc")&&!$("#qbox").classList.contains("hide")&&!busyIn("#qbox"))rQl();
  badge();clearTimeout(SYNC.ur);if(defer)SYNC.ur=setTimeout(uiRefresh,4000)}
 function rtPush(p){SYNC.rq.push(p);clearTimeout(SYNC.rt);SYNC.rt=setTimeout(rtFlush,300)}
