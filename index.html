@@ -182,6 +182,7 @@ main{margin:0;padding:0 10px 20px}
 <div class="row">
 <div><label for="f">Importar ficheiro (.xlsx, .xls, .csv, .json do feed Valento)</label><input type="file" id="f" accept=".xlsx,.xls,.csv,.json" multiple></div>
 <div><button class="btn ghost" id="exp">Exportar catálogo (CSV)</button></div>
+<div><button class="btn ghost" id="delb">Apagar em massa (CSV)</button><input type="file" id="delf" accept=".csv,.xlsx,.xls" class="hide"></div>
 <div><button class="btn" id="newp">+ Adicionar novo produto</button></div>
 </div>
 <p class="mu" id="im"></p>
@@ -380,6 +381,18 @@ rows.forEach(function(r){var name=pick(r,["nome","name","descri","produto","prod
 var cost=num(pick(r,["custo","cost","preco","price","pvp","tarifa"]));var cat=pick(r,["categ","familia","family"]);var cols=pick(r,["cor","color","colour"]),szs=pick(r,["tamanho","size","talla"]);
 var ex=S.products.find(function(p){return ref&&p.ref===String(ref)&&p.sup===sup});if(ex){ex.cost=cost;ex.name=name||ex.name;if(cols)ex.colors=String(cols);if(szs)ex.sizes=String(szs);upd2++}else{S.products.push({id:uid(),sup:sup,ref:String(ref),name:String(name||ref),cat:String(cat),colors:String(cols),sizes:String(szs),cost:cost});add++}});
 save();rCat();$("#im").textContent="Importado: "+add+" novos, "+upd2+" atualizados (fornecedor: "+fs+" se não indicado no ficheiro)."}catch(e){$("#im").textContent="Não foi possível ler o ficheiro. Confirme que é .xlsx, .xls ou .csv com cabeçalhos na primeira linha."}inp.value=""};
+if(csv)rd.readAsText(file);else rd.readAsArrayBuffer(file)};
+$("#delb").onclick=function(){$("#delf").click()};
+$("#delf").onchange=function(){var file=this.files[0],inp=this;if(!file)return;if(typeof XLSX==="undefined"){$("#im").textContent="Não foi possível carregar o leitor de Excel. Verifique a ligação à internet.";inp.value="";return}
+var csv=/\.csv$/i.test(file.name),rd=new FileReader();rd.onload=function(){try{var wb;if(csv){var tx=rd.result.replace(/^\uFEFF/,"");wb=XLSX.read(tx,{type:"string",FS:tx.split("\n")[0].indexOf(";")>-1?";":","})}else wb=XLSX.read(rd.result,{type:"array"});
+var rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:""}),want={},n=0;
+rows.forEach(function(r){var sup=pick(r,["fornecedor","supplier"]),ref=pick(r,["ref","sku","codigo","code"]);if(!sup||ref==="")return;want[String(sup).trim().toLowerCase()+"\u0001"+String(ref).trim()]=1;n++});
+if(!n){$("#im").textContent="O ficheiro precisa das colunas fornecedor e referencia.";inp.value="";return}
+var hit=S.products.filter(function(p){return want[String(p.sup||"").trim().toLowerCase()+"\u0001"+String(p.ref||"").trim()]}),ids={};hit.forEach(function(p){ids[p.id]=1});
+var used=S.lines.filter(function(l){return ids[l.pid]}).length;
+if(!hit.length){$("#im").textContent="Nenhum dos "+n+" artigos do ficheiro existe no catálogo.";inp.value="";return}
+if(!confirm("Vai apagar "+hit.length+" produtos do catálogo (o ficheiro indica "+n+", "+(n-hit.length)+" não foram encontrados)."+(used?"\n\nAtenção: "+used+" linhas do orçamento atual usam estes produtos e também serão removidas.":"")+"\n\nEsta ação não se pode desfazer (exceto repondo uma cópia de segurança). Continuar?")){$("#im").textContent="Cancelado. Nada foi apagado.";inp.value="";return}
+S.products=S.products.filter(function(p){return !ids[p.id]});S.lines=S.lines.filter(function(l){return !ids[l.pid]});save();rCat();rLines();$("#im").textContent="Apagados "+hit.length+" produtos. Restam "+S.products.length+"."}catch(e){$("#im").textContent="Não foi possível ler o ficheiro."}inp.value=""};
 if(csv)rd.readAsText(file);else rd.readAsArrayBuffer(file)};
 function imgOk(u){return typeof u==="string"&&/^https?:\/\//i.test(u)}
 function importJSON(files){var add=0,upd=0,bad=0,n=0,er="";$("#im").textContent="A importar...";
