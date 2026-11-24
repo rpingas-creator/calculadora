@@ -573,7 +573,7 @@ var EMPDEF={empresa:"R.Pingas - Personalizações",emp_ct:"Quinta da Carne Magra
 function applyEmpDefaults(){var c=S.cfg;["empresa","emp_ct"].forEach(function(k){if(!c[k])c[k]=EMPDEF[k]});if(!c.logo){c.logo=EMPDEF.logo;c.lw=EMPDEF.lw;c.lh=EMPDEF.lh}c.emp_init=1}
 function mapOf(s){var m={};s.split(",").forEach(function(x){var a=x.split(":");m[a[0]]=a[1]});return m}
 var FM={roly:mapOf(FRO),stamina:mapOf(FST)};
-function ficha(p){if(!p)return"";var su=String(p.sup||"").toLowerCase().trim(),k=su.indexOf("roly")===0?"roly":su==="stamina"?"stamina":"";if(!k)return"";var m=String(p.ref||"").match(/^\d+/);if(!m)return"";var pre=FM[k][m[0]];return pre?"https://static.gorfactory.es/b2b/Ficha_Tecnica/pt/pdf/"+pre+m[0]+"_pt.pdf":""}
+function ficha(p){if(!p)return"";var su=String(p.sup||"").toLowerCase().trim(),rf=String(p.ref||"").trim(),er=encodeURIComponent(rf);if(rf){if(su==="toptex")return"https://www.toptex.pt/pdfmodeler/create/pdf/sku/"+er+"/";if(su==="makito")return"https://makito.es/epages/Makito.sf/pt_PT/?ObjectPath=/Shops/Makito/Products/"+er+"&ChangeAction=DescargarFichaPDF&Ficha=ARQUIVO";if(su==="valento")return"https://www.valento.es/?service=ServeDocuments&function=serve_datasheet&article_ref="+er;if(su==="tejo brinde")return"https://www.tejobrinde.pt/pt-pt/detalhe-produto/"+er}var k=su.indexOf("roly")===0?"roly":su==="stamina"?"stamina":"";if(!k)return"";var m=String(p.ref||"").match(/^\d+/);if(!m)return"";var pre=FM[k][m[0]];return pre?"https://static.gorfactory.es/b2b/Ficha_Tecnica/pt/pdf/"+pre+m[0]+"_pt.pdf":""}
 var DT=[{t:"quotes",a:"quotes",s:"q",n:"orçamentos: "},{t:"clients",a:"clients",s:"cl",n:"clientes: "}];
 function dRow(o){return {id:o.id,data:o}}
 function dObj(r){var o=Object.assign({},r.data);o.id=r.id;return o}
