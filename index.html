@@ -166,7 +166,7 @@ main{margin:0;padding:0 10px 20px}
 <div class="res"><span>Total sem IVA</span><b class="num" id="gb"></b></div>
 <div class="res" id="riva"><span>IVA final (<span id="gip"></span> %)</span><b class="num" id="gi"></b></div>
 <div class="res"><span class="grand">Total final</span><b class="num grand" id="gt"></b></div>
-<p><button class="btn" id="copy">Copiar resumo para o cliente</button> <button class="btn" id="mko">Criar folha de obra deste orçamento</button> <button class="btn ghost" id="qpdf">Descarregar PDF</button> <span class="mu" id="cm"></span></p>
+<p><button class="btn" id="copy">Copiar resumo para o cliente</button> <button class="btn" id="mko">Criar folha de obra deste orçamento</button> <button class="btn ghost" id="qpdf">Descarregar PDF</button> <button class="btn ghost" id="mkpk">Criar pack com estes artigos</button> <span class="mu" id="cm"></span></p>
 </div>
 <p class="mu" id="empty">Procure um produto acima para começar o orçamento.</p>
 </section>
@@ -186,6 +186,19 @@ main{margin:0;padding:0 10px 20px}
 <div><button class="btn" id="newp">+ Adicionar novo produto</button></div>
 </div>
 <p class="mu" id="im"></p>
+</div>
+<div class="card" id="pkcard">
+<b>Packs</b>
+<p class="mu" style="margin:4px 0 8px">Junte vários artigos num só artigo (por exemplo um kit para oferecer). O pack aparece na pesquisa como qualquer produto e o custo é a soma dos artigos.</p>
+<button class="btn" id="pk_new">+ Criar pack</button>
+<div id="pk_box" class="hide" style="margin-top:10px">
+<div class="row"><div><label for="pk_n">Nome do pack</label><input id="pk_n" autocomplete="off"></div><div><label for="pk_q">Adicionar artigo (referência ou nome)</label><input id="pk_q" autocomplete="off"></div></div>
+<div id="pk_h"></div><div id="pk_i" style="margin:8px 0"></div>
+<div class="row"><div><label for="pk_c">Custo do pack (€) — deixe vazio para somar os artigos</label><input id="pk_c" inputmode="decimal"></div><div><label>Soma dos artigos</label><div id="pk_t" style="padding:10px 0;font-weight:600"></div></div></div>
+<p style="margin:10px 0 0"><button class="btn" id="pk_save">Guardar pack</button> <button class="btn ghost" id="pk_cancel">Cancelar</button></p>
+</div>
+<div id="pk_l" style="margin-top:10px"></div>
+<p class="mu" id="pk_m"></p>
 </div>
 <div class="card hide" id="addbox">
 <b>Novo produto</b>
@@ -348,7 +361,7 @@ if(d.p==="name"){var b=c.querySelector('.tab[aria-pressed="true"]');b.textConten
 if(d.p==="tid"){save();rLines();return}}else return;save();upd()};
 $("#lines").onclick=function(e){var b=e.target.closest("[data-a]");if(!b)return;var c=b.closest(".card"),l=S.lines[+c.dataset.i],a=b.dataset.a;
 if(a==="del")S.lines.splice(+c.dataset.i,1);else if(a==="tab")l.tab=+b.dataset.k;else if(a==="addv")vrows(l).push({c:"",s:"",n:""});else if(a==="delv")vrows(l).splice(+b.closest(".vr").dataset.j,1);else if(a==="addpos"){l.pos.push(blank("Posição "+(l.pos.length+1)));l.tab=l.pos.length-1}save();rLines()};
-$("#copy").onclick=function(){var t=(S.cur.siva?"Orçamento":"Orçamento (valores sem IVA)")+"\n\n",gt=0;S.lines.forEach(function(l){var r=calc(l);if(!r.p)return;gt+=r.tot;t+="• "+r.p.name+" ("+r.p.ref+")\n  "+r.q+" un. · "+eur(r.unit)+"/un. · total "+eur(r.tot)+"\n"+(l.color?"  Cor: "+l.color+"\n":"")+vtxt(l,r)+(r.dsc>0?"  Desconto: "+r.dl+"\n":"");r.det.forEach(function(d){t+="  - "+d.x.name+": "+(d.t?d.t.name:"personalização")+(d.t&&WH(d.t)?" ("+num(d.x.w)+" × "+num(d.x.h)+" cm)":d.t&&d.t.kind==="bordado"?" ("+num(d.x.pts)+" pontos)":"")+"\n"})});var T=totals();t+="\n"+(T.td>0?"Subtotal sem IVA: "+eur(T.sub)+"\nDesconto ("+T.dl+"): − "+eur(T.td)+"\n":"")+(S.cur.siva?"TOTAL: "+eur(T.gb):"Total sem IVA: "+eur(T.gb)+"\nIVA ("+T.iva+"%): "+eur(T.iv)+"\nTOTAL com IVA: "+eur(T.gt))+"\n";
+$("#copy").onclick=function(){var t=(S.cur.siva?"Orçamento":"Orçamento (valores sem IVA)")+"\n\n",gt=0;S.lines.forEach(function(l){var r=calc(l);if(!r.p)return;gt+=r.tot;t+="• "+r.p.name+" ("+r.p.ref+")\n  "+r.q+" un. · "+eur(r.unit)+"/un. · total "+eur(r.tot)+"\n"+(l.color?"  Cor: "+l.color+"\n":"")+(packInc(r.p)?"  "+packInc(r.p)+"\n":"")+vtxt(l,r)+(r.dsc>0?"  Desconto: "+r.dl+"\n":"");r.det.forEach(function(d){t+="  - "+d.x.name+": "+(d.t?d.t.name:"personalização")+(d.t&&WH(d.t)?" ("+num(d.x.w)+" × "+num(d.x.h)+" cm)":d.t&&d.t.kind==="bordado"?" ("+num(d.x.pts)+" pontos)":"")+"\n"})});var T=totals();t+="\n"+(T.td>0?"Subtotal sem IVA: "+eur(T.sub)+"\nDesconto ("+T.dl+"): − "+eur(T.td)+"\n":"")+(S.cur.siva?"TOTAL: "+eur(T.gb):"Total sem IVA: "+eur(T.gb)+"\nIVA ("+T.iva+"%): "+eur(T.iv)+"\nTOTAL com IVA: "+eur(T.gt))+"\n";
 function done(){$("#cm").textContent="Copiado."}
 try{navigator.clipboard.writeText(t).then(done,function(){fb()})}catch(e){fb()}
 function fb(){var a=document.createElement("textarea");a.value=t;document.body.appendChild(a);a.select();try{document.execCommand("copy");done()}catch(e){$("#cm").textContent="Não foi possível copiar."}a.remove()}};
@@ -373,6 +386,27 @@ $("#newp").onclick=function(){var b=$("#addbox");b.classList.toggle("hide");if(!
 $("#cancel").onclick=function(){$("#addbox").classList.add("hide")};
 $("#add").onclick=function(){var n=$("#n_n").value.trim();if(!n){$("#im").textContent="Indique pelo menos o nome do produto.";return}
 S.products.push({id:uid(),sup:$("#n_s").value.trim()||"—",ref:$("#n_r").value.trim(),name:n,cat:$("#n_ct").value.trim(),colors:$("#n_cl").value.trim(),sizes:$("#n_tm").value.trim(),cost:num($("#n_c").value)});["#n_s","#n_r","#n_n","#n_ct","#n_c","#n_cl","#n_tm"].forEach(function(x){$(x).value=""});save();$("#addbox").classList.add("hide");rCat();$("#im").textContent="Produto adicionado."};
+
+/* ===== packs ===== */
+var PK={items:[]};
+function pkProd(id){return S.products.find(function(x){return x.id===id})}
+function pkSum(items){var t=0;items.forEach(function(it){var p=pkProd(it.pid);if(p)t+=num(p.cost)*Math.max(1,num(it.qty))});return Math.round(t*100)/100}
+function pkOf(p){return p&&(S.cfg.packs||[]).find(function(k){return k.pid===p.id})}
+function packInc(p){var k=pkOf(p);if(!k)return"";return"Inclui: "+k.items.map(function(it){var q=pkProd(it.pid);return Math.max(1,num(it.qty))+" × "+(q?q.name:it.name)+(q&&q.ref?" ("+q.ref+")":"")}).join("; ")}
+function pkMsg(t){$("#pk_m").textContent=t}
+function pkCreate(name,items,cost){if(!S.cfg.packs)S.cfg.packs=[];var n=0;S.cfg.packs.forEach(function(k){var m=String(k.ref).match(/(\d+)$/);if(m)n=Math.max(n,+m[1])});var ref="PACK-"+("00"+(n+1)).slice(-3),id=uid();S.products.push({id:id,sup:"Pack",ref:ref,name:name,cat:"Packs",colors:"",sizes:"",cost:cost});S.cfg.packs.push({pid:id,ref:ref,items:items.map(function(it){var p=pkProd(it.pid);return{pid:it.pid,qty:Math.max(1,num(it.qty)),name:p?p.name:it.name}})});save();rCat();return ref}
+function rPkB(){var h="";PK.items.forEach(function(it,i){var p=pkProd(it.pid);h+='<div class="fl" style="gap:8px"><span style="flex:1">'+esc(p?p.name:it.name)+' <span class="mu">'+esc(p?p.ref:"")+' · '+eur(p?num(p.cost):0)+'</span></span><input data-pq="'+i+'" inputmode="numeric" style="width:70px" value="'+esc(it.qty)+'"><button class="btn ghost" data-px="'+i+'">✕</button></div>'});$("#pk_i").innerHTML=h||'<p class="mu">Ainda sem artigos no pack.</p>';$("#pk_t").textContent=eur(pkSum(PK.items))}
+function rPk(){var P=S.cfg.packs||[];$("#pk_l").innerHTML=P.length?P.map(function(k,i){var p=pkProd(k.pid);if(!p)return"";return'<div class="fl"><span><b>'+esc(p.name)+'</b> <span class="mu">'+esc(k.ref)+' · custo '+eur(num(p.cost))+'<br>'+esc(packInc(p))+'</span></span><span><button class="btn ghost" data-pu="'+i+'">Atualizar custo</button> <button class="btn ghost" data-pd="'+i+'">Apagar</button></span></div>'}).join(""):""}
+$("#pk_new").onclick=function(){var b=$("#pk_box");b.classList.toggle("hide");if(!b.classList.contains("hide")){PK={items:[]};rPkB();$("#pk_n").focus()}};
+$("#pk_cancel").onclick=function(){$("#pk_box").classList.add("hide")};
+$("#pk_q").oninput=function(){var q=this.value.toLowerCase().trim();if(q.length<2){$("#pk_h").innerHTML="";return}var L=S.products.filter(function(p){return !pkOf(p)&&(String(p.ref||"").toLowerCase().indexOf(q)>-1||String(p.name||"").toLowerCase().indexOf(q)>-1)}).slice(0,8);$("#pk_h").innerHTML=L.map(function(p){return'<button class="btn ghost" style="display:block;width:100%;text-align:left;margin:2px 0" data-ph="'+p.id+'">'+esc(p.name)+' <span class="mu">'+esc(p.ref)+' · '+eur(num(p.cost))+'</span></button>'}).join("")};
+$("#pk_h").onclick=function(e){var b=e.target.closest("[data-ph]");if(!b)return;PK.items.push({pid:b.dataset.ph,qty:1});$("#pk_q").value="";$("#pk_h").innerHTML="";rPkB()};
+$("#pk_i").oninput=function(e){var i=e.target.dataset.pq;if(i==null)return;PK.items[i].qty=e.target.value;$("#pk_t").textContent=eur(pkSum(PK.items))};
+$("#pk_i").onclick=function(e){var i=e.target.dataset.px;if(i==null)return;PK.items.splice(+i,1);rPkB()};
+$("#pk_save").onclick=function(){var n=$("#pk_n").value.trim();if(!n){pkMsg("Indique o nome do pack.");return}if(PK.items.length<2){pkMsg("Junte pelo menos 2 artigos.");return}var c=$("#pk_c").value.trim(),cost=c===""?pkSum(PK.items):num(c);var ref=pkCreate(n,PK.items,cost);$("#pk_box").classList.add("hide");$("#pk_n").value="";$("#pk_c").value="";pkMsg("Pack criado ("+ref+"). Já o pode procurar e juntar a um orçamento como qualquer artigo.")};
+$("#pk_l").onclick=function(e){var u=e.target.dataset.pu,d=e.target.dataset.pd;var P=S.cfg.packs||[];if(u!=null){var k=P[u],p=pkProd(k.pid);if(p){p.cost=pkSum(k.items);save();rCat();pkMsg("Custo de "+k.ref+" atualizado para "+eur(p.cost)+".")}}else if(d!=null){var k2=P[d];if(!confirm("Apagar o pack "+k2.ref+"? Os artigos que o compõem não são afetados."))return;S.products=S.products.filter(function(p){return p.id!==k2.pid});S.lines=S.lines.filter(function(l){return l.pid!==k2.pid});P.splice(d,1);save();rCat();rLines()}};
+var _rcP=rCat;rCat=function(){_rcP();rPk()};
+$("#mkpk").onclick=function(){var ls=S.lines.filter(function(l){return S.products.some(function(p){return p.id===l.pid})});if(ls.length<2){alert("Junte pelo menos 2 artigos ao orçamento para criar um pack.");return}var n=prompt("Nome do pack com os "+ls.length+" artigos deste orçamento:","Pack "+(S.cur&&S.cur.cli?S.cur.cli:""));if(!n||!n.trim())return;var items=ls.map(function(l){return{pid:l.pid,qty:Math.max(1,calc(l).q)}});var ref=pkCreate(n.trim(),items,pkSum(items));$("#qmsg")&&($("#qmsg").textContent="Pack criado ("+ref+"). Procure-o no catálogo de artigos.")};
 function pick(row,keys){var out="";Object.keys(row).forEach(function(k){var nk=k.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim();if(!out&&keys.some(function(x){return nk.indexOf(x)>-1})&&row[k]!=="")out=row[k]});return out}
 $("#f").onchange=function(){var file=this.files[0];if(!file)return;var inp=this;if(/\.json$/i.test(file.name)){importJSON(Array.prototype.slice.call(this.files));inp.value="";return}if(typeof XLSX==="undefined"){$("#im").textContent="Não foi possível carregar o leitor de Excel. Verifique a ligação à internet.";return}
 var rd=new FileReader(),csv=/\.csv$/i.test(file.name);rd.onload=function(){try{var wb;if(csv){var tx=rd.result;wb=XLSX.read(tx,{type:"string",FS:tx.split("\n")[0].indexOf(";")>-1?";":","})}else wb=XLSX.read(rd.result,{type:"array"});
@@ -652,7 +686,7 @@ function pdfFolha(o){var d=pdfNew(),M=d.M;d.put("FOLHA DE OBRA",M,20,true);d.y-=
  if((o.files||[]).length){d.head("Ficheiros anexados");o.files.forEach(function(f){d.para("• "+f.name+"  ("+fsize(f.size)+")",10,13)})}
  return pdfEnd(d,(o.cli?o.cli+"  ·  ":"")+"Folha de obra  ·  gerada em "+fdate(today()))}
 function dlPdf(o){var nm=pdfName("Folha_de_Obra",o.num,o.cli);dlBlob(pdfFolha(o),nm);ost("PDF gerado: "+nm)}
-function lineDet(l,r){var a=[];if(l.color)a.push("Cor: "+l.color);var v=vtxt(l,r).trim();if(v)a.push(v);if(r.dsc>0)a.push("Desconto: "+r.dl);r.det.forEach(function(x){a.push(x.x.name+": "+(x.t?x.t.name:"personalização")+(x.t&&WH(x.t)?" ("+num(x.x.w)+" × "+num(x.x.h)+" cm)":x.t&&x.t.kind==="bordado"?" ("+num(x.x.pts)+" pontos)":""))});return a}
+function lineDet(l,r){var a=[];var pi=packInc(r.p);if(pi)a.push(pi);if(l.color)a.push("Cor: "+l.color);var v=vtxt(l,r).trim();if(v)a.push(v);if(r.dsc>0)a.push("Desconto: "+r.dl);r.det.forEach(function(x){a.push(x.x.name+": "+(x.t?x.t.name:"personalização")+(x.t&&WH(x.t)?" ("+num(x.x.w)+" × "+num(x.x.h)+" cm)":x.t&&x.t.kind==="bordado"?" ("+num(x.x.pts)+" pontos)":""))});return a}
 function pdfOrc(meta,lines){var d=pdfNew(),M=d.M,W=d.W,c=S.cfg,R=W-M,xq=M+335,xu=M+430;
  if(c.logo&&c.lw&&c.lh){try{d.img={bin:atob(c.logo.split(",")[1]),w:c.lw,h:c.lh}}catch(e){d.img=null}}
  var top=d.y,hh=0;if(d.img){var lh=50,lw=lh*d.img.w/d.img.h;if(lw>170){lw=170;lh=lw*d.img.h/d.img.w}d.image(R-lw,top-lh,lw,lh);hh=lh}
