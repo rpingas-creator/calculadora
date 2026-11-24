@@ -190,12 +190,51 @@ main{padding:0 12px 40px!important}
 }
 input[type=file]{padding:6px!important}
 input[type=file]::file-selector-button{border:0;border-radius:8px;background:var(--lt);color:var(--tx);padding:7px 12px;margin-right:10px;font:inherit;font-weight:600;cursor:pointer}
+
+/* ---- fluxo do orçamento ---- */
+.stp{display:flex;align-items:center;gap:10px;margin:22px 0 10px;font-size:1.05rem;font-weight:700;letter-spacing:-.01em}
+.stp span{width:26px;height:26px;border-radius:50%;background:var(--ac);color:var(--on);display:inline-flex;align-items:center;justify-content:center;font-size:.85rem}
+.stp.hide{display:none}
+#calc>.stp:first-child{margin-top:4px}
+.qact{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn.lnk{background:transparent!important;border:0!important;color:var(--mu)!important;padding:10px 10px!important;box-shadow:none!important;font-weight:500}
+.btn.lnk:hover{color:var(--tx)!important;text-decoration:underline;filter:none!important;box-shadow:none!important}
+.flt{margin-top:10px}.flt>summary{font-size:.85rem}
+#s_q{font-size:1.02rem;padding:12px 14px!important}
+.line{padding:0!important}
+.line .lh{display:flex;align-items:center;gap:10px;padding:14px 16px;cursor:pointer;user-select:none;border-radius:var(--r) var(--r) 0 0}
+.line.fold .lh{border-radius:var(--r)}
+.line .lh b{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.line .lsum{margin-left:auto;font-weight:600;white-space:nowrap;color:var(--mu);font-size:.9rem}
+.line .lh .x{float:none;flex:none}
+.line .chev{width:8px;height:8px;border-right:2px solid var(--mu);border-bottom:2px solid var(--mu);transform:rotate(45deg);transition:transform .15s;flex:none;margin:0 4px 3px 2px}
+.line.fold .chev{transform:rotate(-45deg);margin-bottom:0}
+.line .lb{padding:0 16px 16px}
+.line.fold .lb{display:none}
+.line .lm{margin-bottom:6px}
+.line .opt{margin:12px 0;border:1px dashed var(--bd);border-radius:var(--r2);padding:10px 12px}
+.line .opt[open]{border-style:solid;background:color-mix(in srgb,var(--bg) 45%,var(--card))}
+.line .opt>summary{cursor:pointer;list-style:none;display:flex;gap:8px;flex-wrap:wrap;align-items:baseline}
+.line .opt>summary::-webkit-details-marker{display:none}
+.line .opt>summary::before{content:"+";font-weight:700;color:var(--ac);width:14px}
+.line .opt[open]>summary::before{content:"–"}
+#qbar{position:sticky;bottom:0;z-index:12;display:flex;align-items:center;gap:10px;margin:18px -28px 0;padding:12px 28px;background:color-mix(in srgb,var(--card) 90%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-top:1px solid var(--bd);box-shadow:0 -10px 30px -18px rgba(0,0,0,.35)}
+#qbar.hide{display:none}
+#qbar .qbi{flex:1;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+#qbar .qbi b{font-size:1.35rem;letter-spacing:-.02em}
+#qbar small{color:var(--mu)}
+.menu{position:relative}
+.menu>summary{list-style:none;cursor:pointer;display:inline-block}.menu>summary::-webkit-details-marker{display:none}
+.mpop{position:absolute;right:0;top:calc(100% + 6px);z-index:40;min-width:210px;display:flex;flex-direction:column;gap:2px;padding:6px;background:var(--card);border:1px solid var(--bd);border-radius:12px;box-shadow:0 18px 40px -16px rgba(0,0,0,.4)}
+.mpop .btn{text-align:left;border:0!important;background:transparent!important;box-shadow:none!important;font-weight:500}
+.mpop .btn:hover{background:var(--lt)!important}
+@media(max-width:900px){#sbar{position:relative!important;z-index:30}#qbar{margin:14px -12px 0;padding:10px 12px}#qbar .qbi b{font-size:1.15rem}.line .lh{padding:12px}.line .lb{padding:0 12px 12px}}
 </style>
 </head>
 <body>
 <main>
 <h1>Calculadora de orçamentos</h1>
-<div class="card" id="sbar" style="padding:10px 14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center"><span id="sst" class="mu" style="flex:1 1 220px">A iniciar…</span><button class="btn ghost" id="sref">Atualizar</button><button class="btn ghost" id="sbak">Cópia de segurança</button><button class="btn ghost" id="sres">Restaurar cópia</button><button class="btn ghost" id="sout">Sair</button><input type="file" id="sresf" accept=".json" hidden></div>
+<div class="card" id="sbar" style="padding:10px 14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center"><span id="sst" class="mu" style="flex:1 1 220px">A iniciar…</span><details class="menu" id="smenu"><summary class="btn ghost">Conta ▾</summary><div class="mpop"><button class="btn ghost" id="sref">Atualizar dados</button><button class="btn ghost" id="sbak">Cópia de segurança</button><button class="btn ghost" id="sres">Restaurar cópia</button><button class="btn ghost" id="sout">Sair</button></div></details><input type="file" id="sresf" accept=".json" hidden></div>
 <div class="card hide" id="alr" style="border-left:4px solid #c0392b;padding:10px 14px"></div>
 <nav id="tabs">
 <button data-t="calc" aria-pressed="true">Orçamento</button>
@@ -212,24 +251,28 @@ input[type=file]::file-selector-button{border:0;border-radius:8px;background:var
 </nav>
 
 <section id="calc">
+<h2 class="stp"><span>1</span>Cliente</h2>
 <div class="card" id="qhead">
 <div class="orow"><div><label for="q_cli">Cliente</label><input id="q_cli" list="clis" autocomplete="off"></div><div><label for="q_clube">Empresa</label><input id="q_clube" list="clubes" autocomplete="off"></div><div><label for="q_ct">Contacto do cliente</label><input id="q_ct" autocomplete="off" placeholder="Telemóvel / email"></div><div><label for="q_num">N.º orçamento</label><input id="q_num" readonly placeholder="atribuído ao guardar"></div></div>
 <div id="fbanner" class="hide" style="margin-top:10px;padding:10px 12px;border-left:4px solid var(--ac);background:var(--tot);border-radius:8px"><span id="fbtxt"></span><div style="margin-top:8px"><button class="btn" id="fbok">Guardar e atualizar a folha de obra</button> <button class="btn ghost" id="fbno">Cancelar</button></div></div>
-<p style="margin:10px 0 0"><button class="btn" id="qsave">Guardar orçamento</button> <button class="btn ghost" id="qnew">Novo orçamento</button> <button class="btn ghost" id="qlist">Orçamentos guardados</button> <span class="mu" id="qmsg"></span></p>
+<p style="margin:10px 0 0" class="qact"><button class="btn" id="qsave">Guardar orçamento</button> <button class="btn ghost lnk" id="qnew">Novo orçamento</button> <button class="btn ghost lnk" id="qlist">Orçamentos guardados</button> <span class="mu" id="qmsg"></span></p>
 </div>
 <div class="card hide" id="qbox"><div class="ocnt"><div style="flex:1 1 200px"><label for="ql_q">Pesquisar (cliente, n.º)</label><input id="ql_q" autocomplete="off"></div><div style="flex:0 1 200px"><label for="ql_f">Estado</label><select id="ql_f"><option value="">Todos</option><option value="pend">Pendentes de resposta</option><option>Por enviar</option><option>Enviado</option><option>Aceite</option><option>Recusado</option><option>Expirado</option></select></div></div><p class="mu" id="ql_n" style="margin:0 0 6px"></p><div id="ql"></div></div>
 <datalist id="clubes"></datalist><datalist id="clis"></datalist>
+<h2 class="stp"><span>2</span>Artigos</h2>
 <div class="card">
-<div class="row">
+<label for="s_q">Procurar artigo</label><input id="s_q" type="search" autocomplete="off" placeholder="Nome, referência, fornecedor ou categoria…">
+<details class="flt"><summary>Filtrar por fornecedor, referência, nome ou categoria</summary>
+<div class="row" style="margin-top:8px">
 <div><label for="s_s">Fornecedor</label><input id="s_s" list="sups" autocomplete="off"></div>
 <div><label for="s_r">Referência</label><input id="s_r" autocomplete="off"></div>
 <div><label for="s_n">Nome</label><input id="s_n" autocomplete="off"></div>
 <div><label for="s_c">Categoria</label><input id="s_c" autocomplete="off"></div>
-</div><datalist id="sups"></datalist>
-<p class="mu" style="margin:8px 0 0">Preencha um ou mais campos. A pesquisa mostra os produtos que cumprem todos.</p>
+</div><datalist id="sups"></datalist></details>
 <div id="pkq" class="hide" style="margin-top:10px"><label>Juntar um pack ao orçamento</label><div style="display:flex;gap:8px;flex-wrap:wrap"><select id="pq_s" style="flex:1;min-width:160px"></select><input id="pq_n" inputmode="numeric" placeholder="Qtd. de packs" style="width:120px" value="1"><button class="btn" id="pq_add">Juntar pack</button></div></div><div id="hits"></div>
 </div>
 <div id="lines"></div>
+<h2 class="stp hide" id="stp3"><span>3</span>Resumo e guardar</h2>
 <div class="card hide" id="sum">
 <div class="res hide" id="rsub"><span>Subtotal sem IVA</span><b class="num" id="gsub"></b></div>
 <div class="row" style="margin:10px 0"><div><label for="q_disc">Desconto no total</label><input id="q_disc" inputmode="decimal" placeholder="0"></div><div style="max-width:110px"><label for="q_dt">Tipo</label><select id="q_dt"><option value="%">%</option><option value="€">€</option></select></div><div style="max-width:230px"><label for="q_fat">Fatura</label><select id="q_fat"><option value="">Com IVA (com fatura)</option><option value="1">Sem IVA (sem fatura)</option></select></div><div style="max-width:190px"><label for="q_est">Estado do orçamento</label><select id="q_est"><option>Por enviar</option><option>Enviado</option><option>Aceite</option><option>Recusado</option></select></div><div style="max-width:130px"><label for="q_dv">Validade (dias)</label><input id="q_dv" inputmode="numeric" placeholder="30"></div></div>
@@ -239,7 +282,8 @@ input[type=file]::file-selector-button{border:0;border-radius:8px;background:var
 <div class="res"><span class="grand">Total final</span><b class="num grand" id="gt"></b></div>
 <p><button class="btn" id="copy">Copiar resumo para o cliente</button> <button class="btn" id="mko">Criar folha de obra deste orçamento</button> <button class="btn ghost" id="qpdf">Descarregar PDF</button> <button class="btn ghost" id="mkpk">Criar pack com estes artigos</button> <span class="mu" id="cm"></span></p>
 </div>
-<p class="mu" id="empty">Procure um produto acima para começar o orçamento.</p>
+<p class="mu" id="empty">Procure um artigo acima para começar o orçamento.</p>
+<div id="qbar" class="hide"><div class="qbi"><small>Total final</small><b class="num" id="qbt"></b><small id="qbs"></small></div><button class="btn ghost" id="qbp">PDF</button><button class="btn" id="qbg">Guardar orçamento</button></div>
 </section>
 
 <section id="cli" class="hide">
@@ -399,37 +443,45 @@ document.querySelectorAll("#tabs button").forEach(function(b){b.onclick=function
 
 /* orçamento */
 var SF=["s_s","s_r","s_n","s_c"];
-function srch(){var f=SF.map(function(i){return $("#"+i).value.toLowerCase().trim()});var h=$("#hits");if(!f.some(Boolean)){h.innerHTML="";return}
-var res=S.products.filter(function(p){return String(p.sup||"").toLowerCase().indexOf(f[0])>-1&&String(p.ref||"").toLowerCase().indexOf(f[1])>-1&&String(p.name||"").toLowerCase().indexOf(f[2])>-1&&String(p.cat||"").toLowerCase().indexOf(f[3])>-1});
+function srch(){var f=SF.map(function(i){return $("#"+i).value.toLowerCase().trim()}),qw=$("#s_q").value.toLowerCase().trim().split(/\s+/).filter(Boolean);var h=$("#hits");if(!f.some(Boolean)&&!qw.length){h.innerHTML="";return}
+var res=S.products.filter(function(p){return String(p.sup||"").toLowerCase().indexOf(f[0])>-1&&String(p.ref||"").toLowerCase().indexOf(f[1])>-1&&String(p.name||"").toLowerCase().indexOf(f[2])>-1&&String(p.cat||"").toLowerCase().indexOf(f[3])>-1&&(!qw.length||(function(){var hs=(String(p.sup||"")+" "+String(p.ref||"")+" "+String(p.name||"")+" "+String(p.cat||"")).toLowerCase();return qw.every(function(w){return hs.indexOf(w)>-1})})())});
 h.innerHTML=res.length?res.slice(0,15).map(function(p){return '<button class="hit" data-id="'+p.id+'"><span>'+esc(p.name)+' <span class="mu">'+esc(p.ref)+' · '+esc(p.sup)+'</span></span><span class="num">'+eur(num(p.cost))+'</span></button>'}).join(""):'<p class="mu">Sem resultados. Importe o fornecedor ou adicione o produto no separador Catálogo.</p>';if(res.length>15)h.innerHTML+='<p class="mu">A mostrar 15 de '+res.length+'. Escreva mais para filtrar.</p>'}
-SF.forEach(function(i){$("#"+i).oninput=srch});
+SF.concat(["s_q"]).forEach(function(i){$("#"+i).oninput=srch});
 $("#s_s").onfocus=function(){var u=[];S.products.forEach(function(p){if(p.sup&&u.indexOf(p.sup)<0)u.push(p.sup)});$("#sups").innerHTML=u.map(function(x){return '<option value="'+esc(x)+'">'}).join("")};
-$("#hits").onclick=function(e){var b=e.target.closest(".hit");if(!b)return;S.lines.push(norm({id:uid(),pid:b.dataset.id,qty:100,iva:String(S.cfg.iva)}));save();SF.forEach(function(i){$("#"+i).value=""});$("#hits").innerHTML="";rLines()};
-function rLines(){$("#lines").innerHTML=S.lines.map(function(l,i){norm(l);var p=S.products.find(function(x){return x.id===l.pid});if(!p)return"";
+$("#hits").onclick=function(e){var b=e.target.closest(".hit");if(!b)return;S.lines.push(norm({id:uid(),pid:b.dataset.id,qty:100,iva:String(S.cfg.iva)}));save();SF.concat(["s_q"]).forEach(function(i){$("#"+i).value=""});$("#hits").innerHTML="";rLines()};
+var FOLD={},OPENO={};
+$("#lines").addEventListener("toggle",function(e){var d=e.target;if(d&&d.classList&&d.classList.contains("opt"))OPENO[d.dataset.id]=d.open},true);
+$("#lines").addEventListener("keydown",function(e){if((e.key==="Enter"||e.key===" ")&&e.target.classList&&e.target.classList.contains("lh")){e.preventDefault();e.target.click()}});
+$("#qbg").onclick=function(){$("#qsave").click()};$("#qbp").onclick=function(){$("#qpdf").click()};
+document.addEventListener("click",function(e){var m=$("#smenu");if(m&&m.open&&(!m.contains(e.target)||e.target.closest(".mpop button")))m.open=false});
+function rLines(){document.querySelectorAll("#lines details.opt").forEach(function(d){OPENO[d.dataset.id]=d.open});$("#lines").innerHTML=S.lines.map(function(l,i){norm(l);var p=S.products.find(function(x){return x.id===l.pid});if(!p)return"";
 var k=Math.min(l.tab||0,l.pos.length-1),x=l.pos[k],t=S.techs.find(function(y){return y.id===x.tid});
 var tabs=l.pos.map(function(z,j){var on=z.tid||(z.pers!==""&&z.pers!=null);return '<button class="tab" data-a="tab" data-k="'+j+'" aria-pressed="'+(j===k)+'">'+esc(z.name)+(on?" ●":"")+'</button>'}).join("")+'<button class="tab" data-a="addpos" aria-label="Adicionar posição">+</button>';
-return '<div class="card" data-i="'+i+'"><button class="x" data-a="del" aria-label="Remover linha">×</button><b>'+esc(p.name)+'</b>'+(l.grp?' <span class="tag">Pack: '+esc(l.grp.name)+'</span>':'')+' <span class="mu">'+esc(p.ref)+' · '+esc(p.sup)+' · custo '+eur(num(p.cost))+'</span>'+(imgOk(p.img)?' <a href="'+esc(p.img)+'" target="_blank" rel="noopener noreferrer">ver imagem</a>':'')+(ficha(p)?' · <a href="'+esc(ficha(p))+'" target="_blank" rel="noopener noreferrer">ficha técnica</a>':'')+
+var osum=l.pos.filter(function(z){return z.tid||(z.pers!==""&&z.pers!=null)}).map(function(z){var tt=S.techs.find(function(y){return y.id===z.tid});return esc(z.name)+": "+esc(tt?tt.name:"valor manual")}).join(" · ")||"sem personalização";if(num(l.disc)>0)osum+=" · desconto "+esc(l.disc)+esc(l.dtype==="€"?" €":"%");
+return '<div class="card line'+(FOLD[l.id]?' fold':'')+'" data-i="'+i+'"><div class="lh" data-a="fold" role="button" tabindex="0" aria-label="Abrir ou fechar o artigo"><i class="chev"></i><b>'+esc(p.name)+'</b>'+(l.grp?' <span class="tag">Pack: '+esc(l.grp.name)+'</span>':'')+'<span class="lsum num" data-o="ht"></span><button class="x" data-a="del" aria-label="Remover linha">×</button></div><div class="lb"><div class="lm mu">'+esc(p.ref)+' · '+esc(p.sup)+' · custo '+eur(num(p.cost))+' '+(imgOk(p.img)?' <a href="'+esc(p.img)+'" target="_blank" rel="noopener noreferrer">ver imagem</a>':'')+(ficha(p)?' · <a href="'+esc(ficha(p))+'" target="_blank" rel="noopener noreferrer">ficha técnica</a>':'')+'</div>'+
 qtyBlock(l,p)+
+'<details class="opt" data-id="'+l.id+'"'+(OPENO[l.id]?' open':'')+'><summary><b>Opções e personalização</b> <span class="mu">'+osum+'</span></summary>'+
 '<div class="row" style="margin-top:10px"><div><label>IVA do artigo (%)</label><input data-f="iva" inputmode="decimal" value="'+esc(l.iva==null?S.cfg.iva:l.iva)+'"></div><div><label>Desconto do artigo</label><input data-f="disc" inputmode="decimal" placeholder="0" value="'+esc(l.disc)+'"></div><div style="max-width:110px"><label>Tipo</label><select data-f="dtype"><option value="%"'+(l.dtype==="€"?"":" selected")+'>%</option><option value="€"'+(l.dtype==="€"?" selected":"")+'>€</option></select></div></div>'+
 '<div class="tabs" role="group" aria-label="Posições de personalização">'+tabs+'</div>'+
 '<div class="row"><div><label>Nome da posição</label><input data-p="name" value="'+esc(x.name)+'"></div>'+
 '<div><label>Personalização</label><select data-p="tid"><option value="">Sem personalização</option>'+S.techs.map(function(y){return '<option value="'+y.id+'"'+(y.id===x.tid?" selected":"")+'>'+esc(y.name)+'</option>'}).join("")+'</select></div>'+
 (t&&t.kind==="bordado"?'<div><label>Número de pontos</label><input data-p="pts" inputmode="numeric" value="'+esc(x.pts)+'"></div>':'')+(t&&WH(t)?'<div><label>Largura da imagem (cm)</label><input data-p="w" inputmode="decimal" value="'+esc(x.w)+'"></div><div><label>Altura da imagem (cm)</label><input data-p="h" inputmode="decimal" value="'+esc(x.h)+'"></div>':'')+
 '<div><label>Personalização €/un (vazio = tabela)</label><input data-p="pers" inputmode="decimal" value="'+esc(x.pers)+'"></div>'+
-'<div><label>Arranque € (vazio = tabela)</label><input data-p="setup" inputmode="decimal" value="'+esc(x.setup)+'"></div></div>'+
+'<div><label>Arranque € (vazio = tabela)</label><input data-p="setup" inputmode="decimal" value="'+esc(x.setup)+'"></div></div></details>'+
 '<div class="res"><span>Preço unitário s/ IVA <b class="num" data-o="u"></b></span><span>Total s/ IVA <b class="num" data-o="t"></b></span></div>'+
-'<details style="margin-top:8px"><summary class="mu" style="cursor:pointer">Ver como foi calculado</summary><div data-o="b"></div></details></div>'}).join("");
+'<details style="margin-top:8px"><summary class="mu" style="cursor:pointer">Ver como foi calculado</summary><div data-o="b"></div></details></div></div>'}).join("");
 $("#empty").classList.toggle("hide",S.lines.length>0);upd()}
-function upd(){var gb=0,gi=0;document.querySelectorAll("#lines .card").forEach(function(c){var r=calc(S.lines[+c.dataset.i]);var vt=c.querySelector('[data-o="vt"]');if(vt)vt.textContent=r.sq+" un.";c.querySelector('[data-o="u"]').textContent=eur(r.unit);c.querySelector('[data-o="t"]').textContent=eur(r.tot);
+function upd(){var gb=0,gi=0;document.querySelectorAll("#lines .card").forEach(function(c){var r=calc(S.lines[+c.dataset.i]);var vt=c.querySelector('[data-o="vt"]');if(vt)vt.textContent=r.sq+" un.";c.querySelector('[data-o="u"]').textContent=eur(r.unit);var ht=c.querySelector('[data-o="ht"]');if(ht)ht.textContent=r.sq+" un. · "+eur(r.tot);c.querySelector('[data-o="t"]').textContent=eur(r.tot);
 var iv=num(S.cfg.iva),h='<table class="bk"><tr><td>Custo do produto</td><td class="num">'+eur(r.cost)+'</td></tr><tr><td>+ percentagem ('+r.ia+'% sobre o custo)</td><td class="num">'+eur(r.cost*r.ia/100)+'</td></tr><tr><td>+ custo do produto</td><td class="num">'+eur(r.cost)+'</td></tr>';
 r.det.forEach(function(d){var dim=d.t&&WH(d.t)?" "+num(d.x.w)+" × "+num(d.x.h)+" cm":d.t&&d.t.kind==="bordado"?" "+num(d.x.pts)+" pontos":"";h+='<tr><td>+ '+esc(d.x.name)+': '+esc(d.t?d.t.name:"valor manual")+dim+' (por unidade)</td><td class="num">'+eur(d.u)+'</td></tr>'});
 var pu0=r.cost*2+r.cost*r.ia/100+r.pu;h+='<tr class="k"><td>= preço por unidade, sem IVA final</td><td class="num">'+eur(pu0)+'</td></tr><tr><td>× quantidade ('+r.q+')</td><td class="num">'+eur(pu0*r.q)+'</td></tr><tr><td>+ arranques (uma só vez)</td><td class="num">'+eur(r.su)+'</td></tr><tr'+(r.dsc>0?'':' class="k"')+'><td>= total da linha'+(r.dsc>0?' antes de desconto':', sem IVA final')+'</td><td class="num">'+eur(r.bruto)+'</td></tr>'+(r.dsc>0?'<tr><td>− desconto ('+r.dl+')</td><td class="num">− '+eur(r.dsc)+'</td></tr><tr class="k"><td>= total da linha, sem IVA final</td><td class="num">'+eur(r.base)+'</td></tr>':'')+'<tr><td>÷ quantidade = preço unitário (arranques diluídos)</td><td class="num">'+eur(r.unit)+'</td></tr></table>';c.querySelector('[data-o="b"]').innerHTML=h});
-var T=totals();$("#gip").textContent=T.iva;$("#sum").classList.toggle("hide",!S.lines.length);$("#rsub").classList.toggle("hide",!(T.td>0));$("#rdis").classList.toggle("hide",!(T.td>0));$("#gsub").textContent=eur(T.sub);$("#gdis").textContent="− "+eur(T.td);$("#gdl").textContent=T.dl;$("#gb").textContent=eur(T.gb);$("#gi").textContent=eur(T.iv);$("#gt").textContent=eur(T.gt);$("#riva").classList.toggle("hide",!!S.cur.siva)}
+var T=totals();$("#gip").textContent=T.iva;$("#sum").classList.toggle("hide",!S.lines.length);$("#stp3").classList.toggle("hide",!S.lines.length);$("#qbar").classList.toggle("hide",!S.lines.length);$("#qbt").textContent=eur(T.gt);$("#qbs").textContent=S.lines.length+(S.lines.length===1?" artigo":" artigos")+(S.cur.siva?" · sem IVA":" · com IVA");$("#rsub").classList.toggle("hide",!(T.td>0));$("#rdis").classList.toggle("hide",!(T.td>0));$("#gsub").textContent=eur(T.sub);$("#gdis").textContent="− "+eur(T.td);$("#gdl").textContent=T.dl;$("#gb").textContent=eur(T.gb);$("#gi").textContent=eur(T.iv);$("#gt").textContent=eur(T.gt);$("#riva").classList.toggle("hide",!!S.cur.siva)}
 $("#lines").oninput=function(e){var c=e.target.closest(".card");if(!c)return;var l=S.lines[+c.dataset.i],d=e.target.dataset;
 if(d.f)l[d.f]=e.target.value;else if(d.w){vrows(l)[+e.target.closest(".vr").dataset.j][d.w]=e.target.value}else if(d.p){var x=l.pos[Math.min(l.tab||0,l.pos.length-1)];x[d.p]=e.target.value;
 if(d.p==="name"){var b=c.querySelector('.tab[aria-pressed="true"]');b.textContent=x.name+(x.tid||(x.pers!==""&&x.pers!=null)?" ●":"")}
 if(d.p==="tid"){save();rLines();return}}else return;save();upd()};
 $("#lines").onclick=function(e){var b=e.target.closest("[data-a]");if(!b)return;var c=b.closest(".card"),l=S.lines[+c.dataset.i],a=b.dataset.a;
+if(a==="fold"){FOLD[l.id]=!FOLD[l.id];c.classList.toggle("fold",!!FOLD[l.id]);return}
 if(a==="del")S.lines.splice(+c.dataset.i,1);else if(a==="tab")l.tab=+b.dataset.k;else if(a==="addv")vrows(l).push({c:"",s:"",n:""});else if(a==="delv")vrows(l).splice(+b.closest(".vr").dataset.j,1);else if(a==="addpos"){l.pos.push(blank("Posição "+(l.pos.length+1)));l.tab=l.pos.length-1}save();rLines()};
 $("#copy").onclick=function(){var t=(S.cur.siva?"Orçamento":"Orçamento (valores sem IVA)")+"\n\n",gt=0,gcur=null,gsum=0;S.lines.forEach(function(l){var r=calc(l);if(!r.p)return;gt+=r.tot;var gi=l.grp?l.grp.id:null;if(gcur&&gi!==gcur){t+="  Total do pack: "+eur(gsum)+"\n\n";gcur=null}if(gi&&!gcur){gcur=gi;gsum=0;t+="▸ PACK: "+l.grp.name+(l.grp.n>1?" ("+l.grp.n+" packs)":"")+"\n"}if(gcur)gsum+=r.tot;t+="• "+r.p.name+" ("+r.p.ref+")\n  "+r.q+" un. · "+eur(r.unit)+"/un. · total "+eur(r.tot)+"\n"+(l.color?"  Cor: "+l.color+"\n":"")+vtxt(l,r)+(r.dsc>0?"  Desconto: "+r.dl+"\n":"");r.det.forEach(function(d){t+="  - "+d.x.name+": "+(d.t?d.t.name:"personalização")+(d.t&&WH(d.t)?" ("+num(d.x.w)+" × "+num(d.x.h)+" cm)":d.t&&d.t.kind==="bordado"?" ("+num(d.x.pts)+" pontos)":"")+"\n"})});if(gcur)t+="  Total do pack: "+eur(gsum)+"\n";var T=totals();t+="\n"+(T.td>0?"Subtotal sem IVA: "+eur(T.sub)+"\nDesconto ("+T.dl+"): − "+eur(T.td)+"\n":"")+(S.cur.siva?"TOTAL: "+eur(T.gb):"Total sem IVA: "+eur(T.gb)+"\nIVA ("+T.iva+"%): "+eur(T.iv)+"\nTOTAL com IVA: "+eur(T.gt))+"\n";
 function done(){$("#cm").textContent="Copiado."}
