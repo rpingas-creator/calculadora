@@ -362,7 +362,7 @@ main{padding-top:20px!important}
 <div class="qtb"><button class="btn ghost" id="cv_p">Produtos</button><button class="btn ghost" id="cv_k">Packs</button><button class="btn ghost" id="cv_i">Importar / exportar</button></div>
 <div id="cv_prod" class="hide">
 <div class="card">
-<div class="ocnt"><div style="flex:1 1 240px"><label for="c_q">Procurar produto</label><input id="c_q" type="search" autocomplete="off" placeholder="Nome, referência, fornecedor ou categoria…"></div><div><button class="btn" id="newp">+ Novo produto</button></div></div>
+<div class="ocnt"><div style="flex:1 1 240px"><label for="c_q">Procurar produto</label><input id="c_q" type="search" autocomplete="off" placeholder="Nome, referência, fornecedor ou categoria…"></div><div><label for="c_o">Ordenar por</label><select id="c_o"><option value="">Fornecedor / referência</option><option value="sup">Fornecedor (A–Z)</option><option value="cup">Preço: mais baixo primeiro</option><option value="cdn">Preço: mais alto primeiro</option><option value="nome">Nome (A–Z)</option></select></div><div><button class="btn" id="newp">+ Novo produto</button></div></div>
 <details class="flt"><summary>Filtrar por fornecedor, referência, nome ou categoria</summary>
 <div class="row" style="margin-top:8px">
 <div><label for="c_s">Fornecedor</label><input id="c_s" list="sups" autocomplete="off"></div>
@@ -574,13 +574,15 @@ function fb(){var a=document.createElement("textarea");a.value=t;document.body.a
 /* catálogo */
 var CP=0,PS=100,CF=["c_s","c_r","c_n","c_c"],COPN={};
 function cfilter(){var f=CF.map(function(i){return $("#"+i).value.toLowerCase().trim()}),qw=$("#c_q").value.toLowerCase().trim().split(/\s+/).filter(Boolean);return S.products.filter(function(p){var hs=(String(p.sup||"")+" "+String(p.ref||"")+" "+String(p.name||"")+" "+String(p.cat||"")).toLowerCase();if(!qw.every(function(w){return hs.indexOf(w)>-1}))return false;return String(p.sup||"").toLowerCase().indexOf(f[0])>-1&&String(p.ref||"").toLowerCase().indexOf(f[1])>-1&&String(p.name||"").toLowerCase().indexOf(f[2])>-1&&String(p.cat||"").toLowerCase().indexOf(f[3])>-1})}
-function rCat(){var list=cfilter(),pages=Math.max(1,Math.ceil(list.length/PS));if(CP>=pages)CP=pages-1;if(CP<0)CP=0;var from=CP*PS;
+function csort(l){var o=$("#c_o").value;if(!o)return l;var nm=function(p){return String(p.name||"").toLowerCase()},sp=function(p){return String(p.sup||"").toLowerCase()},rf=function(p){return String(p.ref||"").toLowerCase()},cs=function(p){return num(p.cost)},cp=function(a,b){return a<b?-1:a>b?1:0};var f={sup:function(a,b){return cp(sp(a),sp(b))||cp(rf(a),rf(b))},cup:function(a,b){return cs(a)-cs(b)||cp(sp(a),sp(b))},cdn:function(a,b){return cs(b)-cs(a)||cp(sp(a),sp(b))},nome:function(a,b){return cp(nm(a),nm(b))}}[o];return f?l.slice().sort(f):l}
+function rCat(){var list=csort(cfilter()),pages=Math.max(1,Math.ceil(list.length/PS));if(CP>=pages)CP=pages-1;if(CP<0)CP=0;var from=CP*PS;
 $("#tb").innerHTML=list.slice(from,from+PS).map(function(p){return '<div class="pdc" data-pid="'+p.id+'"><details class="pdet"'+(COPN[p.id]?' open':'')+'><summary><b class="pnm">'+esc(p.name||"(sem nome)")+'</b> <span class="mu pms">'+esc([p.ref,p.sup].filter(Boolean).join(" · "))+'</span><span class="num pcs">'+eur(num(p.cost))+'</span><button class="x" data-id="'+p.id+'" aria-label="Apagar produto">×</button></summary><div class="row" style="margin-top:12px"><div><label>Fornecedor</label><input data-k="sup" value="'+esc(p.sup)+'"></div><div><label>Referência</label><input data-k="ref" value="'+esc(p.ref)+'"></div><div><label>Nome</label><input data-k="name" value="'+esc(p.name)+'"></div><div><label>Categoria</label><input data-k="cat" value="'+esc(p.cat)+'"></div><div><label>Cores</label><input data-k="colors" value="'+esc(p.colors)+'"></div><div><label>Tamanhos</label><input data-k="sizes" value="'+esc(p.sizes)+'"></div><div><label>Custo (€)</label><input data-k="cost" inputmode="decimal" value="'+esc(p.cost)+'"></div></div>'+(imgOk(p.img)?'<p style="margin:8px 0 0"><a href="'+esc(p.img)+'" target="_blank" rel="noopener noreferrer">Ver imagem</a></p>':'')+'</details></div>'}).join("")||'<p class="mu">Sem produtos.</p>';
 $("#cn").textContent=list.length===S.products.length?S.products.length+" produtos no catálogo.":list.length+" de "+S.products.length+" produtos correspondem à pesquisa.";
 var lb=list.length?"A mostrar "+(from+1)+"–"+Math.min(from+PS,list.length)+" de "+list.length+" · página "+(CP+1)+" de "+pages:"Sem produtos.";
 [].forEach.call(document.querySelectorAll(".pgl"),function(e){e.textContent=lb});
 [].forEach.call(document.querySelectorAll(".pgp"),function(e){e.disabled=CP<=0});
 [].forEach.call(document.querySelectorAll(".pgn"),function(e){e.disabled=CP>=pages-1})}
+$("#c_o").onchange=function(){CP=0;rCat()};
 CF.concat(["c_q"]).forEach(function(i){$("#"+i).oninput=function(){CP=0;rCat()}});
 $("#tb").addEventListener("toggle",function(e){var d=e.target;if(d&&d.classList&&d.classList.contains("pdet"))COPN[d.closest(".pdc").dataset.pid]=d.open},true);
 [].forEach.call(document.querySelectorAll(".pgp"),function(e){e.onclick=function(){CP--;rCat()}});
