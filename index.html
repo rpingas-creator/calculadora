@@ -282,6 +282,12 @@ main{padding-top:20px!important}
 .cdet>summary::before{content:"+";font-weight:700;color:var(--ac);width:14px}
 .cdet[open]>summary::before{content:"–"}
 .cdc{position:relative}.cdet>summary .x{position:absolute;right:0;top:-2px}
+.pdet>summary{cursor:pointer;list-style:none;display:flex;gap:10px;flex-wrap:wrap;align-items:baseline;padding-right:34px;position:relative}
+.pdet>summary::-webkit-details-marker{display:none}
+.pdet>summary::before{content:"+";font-weight:700;color:var(--ac);width:14px}
+.pdet[open]>summary::before{content:"–"}
+.pdet>summary .pcs{margin-left:auto}.pdet>summary .x{position:absolute;right:0;top:-2px}
+.pdc{position:relative;padding:12px 0;border-bottom:1px solid var(--bd)}.pdc:last-child{border-bottom:0}
 </style>
 </head>
 <body>
@@ -353,27 +359,18 @@ main{padding-top:20px!important}
 </section>
 
 <section id="cat" class="hide">
+<div class="qtb"><button class="btn ghost" id="cv_p">Produtos</button><button class="btn ghost" id="cv_k">Packs</button><button class="btn ghost" id="cv_i">Importar / exportar</button></div>
+<div id="cv_prod" class="hide">
 <div class="card">
-<p class="mu">Importe um ficheiro Excel ou CSV de cada fornecedor. Se não houver coluna de fornecedor, é usado o nome do ficheiro. Colunas reconhecidas: referência, nome, categoria, custo (ou preço), fornecedor, cores, tamanhos.</p>
-<div class="row">
-<div><label for="f">Importar ficheiro (.xlsx, .xls, .csv, .json do feed Valento)</label><input type="file" id="f" accept=".xlsx,.xls,.csv,.json" multiple></div>
-<div><button class="btn ghost" id="exp">Exportar catálogo (CSV)</button></div>
-<div><button class="btn ghost" id="delb">Apagar em massa (CSV)</button><input type="file" id="delf" accept=".csv,.xlsx,.xls" class="hide"></div>
-<div><button class="btn" id="newp">+ Adicionar novo produto</button></div>
-</div>
-<p class="mu" id="im"></p>
-</div>
-<div class="card" id="pkcard">
-<b>Packs</b>
-<p class="mu" style="margin:4px 0 8px">Um pack é um conjunto de artigos. Ao juntá-lo a um orçamento, cada artigo entra como linha própria (com a sua personalização e as contas de sempre) e o valor do pack é a soma dos artigos.</p>
-<button class="btn" id="pk_new">+ Criar pack</button>
-<div id="pk_box" class="hide" style="margin-top:10px">
-<div class="row"><div><label for="pk_n">Nome do pack</label><input id="pk_n" autocomplete="off"></div><div><label for="pk_q">Adicionar artigo (referência ou nome)</label><input id="pk_q" autocomplete="off"></div></div>
-<div id="pk_h"></div><div id="pk_i" style="margin:8px 0"></div>
-<p style="margin:10px 0 0"><button class="btn" id="pk_save">Guardar pack</button> <button class="btn ghost" id="pk_cancel">Cancelar</button></p>
-</div>
-<div id="pk_l" style="margin-top:10px"></div>
-<p class="mu" id="pk_m"></p>
+<div class="ocnt"><div style="flex:1 1 240px"><label for="c_q">Procurar produto</label><input id="c_q" type="search" autocomplete="off" placeholder="Nome, referência, fornecedor ou categoria…"></div><div><button class="btn" id="newp">+ Novo produto</button></div></div>
+<details class="flt"><summary>Filtrar por fornecedor, referência, nome ou categoria</summary>
+<div class="row" style="margin-top:8px">
+<div><label for="c_s">Fornecedor</label><input id="c_s" list="sups" autocomplete="off"></div>
+<div><label for="c_r">Referência</label><input id="c_r" autocomplete="off"></div>
+<div><label for="c_n">Nome</label><input id="c_n" autocomplete="off"></div>
+<div><label for="c_c">Categoria</label><input id="c_c" autocomplete="off"></div>
+</div></details>
+<p class="mu" id="cn" style="margin:8px 0 0"></p>
 </div>
 <div class="card hide" id="addbox">
 <b>Novo produto</b>
@@ -389,18 +386,35 @@ main{padding-top:20px!important}
 <p style="margin:10px 0 0"><button class="btn" id="add">Guardar produto</button> <button class="btn ghost" id="cancel">Cancelar</button></p>
 </div>
 <div class="card">
-<div class="row">
-<div><label for="c_s">Fornecedor</label><input id="c_s" list="sups" autocomplete="off"></div>
-<div><label for="c_r">Referência</label><input id="c_r" autocomplete="off"></div>
-<div><label for="c_n">Nome</label><input id="c_n" autocomplete="off"></div>
-<div><label for="c_c">Categoria</label><input id="c_c" autocomplete="off"></div>
+<div class="pager"><button class="btn ghost pgp">‹ Anterior</button><span class="mu pgl"></span><button class="btn ghost pgn">Seguinte ›</button></div>
+<div id="tb"></div>
+<div class="pager"><button class="btn ghost pgp">‹ Anterior</button><span class="mu pgl"></span><button class="btn ghost pgn">Seguinte ›</button></div>
 </div>
-<p class="mu" id="cn" style="margin:8px 0 0"></p>
 </div>
+<div id="cv_pack" class="hide">
+<div class="card" id="pkcard">
+<b>Packs</b>
+<p class="mu" style="margin:4px 0 8px">Um pack é um conjunto de artigos. Ao juntá-lo a um orçamento, cada artigo entra como linha própria (com a sua personalização e as contas de sempre) e o valor do pack é a soma dos artigos.</p>
+<button class="btn" id="pk_new">+ Criar pack</button>
+<div id="pk_box" class="hide" style="margin-top:10px">
+<div class="row"><div><label for="pk_n">Nome do pack</label><input id="pk_n" autocomplete="off"></div><div><label for="pk_q">Adicionar artigo (referência ou nome)</label><input id="pk_q" autocomplete="off"></div></div>
+<div id="pk_h"></div><div id="pk_i" style="margin:8px 0"></div>
+<p style="margin:10px 0 0"><button class="btn" id="pk_save">Guardar pack</button> <button class="btn ghost" id="pk_cancel">Cancelar</button></p>
+</div>
+<div id="pk_l" style="margin-top:10px"></div>
+<p class="mu" id="pk_m"></p>
+</div>
+</div>
+<div id="cv_imp" class="hide">
 <div class="card">
-<div class="pager"><button class="btn ghost pgp">‹ Anterior</button><span class="mu pgl"></span><button class="btn ghost pgn">Seguinte ›</button></div>
-<div class="tw"><table><thead><tr><th>Fornecedor</th><th>Ref.</th><th>Nome</th><th>Categoria</th><th>Cores</th><th>Tamanhos</th><th>Custo</th><th>Imagem</th><th></th></tr></thead><tbody id="tb"></tbody></table></div>
-<div class="pager"><button class="btn ghost pgp">‹ Anterior</button><span class="mu pgl"></span><button class="btn ghost pgn">Seguinte ›</button></div>
+<p class="mu">Importe um ficheiro Excel ou CSV de cada fornecedor. Se não houver coluna de fornecedor, é usado o nome do ficheiro. Colunas reconhecidas: referência, nome, categoria, custo (ou preço), fornecedor, cores, tamanhos.</p>
+<div class="row">
+<div><label for="f">Importar ficheiro (.xlsx, .xls, .csv, .json do feed Valento)</label><input type="file" id="f" accept=".xlsx,.xls,.csv,.json" multiple></div>
+<div><button class="btn ghost" id="exp">Exportar catálogo (CSV)</button></div>
+<div><button class="btn ghost" id="delb">Apagar em massa (CSV)</button><input type="file" id="delf" accept=".csv,.xlsx,.xls" class="hide"></div>
+</div>
+<p class="mu" id="im"></p>
+</div>
 </div>
 </section>
 
@@ -504,7 +518,7 @@ l.pos.forEach(function(x){var t=S.techs.find(function(y){return y.id===x.tid});v
 var ia=(l.iva==null)?num(S.cfg.iva):num(l.iva),iat=cs*ia/100;var bruto=cs+iat+cs+pu*q+su,dsc=ddisc(l.disc,l.dtype,bruto),base=bruto-dsc;var emp=!(sq>0);return{p:p,vs:vs,sq:sq,q:q,cost:cs/q,pu:pu,su:su,det:det,ia:ia,iat:iat,bruto:bruto,dsc:dsc,dl:dsc>0?dlabel(l.disc,l.dtype):"",base:emp?0:base,tot:emp?0:base,unit:base/q,empty:emp}}
 
 /* tabs */
-document.querySelectorAll("#tabs button").forEach(function(b){b.onclick=function(ev){document.querySelectorAll("#tabs button").forEach(function(x){x.setAttribute("aria-pressed",x===b)});["calc","cli","cat","pers","enc","forn","dtf","desp","cal","cobr","res"].forEach(function(id){$("#"+id).classList.toggle("hide",id!==b.dataset.t)});if(b.dataset.t==="cat")rCat();if(b.dataset.t==="pers")rPers();if(b.dataset.t==="calc"){rLines();curLoad();if(ev&&ev.isTrusted)qView("home")}if(b.dataset.t==="cli")rCli();if(b.dataset.t==="cal")rCal();if(b.dataset.t==="forn")rForn();if(b.dataset.t==="dtf")rDtf();if(b.dataset.t==="desp")rDesp();if(b.dataset.t==="cobr")rCobr();if(b.dataset.t==="res")rRes();if(b.dataset.t==="enc")rEnc()}});
+document.querySelectorAll("#tabs button").forEach(function(b){b.onclick=function(ev){document.querySelectorAll("#tabs button").forEach(function(x){x.setAttribute("aria-pressed",x===b)});["calc","cli","cat","pers","enc","forn","dtf","desp","cal","cobr","res"].forEach(function(id){$("#"+id).classList.toggle("hide",id!==b.dataset.t)});if(b.dataset.t==="cat"){rCat();if(ev&&ev.isTrusted)cView("home")}if(b.dataset.t==="pers")rPers();if(b.dataset.t==="calc"){rLines();curLoad();if(ev&&ev.isTrusted)qView("home")}if(b.dataset.t==="cli")rCli();if(b.dataset.t==="cal")rCal();if(b.dataset.t==="forn")rForn();if(b.dataset.t==="dtf")rDtf();if(b.dataset.t==="desp")rDesp();if(b.dataset.t==="cobr")rCobr();if(b.dataset.t==="res")rRes();if(b.dataset.t==="enc")rEnc()}});
 
 /* orçamento */
 var SF=["s_s","s_r","s_n","s_c"];
@@ -558,21 +572,22 @@ try{navigator.clipboard.writeText(t).then(done,function(){fb()})}catch(e){fb()}
 function fb(){var a=document.createElement("textarea");a.value=t;document.body.appendChild(a);a.select();try{document.execCommand("copy");done()}catch(e){$("#cm").textContent="Não foi possível copiar."}a.remove()}};
 
 /* catálogo */
-var CP=0,PS=100,CF=["c_s","c_r","c_n","c_c"];
-function cfilter(){var f=CF.map(function(i){return $("#"+i).value.toLowerCase().trim()});return S.products.filter(function(p){return String(p.sup||"").toLowerCase().indexOf(f[0])>-1&&String(p.ref||"").toLowerCase().indexOf(f[1])>-1&&String(p.name||"").toLowerCase().indexOf(f[2])>-1&&String(p.cat||"").toLowerCase().indexOf(f[3])>-1})}
+var CP=0,PS=100,CF=["c_s","c_r","c_n","c_c"],COPN={};
+function cfilter(){var f=CF.map(function(i){return $("#"+i).value.toLowerCase().trim()}),qw=$("#c_q").value.toLowerCase().trim().split(/\s+/).filter(Boolean);return S.products.filter(function(p){var hs=(String(p.sup||"")+" "+String(p.ref||"")+" "+String(p.name||"")+" "+String(p.cat||"")).toLowerCase();if(!qw.every(function(w){return hs.indexOf(w)>-1}))return false;return String(p.sup||"").toLowerCase().indexOf(f[0])>-1&&String(p.ref||"").toLowerCase().indexOf(f[1])>-1&&String(p.name||"").toLowerCase().indexOf(f[2])>-1&&String(p.cat||"").toLowerCase().indexOf(f[3])>-1})}
 function rCat(){var list=cfilter(),pages=Math.max(1,Math.ceil(list.length/PS));if(CP>=pages)CP=pages-1;if(CP<0)CP=0;var from=CP*PS;
-$("#tb").innerHTML=list.slice(from,from+PS).map(function(p){return '<tr data-pid="'+p.id+'"><td><input data-k="sup" style="min-width:110px" value="'+esc(p.sup)+'"></td><td><input data-k="ref" style="min-width:90px" value="'+esc(p.ref)+'"></td><td><input data-k="name" style="min-width:220px" value="'+esc(p.name)+'"></td><td><input data-k="cat" style="min-width:100px" value="'+esc(p.cat)+'"></td><td><input data-k="colors" style="min-width:140px" value="'+esc(p.colors)+'"></td><td><input data-k="sizes" style="min-width:140px" value="'+esc(p.sizes)+'"></td><td><input data-k="cost" inputmode="decimal" style="width:90px" value="'+esc(p.cost)+'"></td><td>'+(imgOk(p.img)?'<a href="'+esc(p.img)+'" target="_blank" rel="noopener noreferrer">Ver</a>':'')+'</td><td><button class="x" data-id="'+p.id+'" aria-label="Apagar produto">×</button></td></tr>'}).join("");
+$("#tb").innerHTML=list.slice(from,from+PS).map(function(p){return '<div class="pdc" data-pid="'+p.id+'"><details class="pdet"'+(COPN[p.id]?' open':'')+'><summary><b class="pnm">'+esc(p.name||"(sem nome)")+'</b> <span class="mu pms">'+esc([p.ref,p.sup].filter(Boolean).join(" · "))+'</span><span class="num pcs">'+eur(num(p.cost))+'</span><button class="x" data-id="'+p.id+'" aria-label="Apagar produto">×</button></summary><div class="row" style="margin-top:12px"><div><label>Fornecedor</label><input data-k="sup" value="'+esc(p.sup)+'"></div><div><label>Referência</label><input data-k="ref" value="'+esc(p.ref)+'"></div><div><label>Nome</label><input data-k="name" value="'+esc(p.name)+'"></div><div><label>Categoria</label><input data-k="cat" value="'+esc(p.cat)+'"></div><div><label>Cores</label><input data-k="colors" value="'+esc(p.colors)+'"></div><div><label>Tamanhos</label><input data-k="sizes" value="'+esc(p.sizes)+'"></div><div><label>Custo (€)</label><input data-k="cost" inputmode="decimal" value="'+esc(p.cost)+'"></div></div>'+(imgOk(p.img)?'<p style="margin:8px 0 0"><a href="'+esc(p.img)+'" target="_blank" rel="noopener noreferrer">Ver imagem</a></p>':'')+'</details></div>'}).join("")||'<p class="mu">Sem produtos.</p>';
 $("#cn").textContent=list.length===S.products.length?S.products.length+" produtos no catálogo.":list.length+" de "+S.products.length+" produtos correspondem à pesquisa.";
 var lb=list.length?"A mostrar "+(from+1)+"–"+Math.min(from+PS,list.length)+" de "+list.length+" · página "+(CP+1)+" de "+pages:"Sem produtos.";
 [].forEach.call(document.querySelectorAll(".pgl"),function(e){e.textContent=lb});
 [].forEach.call(document.querySelectorAll(".pgp"),function(e){e.disabled=CP<=0});
 [].forEach.call(document.querySelectorAll(".pgn"),function(e){e.disabled=CP>=pages-1})}
-CF.forEach(function(i){$("#"+i).oninput=function(){CP=0;rCat()}});
+CF.concat(["c_q"]).forEach(function(i){$("#"+i).oninput=function(){CP=0;rCat()}});
+$("#tb").addEventListener("toggle",function(e){var d=e.target;if(d&&d.classList&&d.classList.contains("pdet"))COPN[d.closest(".pdc").dataset.pid]=d.open},true);
 [].forEach.call(document.querySelectorAll(".pgp"),function(e){e.onclick=function(){CP--;rCat()}});
 [].forEach.call(document.querySelectorAll(".pgn"),function(e){e.onclick=function(){CP++;rCat()}});
 $("#c_s").onfocus=$("#s_s").onfocus;
-$("#tb").oninput=function(e){var k=e.target.dataset.k;if(!k)return;var tr=e.target.closest("tr");var p=S.products.find(function(x){return x.id===tr.dataset.pid});if(!p)return;p[k]=k==="cost"?num(e.target.value):e.target.value;save()};
-$("#tb").onclick=function(e){var id=e.target.dataset.id;if(!id)return;S.products=S.products.filter(function(p){return p.id!==id});S.lines=S.lines.filter(function(l){return l.pid!==id});save();rCat()};
+$("#tb").oninput=function(e){var k=e.target.dataset.k;if(!k)return;var tr=e.target.closest(".pdc");var p=S.products.find(function(x){return x.id===tr.dataset.pid});if(!p)return;p[k]=k==="cost"?num(e.target.value):e.target.value;if(k==="name")tr.querySelector(".pnm").textContent=p.name||"(sem nome)";if(k==="cost")tr.querySelector(".pcs").textContent=eur(num(p.cost));if(k==="ref"||k==="sup")tr.querySelector(".pms").textContent=[p.ref,p.sup].filter(Boolean).join(" · ");save()};
+$("#tb").onclick=function(e){var id=e.target.dataset.id;if(!id)return;e.preventDefault();S.products=S.products.filter(function(p){return p.id!==id});S.lines=S.lines.filter(function(l){return l.pid!==id});save();rCat()};
 $("#newp").onclick=function(){var b=$("#addbox");b.classList.toggle("hide");if(!b.classList.contains("hide"))$("#n_s").focus()};
 $("#cancel").onclick=function(){$("#addbox").classList.add("hide")};
 $("#add").onclick=function(){var n=$("#n_n").value.trim();if(!n){$("#im").textContent="Indique pelo menos o nome do produto.";return}
@@ -808,7 +823,10 @@ function saveQuote(silent){if(SYNC.ok.quotes===false){qmsg("Falta executar o fic
  if(!S.cur.num)S.cur.num=nextNum();var id=S.cur.id||uid();S.cur.id=id;var r=qRec(id),i=S.quotes.findIndex(function(x){return x.id===id});r.date=i>=0?S.quotes[i].date:today();if(i>=0)S.quotes[i]=r;else S.quotes.unshift(r);
  ensureClient(S.cur.cli,S.cur.contacto,S.cur.clube);save();curLoad();if(!silent)qmsg("Orçamento n.º "+S.cur.num+" guardado.");rClis();if(!$("#qbox").classList.contains("hide"))rQl();return true}
 function newQuote(){S.lines=[];S.cur={id:"",cli:"",clube:"",contacto:"",num:"",disc:"",dtype:"%",siva:"",est:"Por enviar",dv:"",dsend:""};save();curLoad();rLines();qmsg("")}
+var CV="home";
+function cView(v){CV=v;[["p","prod"],["k","pack"],["i","imp"]].forEach(function(x){$("#cv_"+x[1]).classList.toggle("hide",v!==x[1]);$("#cv_"+x[0]).classList.toggle("ghost",v!==x[1])});if(v==="prod")rCat()}
 var QV="edit",QA=0;
+$("#cv_p").onclick=function(){cView("prod")};$("#cv_k").onclick=function(){cView("pack")};$("#cv_i").onclick=function(){cView("imp")};
 function addOpen(o){$("#addart_box").classList.toggle("hide",!o);$("#addbar").classList.toggle("hide",!!o);if(!o){SF.concat(["s_q"]).forEach(function(i){$("#"+i).value=""});$("#hits").innerHTML=""}else{$("#s_q").focus();try{$("#addart_box").scrollIntoView({block:"nearest",behavior:"smooth"})}catch(e){}}}
 $("#addart").onclick=function(){addOpen(true)};$("#addx").onclick=function(){addOpen(false)};
 function qTitle(){var e=$("#qtt");if(!e)return;e.textContent=QV!=="edit"?"":(S.cur&&S.cur.id&&S.cur.num?"A editar o orçamento n.º "+S.cur.num:"Novo orçamento (ainda não guardado)")}
