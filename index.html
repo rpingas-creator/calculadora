@@ -411,6 +411,7 @@ main{padding-top:20px!important}
 <div class="row">
 <div><label for="f">Importar ficheiro (.xlsx, .xls, .csv, .json do feed Valento)</label><input type="file" id="f" accept=".xlsx,.xls,.csv,.json" multiple></div>
 <div><button class="btn ghost" id="exp">Exportar catálogo (CSV)</button></div>
+<div><label for="dsup">Apagar todos os artigos de um fornecedor</label><select id="dsup"></select> <button class="btn ghost" id="dsb">Apagar fornecedor</button></div>
 <div><button class="btn ghost" id="delb">Apagar em massa (CSV)</button><input type="file" id="delf" accept=".csv,.xlsx,.xls" class="hide"></div>
 </div>
 <p class="mu" id="im"></p>
@@ -826,7 +827,12 @@ function saveQuote(silent){if(SYNC.ok.quotes===false){qmsg("Falta executar o fic
  ensureClient(S.cur.cli,S.cur.contacto,S.cur.clube);save();curLoad();if(!silent)qmsg("Orçamento n.º "+S.cur.num+" guardado.");rClis();if(!$("#qbox").classList.contains("hide"))rQl();return true}
 function newQuote(){S.lines=[];S.cur={id:"",cli:"",clube:"",contacto:"",num:"",disc:"",dtype:"%",siva:"",est:"Por enviar",dv:"",dsend:""};save();curLoad();rLines();qmsg("")}
 var CV="home";
-function cView(v){CV=v;[["p","prod"],["k","pack"],["i","imp"]].forEach(function(x){$("#cv_"+x[1]).classList.toggle("hide",v!==x[1]);$("#cv_"+x[0]).classList.toggle("ghost",v!==x[1])});if(v==="prod")rCat()}
+function fillSup(){var m={};S.products.forEach(function(p){var k=String(p.sup||"").trim();if(k)m[k]=(m[k]||0)+1});var el=$("#dsup"),old=el.value;el.innerHTML=Object.keys(m).sort().map(function(k){return '<option value="'+esc(k)+'">'+esc(k)+" ("+m[k]+")</option>"}).join("");if(old)el.value=old}
+$("#dsb").onclick=async function(){var sup=$("#dsup").value;if(!sup)return;var hit=S.products.filter(function(p){return String(p.sup||"").trim()===sup}),ids={};hit.forEach(function(p){ids[p.id]=1});if(!hit.length)return;var used=S.lines.filter(function(l){return ids[l.pid]}).length;
+if(!confirm("Vai apagar TODOS os "+hit.length+" artigos do fornecedor "+sup+" do catálogo."+(used?"\n\nAtenção: "+used+" linhas do orçamento atual usam estes artigos e também serão removidas.":"")+"\n\nÉ feita antes uma cópia de segurança, para poder repor se for preciso. Continuar?")){$("#im").textContent="Cancelado. Nada foi apagado.";return}
+if(SB&&SYNC.on){try{$("#im").textContent="A fazer cópia de segurança…";chk(await SB.rpc("fazer_backup",{forcar:true}),"cópia: ")}catch(e){$("#im").textContent="Não foi possível fazer a cópia de segurança, por isso nada foi apagado.";return}}
+SYNC.okdel=true;S.products=S.products.filter(function(p){return !ids[p.id]});S.lines=S.lines.filter(function(l){return !ids[l.pid]});save();rCat();rLines();fillSup();$("#im").textContent="Apagados "+hit.length+" artigos de "+sup+". Restam "+S.products.length+" artigos no catálogo."};
+function cView(v){CV=v;[["p","prod"],["k","pack"],["i","imp"]].forEach(function(x){$("#cv_"+x[1]).classList.toggle("hide",v!==x[1]);$("#cv_"+x[0]).classList.toggle("ghost",v!==x[1])});if(v==="prod")rCat();if(v==="imp")fillSup()}
 var QV="edit",QA=0;
 $("#cv_p").onclick=function(){cView("prod")};$("#cv_k").onclick=function(){cView("pack")};$("#cv_i").onclick=function(){cView("imp")};
 function addOpen(o){$("#addart_box").classList.toggle("hide",!o);$("#addbar").classList.toggle("hide",!!o);if(!o){SF.concat(["s_q"]).forEach(function(i){$("#"+i).value=""});$("#hits").innerHTML=""}else{$("#s_q").focus();try{$("#addart_box").scrollIntoView({block:"nearest",behavior:"smooth"})}catch(e){}}}
@@ -1173,7 +1179,8 @@ async function syncRun(){if(!SYNC.on)return;if(SYNC.busy){SYNC.again=true;return
  try{
   var seen=new Set(),up=[];S.products.forEach(function(p){seen.add(p.id);var r=pRow(p),k=sk(r);if(SYNC.snap.p.get(p.id)!==k)up.push([r,k])});
   var del=[];SYNC.snap.p.forEach(function(v,id){if(!seen.has(id))del.push(id)});
-  if(del.length>200&&del.length>SYNC.snap.p.size*0.3&&!confirm("Esta alteração vai apagar "+del.length+" produtos da base de dados. Tem a certeza?\n\nOK = apagar\nCancelar = voltar a carregar os dados da base de dados")){SYNC.busy=false;await loadAll();return}
+  if(del.length>200&&del.length>SYNC.snap.p.size*0.3&&!SYNC.okdel&&!confirm("Esta alteração vai apagar "+del.length+" produtos da base de dados. Tem a certeza?\n\nOK = apagar\nCancelar = voltar a carregar os dados da base de dados")){SYNC.busy=false;await loadAll();return}
+  SYNC.okdel=false;
   for(var i=0;i<up.length;i+=500){var ch=up.slice(i,i+500);setSt("A gravar produtos… "+Math.min(i+500,up.length)+" de "+up.length);chk(await SB.from("products").upsert(ch.map(function(x){return x[0]})),"produtos: ");ch.forEach(function(x){SYNC.snap.p.set(x[0].id,x[1])})}
   for(var j=0;j<del.length;j+=200){var ids=del.slice(j,j+200);chk(await SB.from("products").delete().in("id",ids),"produtos: ");ids.forEach(function(id){SYNC.snap.p.delete(id)})}
   var tseen=new Set(),tup=[];S.techs.forEach(function(t,i){tseen.add(t.id);var r=tRow(t,i),k=sk(r);if(SYNC.snap.t.get(t.id)!==k)tup.push([r,k])});
