@@ -359,7 +359,11 @@ main{padding-top:20px!important}
 </section>
 
 <section id="cat" class="hide">
-<div class="qtb"><button class="btn ghost" id="cv_p">Produtos</button><button class="btn ghost" id="cv_k">Packs</button><button class="btn ghost" id="cv_i">Importar / exportar</button></div>
+<div class="qtb"><button class="btn ghost" id="cv_p">Produtos</button><button class="btn ghost" id="cv_k">Packs</button><button class="btn ghost" id="cv_i">Importar / exportar</button><button class="btn ghost" id="cv_c">Ver / editar catálogo</button></div>
+<div id="cv_cat" class="hide">
+<p class="mu" style="margin:0 0 8px">Esta é a página do catálogo em modo de edição (entre com o seu email e palavra-passe na barra lateral do catálogo). Para o cliente, envie a ligação <a href="https://rpingas-creator.github.io/catalogo/" target="_blank" rel="noopener">rpingas-creator.github.io/catalogo</a>, que é só de visualização. <a href="https://rpingas-creator.github.io/catalogo/#editar" target="_blank" rel="noopener">Abrir o modo de edição em janela própria</a></p>
+<iframe id="catfr" title="Catálogo" style="width:100%;height:calc(100vh - 170px);min-height:520px;border:1px solid var(--bd);border-radius:12px;background:#fff" loading="lazy"></iframe>
+</div>
 <div id="cv_prod" class="hide">
 <div class="card">
 <div class="ocnt"><div style="flex:1 1 240px"><label for="c_q">Procurar produto</label><input id="c_q" type="search" autocomplete="off" placeholder="Nome, referência, fornecedor ou categoria…"></div><div><label for="c_o">Ordenar por</label><select id="c_o"><option value="">Fornecedor / referência</option><option value="sup">Fornecedor (A–Z)</option><option value="cup">Preço: mais baixo primeiro</option><option value="cdn">Preço: mais alto primeiro</option><option value="nome">Nome (A–Z)</option></select></div><div><button class="btn" id="newp">+ Novo produto</button></div></div>
@@ -833,9 +837,9 @@ $("#dsb").onclick=async function(){var sup=$("#dsup").value;if(!sup)return;var h
 if(!confirm("Vai apagar TODOS os "+hit.length+" artigos do fornecedor "+sup+" do catálogo."+(used?"\n\nAtenção: "+used+" linhas do orçamento atual usam estes artigos e também serão removidas.":"")+"\n\nÉ feita antes uma cópia de segurança, para poder repor se for preciso. Continuar?")){$("#im").textContent="Cancelado. Nada foi apagado.";return}
 if(SB&&SYNC.on){try{$("#im").textContent="A fazer cópia de segurança…";chk(await SB.rpc("fazer_backup",{forcar:true}),"cópia: ")}catch(e){$("#im").textContent="Não foi possível fazer a cópia de segurança, por isso nada foi apagado.";return}}
 SYNC.okdel=true;S.products=S.products.filter(function(p){return !ids[p.id]});S.lines=S.lines.filter(function(l){return !ids[l.pid]});save();rCat();rLines();fillSup();$("#im").textContent="Apagados "+hit.length+" artigos de "+sup+". Restam "+S.products.length+" artigos no catálogo."};
-function cView(v){CV=v;[["p","prod"],["k","pack"],["i","imp"]].forEach(function(x){$("#cv_"+x[1]).classList.toggle("hide",v!==x[1]);$("#cv_"+x[0]).classList.toggle("ghost",v!==x[1])});if(v==="prod")rCat();if(v==="imp")fillSup()}
+function cView(v){CV=v;[["p","prod"],["k","pack"],["i","imp"],["c","cat"]].forEach(function(x){$("#cv_"+x[1]).classList.toggle("hide",v!==x[1]);$("#cv_"+x[0]).classList.toggle("ghost",v!==x[1])});if(v==="prod")rCat();if(v==="imp")fillSup();if(v==="cat"){var fr=$("#catfr");if(!fr.getAttribute("src"))fr.src="https://rpingas-creator.github.io/catalogo/#editar"}}
 var QV="edit",QA=0;
-$("#cv_p").onclick=function(){cView("prod")};$("#cv_k").onclick=function(){cView("pack")};$("#cv_i").onclick=function(){cView("imp")};
+$("#cv_p").onclick=function(){cView("prod")};$("#cv_k").onclick=function(){cView("pack")};$("#cv_i").onclick=function(){cView("imp")};$("#cv_c").onclick=function(){cView("cat")};
 function addOpen(o){$("#addart_box").classList.toggle("hide",!o);$("#addbar").classList.toggle("hide",!!o);if(!o){SF.concat(["s_q"]).forEach(function(i){$("#"+i).value=""});$("#hits").innerHTML=""}else{$("#s_q").focus();try{$("#addart_box").scrollIntoView({block:"nearest",behavior:"smooth"})}catch(e){}}}
 $("#addart").onclick=function(){addOpen(true)};$("#addx").onclick=function(){addOpen(false)};
 function qTitle(){var e=$("#qtt");if(!e)return;e.textContent=QV!=="edit"?"":(S.cur&&S.cur.id&&S.cur.num?"A editar o orçamento n.º "+S.cur.num:"Novo orçamento (ainda não guardado)")}
