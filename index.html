@@ -1164,7 +1164,7 @@ async function loadAll(){SYNC.on=false;setSt("A carregar…");
  SYNC.last={products:"",techs:"",orders:"",settings:"",quotes:"",clients:""};trackLast("products",pr);trackLast("techs",te);trackLast("orders",or);trackLast("settings",se);trackLast("quotes",dlast.quotes);trackLast("clients",dlast.clients);
  var seeded=false;if(ptMig()>0)seeded=true;if(!S.techs.length){S.techs=DEFTECHS();seeded=true}if(!c)seeded=true;if(!S.cfg.emp_init){applyEmpDefaults();seeded=true}
  S.lines=S.lines.filter(function(l){return S.products.some(function(p){return p.id===l.pid})});
- SYNC.on=true;subscribe();rLines();rCat();rPers();rEnc();rCli();rClis();curLoad();if(!QA){QA=1;qView("home")}setTimeout(function(){autoBackup()},2500);setSt("Sincronizado às "+hhmm()+(SYNC.email?" · "+SYNC.email:"")+((SYNC.ok.quotes===false||SYNC.ok.clients===false)?" · falta executar supabase-atualizacao.sql (orçamentos e clientes)":""));
+ SYNC.on=true;subscribe();rLines();rCat();rPers();rEnc();rCli();rClis();curLoad();if(!QA){QA=1;qView("home");var rb=$("#tabs button[data-t=res]");if(rb)rb.click()}setTimeout(function(){autoBackup()},2500);setSt("Sincronizado às "+hhmm()+(SYNC.email?" · "+SYNC.email:"")+((SYNC.ok.quotes===false||SYNC.ok.clients===false)?" · falta executar supabase-atualizacao.sql (orçamentos e clientes)":""));
  if(seeded)syncRun()}
 function syncQueue(){if(!SYNC.on)return;clearTimeout(SYNC.tm);setSt("Alterações por gravar…");SYNC.tm=setTimeout(syncRun,700)}
 async function syncRun(){if(!SYNC.on)return;if(SYNC.busy){SYNC.again=true;return}SYNC.busy=true;clearTimeout(SYNC.tm);
