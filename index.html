@@ -270,6 +270,12 @@ main{padding-top:20px!important}
 #alr>.x{position:absolute;top:6px;right:6px;float:none}
 @keyframes alrin{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
 @media(max-width:900px){#alr{top:8px;right:8px;max-width:calc(100vw - 16px)}}
+
+/* ---- vistas do orçamento: lista / edição ---- */
+.qtb{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:4px 0 14px}
+.qtb #qlist[aria-pressed=true]{background:var(--lt)!important;border-color:var(--ac)!important}
+.qtb #qtt{margin-left:4px;font-weight:600;color:var(--tx)}
+#qed.hide,#qbox.hide{display:none}
 </style>
 </head>
 <body>
@@ -292,13 +298,15 @@ main{padding-top:20px!important}
 </nav>
 
 <section id="calc">
+<div class="qtb"><button class="btn ghost" id="qlist" aria-pressed="false">Orçamentos guardados</button><button class="btn" id="qnew">+ Novo orçamento</button><span class="mu" id="qtt"></span></div>
+<div class="card hide" id="qbox"><div class="ocnt"><div style="flex:1 1 200px"><label for="ql_q">Pesquisar (cliente, n.º)</label><input id="ql_q" autocomplete="off"></div><div style="flex:0 1 200px"><label for="ql_f">Estado</label><select id="ql_f"><option value="">Todos</option><option value="pend">Pendentes de resposta</option><option>Por enviar</option><option>Enviado</option><option>Aceite</option><option>Recusado</option><option>Expirado</option></select></div></div><p class="mu" id="ql_n" style="margin:0 0 6px"></p><div id="ql"></div></div>
+<div id="qed">
 <h2 class="stp"><span>1</span>Cliente</h2>
 <div class="card" id="qhead">
 <div class="orow"><div><label for="q_cli">Cliente</label><input id="q_cli" list="clis" autocomplete="off"></div><div><label for="q_clube">Empresa</label><input id="q_clube" list="clubes" autocomplete="off"></div><div><label for="q_ct">Contacto do cliente</label><input id="q_ct" autocomplete="off" placeholder="Telemóvel / email"></div><div><label for="q_num">N.º orçamento</label><input id="q_num" readonly placeholder="atribuído ao guardar"></div></div>
 <div id="fbanner" class="hide" style="margin-top:10px;padding:10px 12px;border-left:4px solid var(--ac);background:var(--tot);border-radius:8px"><span id="fbtxt"></span><div style="margin-top:8px"><button class="btn" id="fbok">Guardar e atualizar a folha de obra</button> <button class="btn ghost" id="fbno">Cancelar</button></div></div>
-<p style="margin:10px 0 0" class="qact"><button class="btn" id="qsave">Guardar orçamento</button> <button class="btn ghost lnk" id="qnew">Novo orçamento</button> <button class="btn ghost lnk" id="qlist">Orçamentos guardados</button> <span class="mu" id="qmsg"></span></p>
+<p style="margin:10px 0 0" class="qact"><button class="btn" id="qsave">Guardar orçamento</button> <span class="mu" id="qmsg"></span></p>
 </div>
-<div class="card hide" id="qbox"><div class="ocnt"><div style="flex:1 1 200px"><label for="ql_q">Pesquisar (cliente, n.º)</label><input id="ql_q" autocomplete="off"></div><div style="flex:0 1 200px"><label for="ql_f">Estado</label><select id="ql_f"><option value="">Todos</option><option value="pend">Pendentes de resposta</option><option>Por enviar</option><option>Enviado</option><option>Aceite</option><option>Recusado</option><option>Expirado</option></select></div></div><p class="mu" id="ql_n" style="margin:0 0 6px"></p><div id="ql"></div></div>
 <datalist id="clubes"></datalist><datalist id="clis"></datalist>
 <h2 class="stp"><span>2</span>Artigos</h2>
 <div class="card">
@@ -328,6 +336,7 @@ main{padding-top:20px!important}
 </div>
 <p class="mu" id="empty">Procure um artigo acima para começar o orçamento.</p>
 <div id="qbar" class="hide"><div class="qbi"><small>Total final</small><b class="num" id="qbt"></b><small id="qbs"></small></div><button class="btn" id="qbg">Guardar orçamento</button></div>
+</div>
 </section>
 
 <section id="cli" class="hide">
@@ -776,7 +785,7 @@ $("#cls").onclick=function(e){var h=e.target.closest("[data-a]");if(h&&h.dataset
  {S.clients=S.clients.filter(function(x){return x!==c});save();rCli()}};
 /* orçamento: cabeçalho, guardar, abrir */
 function qmsg(m,bad){var e=$("#qmsg");e.textContent=m||"";e.className=bad?"err":"mu"}
-function curLoad(){rFban();$("#q_cli").value=S.cur.cli||"";$("#q_ct").value=S.cur.contacto||"";$("#q_clube").value=S.cur.clube||"";$("#q_est").value=S.cur.est||"Por enviar";$("#q_dv").value=S.cur.dv||"";$("#q_num").value=S.cur.num||"";$("#q_disc").value=S.cur.disc||"";$("#q_dt").value=S.cur.dtype||"%";$("#q_fat").value=S.cur.siva?"1":"";$("#qsave").textContent=S.cur.id?"Guardar alterações":"Guardar orçamento"}
+function curLoad(){rFban();qTitle();$("#q_cli").value=S.cur.cli||"";$("#q_ct").value=S.cur.contacto||"";$("#q_clube").value=S.cur.clube||"";$("#q_est").value=S.cur.est||"Por enviar";$("#q_dv").value=S.cur.dv||"";$("#q_num").value=S.cur.num||"";$("#q_disc").value=S.cur.disc||"";$("#q_dt").value=S.cur.dtype||"%";$("#q_fat").value=S.cur.siva?"1":"";$("#qsave").textContent=S.cur.id?"Guardar alterações":"Guardar orçamento"}
 function qTot(lines){var t=totals(lines);return{gb:t.gb,iva:t.iva,gt:t.gt}}
 function qRec(id){var t=qTot();return {id:id,est:S.cur.est||"Por enviar",dv:S.cur.dv||"",dsend:S.cur.dsend||"",num:S.cur.num||"",cli:S.cur.cli||"",clube:S.cur.clube||"",contacto:S.cur.contacto||"",disc:S.cur.disc||"",dtype:S.cur.dtype||"%",siva:S.cur.siva||"",date:"",lines:JSON.parse(JSON.stringify(S.lines)),iva:t.iva,tot:+t.gb.toFixed(2),totiva:+t.gt.toFixed(2)}}
 function updateCurQuote(){if(!S.cur.id)return;var i=S.quotes.findIndex(function(x){return x.id===S.cur.id});if(i<0)return;var r=qRec(S.cur.id);r.date=S.quotes[i].date;S.quotes[i]=r}
@@ -785,7 +794,10 @@ function saveQuote(silent){if(SYNC.ok.quotes===false){qmsg("Falta executar o fic
  if(!S.cur.num)S.cur.num=nextNum();var id=S.cur.id||uid();S.cur.id=id;var r=qRec(id),i=S.quotes.findIndex(function(x){return x.id===id});r.date=i>=0?S.quotes[i].date:today();if(i>=0)S.quotes[i]=r;else S.quotes.unshift(r);
  ensureClient(S.cur.cli,S.cur.contacto,S.cur.clube);save();curLoad();if(!silent)qmsg("Orçamento n.º "+S.cur.num+" guardado.");rClis();if(!$("#qbox").classList.contains("hide"))rQl();return true}
 function newQuote(){S.lines=[];S.cur={id:"",cli:"",clube:"",contacto:"",num:"",disc:"",dtype:"%",siva:"",est:"Por enviar",dv:"",dsend:""};save();curLoad();rLines();qmsg("")}
-$("#qnew").onclick=function(){if(S.lines.length&&!S.cur.id&&!confirm("O orçamento em curso ainda não foi guardado. Começar um novo orçamento mesmo assim?"))return;newQuote()};
+var QV="edit",QA=0;
+function qTitle(){var e=$("#qtt");if(!e)return;e.textContent=QV==="list"?"":(S.cur&&S.cur.id&&S.cur.num?"A editar o orçamento n.º "+S.cur.num:"Novo orçamento (ainda não guardado)")}
+function qView(v){QV=v;$("#qed").classList.toggle("hide",v==="list");$("#qbox").classList.toggle("hide",v!=="list");$("#qlist").setAttribute("aria-pressed",v==="list");qTitle();if(v==="list")rQl()}
+$("#qnew").onclick=function(){if(S.lines.length&&!S.cur.id&&!confirm("O orçamento em curso ainda não foi guardado. Começar um novo orçamento mesmo assim?"))return;newQuote();qView("edit")};
 $("#qsave").onclick=function(){saveQuote()};
 $("#q_cli").oninput=function(){S.cur.cli=this.value;save()};
 $("#q_cli").onchange=function(){var c=findClient(this.value);if(c){if(c.contacto&&!S.cur.contacto){S.cur.contacto=c.contacto;$("#q_ct").value=c.contacto}if(c.clube&&!S.cur.clube){S.cur.clube=c.clube;$("#q_clube").value=c.clube}save()}};
@@ -793,12 +805,12 @@ $("#q_clube").oninput=function(){S.cur.clube=this.value;save()};
 $("#q_ct").oninput=function(){S.cur.contacto=this.value;save()};
 $("#q_disc").oninput=function(){S.cur.disc=this.value;save();upd()};$("#q_dt").onchange=function(){S.cur.dtype=this.value;save();upd()};$("#q_fat").onchange=function(){S.cur.siva=this.value;save();upd()};
 function openQuote(id){var q=S.quotes.find(function(x){return x.id===id});if(!q)return;if(S.lines.length&&!S.cur.id&&!confirm("O orçamento em curso ainda não foi guardado e vai ser substituído. Continuar?"))return;
- S.lines=JSON.parse(JSON.stringify(q.lines||[])).map(norm);S.cur={id:q.id,est:q.est||(S.orders.some(function(o){return o.quoteId===q.id})?"Aceite":"Por enviar"),dv:q.dv||"",dsend:q.dsend||"",cli:q.cli||"",clube:q.clube||"",contacto:q.contacto||"",num:q.num||"",disc:q.disc||"",dtype:q.dtype||"%",siva:q.siva||""};save();document.querySelector('#tabs button[data-t="calc"]').click();curLoad();qmsg("Orçamento n.º "+(q.num||"")+" aberto.")}
+ S.lines=JSON.parse(JSON.stringify(q.lines||[])).map(norm);S.cur={id:q.id,est:q.est||(S.orders.some(function(o){return o.quoteId===q.id})?"Aceite":"Por enviar"),dv:q.dv||"",dsend:q.dsend||"",cli:q.cli||"",clube:q.clube||"",contacto:q.contacto||"",num:q.num||"",disc:q.disc||"",dtype:q.dtype||"%",siva:q.siva||""};save();document.querySelector('#tabs button[data-t="calc"]').click();curLoad();qmsg("Orçamento n.º "+(q.num||"")+" aberto.");qView("edit")}
 function rQl(){var f=cname($("#ql_q").value),sf=$("#ql_f").value;var list=S.quotes.filter(function(q){var st=qState(q);return (!f||[q.cli,q.clube,q.num,q.contacto].join(" ").toLowerCase().indexOf(f)>-1)&&(!sf||(sf==="pend"?(st==="Enviado"||st==="Por enviar"):st===sf))});
  list.sort(function(a,b){return (parseInt(b.num,10)||0)-(parseInt(a.num,10)||0)});
  $("#ql_n").textContent=S.quotes.length+" orçamentos guardados"+(f?" · "+list.length+" correspondem":"")+".";
  $("#ql").innerHTML=list.map(function(q){return '<div class="fl" data-qid="'+q.id+'"><span><b>N.º '+esc(q.num)+'</b> · '+esc(q.cli||"sem cliente")+' <span class="mu">'+fdate(q.date)+' · '+eur(num(q.tot))+' s/ IVA · '+eur(num(q.totiva))+' c/ IVA'+(S.orders.some(function(o){return o.quoteId===q.id})?' · tem folha de obra':'')+'</span> <span class="tag pg'+qCls(qState(q))+'">'+qState(q)+'</span>'+(qState(q)==="Aceite"||qState(q)==="Recusado"?'':' <span class="mu">válido até '+fdate(qExp(q))+'</span>')+'</span><span><select data-a="qest" style="width:auto;padding:4px 6px">'+["Por enviar","Enviado","Aceite","Recusado"].map(function(e){return '<option'+(e===(qState(q)==="Expirado"?(q.est||"Por enviar"):qState(q))?' selected':'')+'>'+e+'</option>'}).join("")+'</select> <button class="btn ghost" data-a="qopen">Abrir</button> <button class="btn ghost" data-a="qpdf">PDF</button> <button class="btn ghost" data-a="qdup">Duplicar</button> <button class="btn ghost" data-a="qdel">Apagar</button></span></div>'}).join("")||'<p class="mu">Sem orçamentos guardados.</p>'}
-$("#qlist").onclick=function(){var b=$("#qbox");b.classList.toggle("hide");if(!b.classList.contains("hide"))rQl()};
+$("#qlist").onclick=function(){qView("list")};
 $("#ql_q").oninput=rQl;$("#ql_f").onchange=rQl;
 $("#ql").onchange=function(e){var t=e.target;if(t.dataset.a!=="qest")return;var q=S.quotes.find(function(x){return x.id===t.closest(".fl").dataset.qid});if(!q)return;q.est=t.value;if(q.est==="Enviado")q.dsend=today();if(S.cur.id===q.id){S.cur.est=q.est;S.cur.dsend=q.dsend||S.cur.dsend;$("#q_est").value=q.est}save();rQl();badge()};
 $("#ql").onclick=function(e){var b=e.target.closest("[data-a]");if(!b)return;var id=b.closest(".fl").dataset.qid,q=S.quotes.find(function(x){return x.id===id});if(!q)return;var a=b.dataset.a;
@@ -987,7 +999,7 @@ function rAlr(){var e=$("#alr");if(!e)return;var td=today(),tm=addDays(td,1),lt=
  if(cbr.length)p.push('<b>'+cbr.length+(cbr.length===1?" folha entregue por pagar":" folhas entregues por pagar")+'</b> <button class="btn ghost" data-a="vcb" style="padding:2px 8px;font-size:.8rem">Ver</button>');if(qp.length)p.push('<b>'+qp.length+(qp.length===1?" orçamento sem resposta":" orçamentos sem resposta")+'</b> <button class="btn ghost" data-a="vq" style="padding:2px 8px;font-size:.8rem">Ver</button>');if(h)p.push("<b>"+h+(h===1?" entrega hoje":" entregas hoje")+"</b>");if(a)p.push(a+(a===1?" entrega amanhã":" entregas amanhã"));
  var html=p.map(function(x){return '<div class="al">'+x+'</div>'}).join("")+(lt.length||h||a?'<div class="al"><button class="btn ghost" data-a="vcal" style="padding:3px 10px;font-size:.85rem">Ver calendário</button></div>':'');e.dataset.sig=html;e.innerHTML=html+'<button class="x" data-a="adm" aria-label="Fechar aviso">×</button>';e.classList.toggle("hide",ALRX===html)}
 var ALRX="";
-$("#alr").onclick=function(e){if(e.target.closest('[data-a="adm"]')){ALRX=$("#alr").dataset.sig||"";$("#alr").classList.add("hide");return}if(e.target.closest('[data-a="vcal"]'))document.querySelector('#tabs button[data-t="cal"]').click();if(e.target.closest('[data-a="vcb"]')){document.querySelector('#tabs button[data-t="cobr"]').click()}if(e.target.closest('[data-a="vq"]')){document.querySelector('#tabs button[data-t="calc"]').click();$("#qbox").classList.remove("hide");$("#ql_f").value="pend";$("#ql_q").value="";rQl();$("#qbox").scrollIntoView({block:"start"})}};
+$("#alr").onclick=function(e){if(e.target.closest('[data-a="adm"]')){ALRX=$("#alr").dataset.sig||"";$("#alr").classList.add("hide");return}if(e.target.closest('[data-a="vcal"]'))document.querySelector('#tabs button[data-t="cal"]').click();if(e.target.closest('[data-a="vcb"]')){document.querySelector('#tabs button[data-t="cobr"]').click()}if(e.target.closest('[data-a="vq"]')){document.querySelector('#tabs button[data-t="calc"]').click();qView("list");$("#ql_f").value="pend";$("#ql_q").value="";rQl();$("#qbox").scrollIntoView({block:"start"})}};
 /* calendário */
 var CAL={y:null,m:null,sel:""};
 function rCal(){var td=today();if(CAL.y==null){var t=td.split("-");CAL.y=+t[0];CAL.m=+t[1]-1}var y=CAL.y,m=CAL.m,off=(new Date(y,m,1).getDay()+6)%7,dim=new Date(y,m+1,0).getDate(),by={};
@@ -1114,7 +1126,7 @@ async function loadAll(){SYNC.on=false;setSt("A carregar…");
  SYNC.last={products:"",techs:"",orders:"",settings:"",quotes:"",clients:""};trackLast("products",pr);trackLast("techs",te);trackLast("orders",or);trackLast("settings",se);trackLast("quotes",dlast.quotes);trackLast("clients",dlast.clients);
  var seeded=false;if(!S.techs.length){S.techs=DEFTECHS();seeded=true}if(!c)seeded=true;if(!S.cfg.emp_init){applyEmpDefaults();seeded=true}
  S.lines=S.lines.filter(function(l){return S.products.some(function(p){return p.id===l.pid})});
- SYNC.on=true;subscribe();rLines();rCat();rPers();rEnc();rCli();rClis();curLoad();setTimeout(function(){autoBackup()},2500);setSt("Sincronizado às "+hhmm()+(SYNC.email?" · "+SYNC.email:"")+((SYNC.ok.quotes===false||SYNC.ok.clients===false)?" · falta executar supabase-atualizacao.sql (orçamentos e clientes)":""));
+ SYNC.on=true;subscribe();rLines();rCat();rPers();rEnc();rCli();rClis();curLoad();if(!QA){QA=1;qView(S.lines.length||S.cur.id?"edit":"list")}setTimeout(function(){autoBackup()},2500);setSt("Sincronizado às "+hhmm()+(SYNC.email?" · "+SYNC.email:"")+((SYNC.ok.quotes===false||SYNC.ok.clients===false)?" · falta executar supabase-atualizacao.sql (orçamentos e clientes)":""));
  if(seeded)syncRun()}
 function syncQueue(){if(!SYNC.on)return;clearTimeout(SYNC.tm);setSt("Alterações por gravar…");SYNC.tm=setTimeout(syncRun,700)}
 async function syncRun(){if(!SYNC.on)return;if(SYNC.busy){SYNC.again=true;return}SYNC.busy=true;clearTimeout(SYNC.tm);
