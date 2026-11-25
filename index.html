@@ -261,6 +261,15 @@ nav#tabs{bottom:80px!important}
 #sbar .mpop{top:auto;bottom:calc(100% + 6px);left:0;right:0;min-width:0}
 main{padding-top:20px!important}
 }
+
+/* ---- avisos em pop-up pequeno (canto superior direito) ---- */
+#alr{position:fixed!important;top:14px;right:14px;left:auto;z-index:60;width:auto;max-width:min(360px,calc(100vw - 28px));margin:0!important;padding:12px 38px 12px 14px!important;border:1px solid var(--bd)!important;border-left:4px solid #c0392b!important;border-radius:12px!important;box-shadow:0 14px 40px -12px rgba(0,0,0,.35)!important;font-size:.88rem;animation:alrin .25s ease-out}
+#alr.hide{display:none}
+#alr .al{margin:3px 0;line-height:1.35}
+#alr .al .btn{margin-left:4px}#alr .al .btn[data-a=vcal]{margin-left:0}
+#alr>.x{position:absolute;top:6px;right:6px;float:none}
+@keyframes alrin{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+@media(max-width:900px){#alr{top:8px;right:8px;max-width:calc(100vw - 16px)}}
 </style>
 </head>
 <body>
@@ -976,8 +985,9 @@ function rAlr(){var e=$("#alr");if(!e)return;var td=today(),tm=addDays(td,1),lt=
  if(!lt.length&&!h&&!a&&!qp.length&&!cbr.length){e.classList.add("hide");return}lt.sort(function(x,y){return x.ent<y.ent?-1:1});
  var p=[];if(lt.length)p.push('<b style="color:#c0392b">'+lt.length+(lt.length===1?" folha de obra atrasada":" folhas de obra atrasadas")+'</b> ('+lt.slice(0,4).map(function(o){return esc(olabel(o))+", "+dayDiff(o.ent,td)+" d"}).join("; ")+(lt.length>4?"…":"")+')');
  if(cbr.length)p.push('<b>'+cbr.length+(cbr.length===1?" folha entregue por pagar":" folhas entregues por pagar")+'</b> <button class="btn ghost" data-a="vcb" style="padding:2px 8px;font-size:.8rem">Ver</button>');if(qp.length)p.push('<b>'+qp.length+(qp.length===1?" orçamento sem resposta":" orçamentos sem resposta")+'</b> <button class="btn ghost" data-a="vq" style="padding:2px 8px;font-size:.8rem">Ver</button>');if(h)p.push("<b>"+h+(h===1?" entrega hoje":" entregas hoje")+"</b>");if(a)p.push(a+(a===1?" entrega amanhã":" entregas amanhã"));
- e.innerHTML='<span>'+p.join(" · ")+'</span>'+(lt.length||h||a?' <button class="btn ghost" data-a="vcal" style="padding:3px 10px;font-size:.85rem;margin-left:6px">Ver calendário</button>':'');e.classList.remove("hide")}
-$("#alr").onclick=function(e){if(e.target.closest('[data-a="vcal"]'))document.querySelector('#tabs button[data-t="cal"]').click();if(e.target.closest('[data-a="vcb"]')){document.querySelector('#tabs button[data-t="cobr"]').click()}if(e.target.closest('[data-a="vq"]')){document.querySelector('#tabs button[data-t="calc"]').click();$("#qbox").classList.remove("hide");$("#ql_f").value="pend";$("#ql_q").value="";rQl();$("#qbox").scrollIntoView({block:"start"})}};
+ var html=p.map(function(x){return '<div class="al">'+x+'</div>'}).join("")+(lt.length||h||a?'<div class="al"><button class="btn ghost" data-a="vcal" style="padding:3px 10px;font-size:.85rem">Ver calendário</button></div>':'');e.dataset.sig=html;e.innerHTML=html+'<button class="x" data-a="adm" aria-label="Fechar aviso">×</button>';e.classList.toggle("hide",ALRX===html)}
+var ALRX="";
+$("#alr").onclick=function(e){if(e.target.closest('[data-a="adm"]')){ALRX=$("#alr").dataset.sig||"";$("#alr").classList.add("hide");return}if(e.target.closest('[data-a="vcal"]'))document.querySelector('#tabs button[data-t="cal"]').click();if(e.target.closest('[data-a="vcb"]')){document.querySelector('#tabs button[data-t="cobr"]').click()}if(e.target.closest('[data-a="vq"]')){document.querySelector('#tabs button[data-t="calc"]').click();$("#qbox").classList.remove("hide");$("#ql_f").value="pend";$("#ql_q").value="";rQl();$("#qbox").scrollIntoView({block:"start"})}};
 /* calendário */
 var CAL={y:null,m:null,sel:""};
 function rCal(){var td=today();if(CAL.y==null){var t=td.split("-");CAL.y=+t[0];CAL.m=+t[1]-1}var y=CAL.y,m=CAL.m,off=(new Date(y,m,1).getDay()+6)%7,dim=new Date(y,m+1,0).getDate(),by={};
