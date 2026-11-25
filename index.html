@@ -635,7 +635,8 @@ var hit=S.products.filter(function(p){return want[String(p.sup||"").trim().toLow
 var used=S.lines.filter(function(l){return ids[l.pid]}).length;
 if(!hit.length){$("#im").textContent="Nenhum dos "+n+" artigos do ficheiro existe no catálogo.";inp.value="";return}
 if(!confirm("Vai apagar "+hit.length+" produtos do catálogo (o ficheiro indica "+n+", "+(n-hit.length)+" não foram encontrados)."+(used?"\n\nAtenção: "+used+" linhas do orçamento atual usam estes produtos e também serão removidas.":"")+"\n\nEsta ação não se pode desfazer (exceto repondo uma cópia de segurança). Continuar?")){$("#im").textContent="Cancelado. Nada foi apagado.";inp.value="";return}
-S.products=S.products.filter(function(p){return !ids[p.id]});S.lines=S.lines.filter(function(l){return !ids[l.pid]});save();rCat();rLines();$("#im").textContent="Apagados "+hit.length+" produtos. Restam "+S.products.length+"."}catch(e){$("#im").textContent="Não foi possível ler o ficheiro."}inp.value=""};
+(async function(){if(SB&&SYNC.on){try{$("#im").textContent="A fazer cópia de segurança…";chk(await SB.rpc("fazer_backup",{forcar:true}),"cópia: ")}catch(e){$("#im").textContent="Não foi possível fazer a cópia de segurança, por isso nada foi apagado.";return}}
+SYNC.okdel=true;S.products=S.products.filter(function(p){return !ids[p.id]});S.lines=S.lines.filter(function(l){return !ids[l.pid]});save();rCat();rLines();fillSup();$("#im").textContent="Apagados "+hit.length+" produtos. Restam "+S.products.length+"."})()}catch(e){$("#im").textContent="Não foi possível ler o ficheiro."}inp.value=""};
 if(csv)rd.readAsText(file);else rd.readAsArrayBuffer(file)};
 function imgOk(u){return typeof u==="string"&&/^https?:\/\//i.test(u)}
 function importJSON(files){var add=0,upd=0,bad=0,n=0,er="";$("#im").textContent="A importar...";
