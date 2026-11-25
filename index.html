@@ -798,7 +798,7 @@ var QV="edit",QA=0;
 function qTitle(){var e=$("#qtt");if(!e)return;e.textContent=QV!=="edit"?"":(S.cur&&S.cur.id&&S.cur.num?"A editar o orçamento n.º "+S.cur.num:"Novo orçamento (ainda não guardado)")}
 function qView(v){QV=v;$("#qed").classList.toggle("hide",v!=="edit");$("#qbox").classList.toggle("hide",v!=="list");$("#qlist").setAttribute("aria-pressed",v==="list");$("#qnew").classList.toggle("ghost",v!=="edit"&&v!=="home");qTitle();if(v==="list")rQl()}
 $("#qnew").onclick=function(){if(S.lines.length&&!S.cur.id&&!confirm("O orçamento em curso ainda não foi guardado. Começar um novo orçamento mesmo assim?"))return;newQuote();qView("edit")};
-$("#qsave").onclick=function(){saveQuote()};
+$("#qsave").onclick=function(){if(saveQuote())qView("list")};
 $("#q_cli").oninput=function(){S.cur.cli=this.value;save()};
 $("#q_cli").onchange=function(){var c=findClient(this.value);if(c){if(c.contacto&&!S.cur.contacto){S.cur.contacto=c.contacto;$("#q_ct").value=c.contacto}if(c.clube&&!S.cur.clube){S.cur.clube=c.clube;$("#q_clube").value=c.clube}save()}};
 $("#q_clube").oninput=function(){S.cur.clube=this.value;save()};
