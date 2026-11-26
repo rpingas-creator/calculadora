@@ -14,6 +14,7 @@
 <link rel="icon" type="image/png" href="icon-192.png">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script>try{document.documentElement.setAttribute("data-aspeto",localStorage.getItem("mc_aspeto")||"odoo")}catch(e){document.documentElement.setAttribute("data-aspeto","odoo")}</script>
 <style>
 :root{--bg:#eceadc;--card:#fbfaf3;--tx:#25241a;--mu:#67654f;--bd:#d6d2bb;--ac:#6b6a3b;--on:#fff;--tot:#e1dec4;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media not all /*escuro automático desligado*/{:root:not([data-theme="light"]){--bg:#1a1a12;--card:#24241a;--tx:#ece9d8;--mu:#aca989;--bd:#3b3a2a;--ac:#c3b377;--on:#14140c;--tot:#34331f;color-scheme:dark}}
@@ -289,6 +290,44 @@ main{padding-top:20px!important}
 .pdet[open]>summary::before{content:"–"}
 .pdet>summary .pcs{margin-left:auto}.pdet>summary .x{position:absolute;right:0;top:-2px}
 .pdc{position:relative;padding:12px 0;border-bottom:1px solid var(--bd)}.pdc:last-child{border-bottom:0}
+</style>
+<style id="odoo">
+html[data-aspeto="odoo"]{--bg:#f9fafb;--card:#fff;--tx:#212529;--mu:#6c757d;--bd:#d8dadd;--ac:#714b67;--ac2:#017e84;--dk:#5c3c54;--sb:#fff;--lt:#f3eaf1;--on:#fff;--tot:#f3eaf1;--inp:#fff;--sh:none;--r:4px;--r2:3px;--ring:0 0 0 2px rgba(1,126,132,.2)}
+html[data-aspeto="odoo"] body{font:14px/1.5 Roboto,"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;letter-spacing:0;color:var(--tx)}
+html[data-aspeto="odoo"] h1{background:#714b67!important;color:#fff!important;font-size:1.05rem;font-weight:500;border-bottom:0;height:46px;justify-content:flex-start;padding:0 16px}
+html[data-aspeto="odoo"] nav#tabs{top:46px;background:#fff!important;border-right:1px solid var(--bd);padding:8px 0!important;gap:0!important}
+html[data-aspeto="odoo"] nav#tabs button{background:transparent!important;color:#495057!important;border-radius:0!important;border-left:3px solid transparent!important;padding:10px 16px!important;font-weight:400;font-size:.92rem}
+html[data-aspeto="odoo"] nav#tabs button:hover{background:#f1f3f5!important;color:#212529!important}
+html[data-aspeto="odoo"] nav#tabs button[aria-pressed=true]{background:#f3eaf1!important;color:#714b67!important;border-left-color:#714b67!important;box-shadow:none!important;font-weight:500}
+html[data-aspeto="odoo"] #sbar{background:#fff!important;border-top:1px solid var(--bd)!important}
+html[data-aspeto="odoo"] #sbar #sst{color:#6c757d}
+html[data-aspeto="odoo"] #sbar .menu>summary{background:#e7e9ed!important;color:#212529!important}
+html[data-aspeto="odoo"] #sbar .menu>summary:hover{background:#d8dadd!important}
+html[data-aspeto="odoo"] main{padding-bottom:40px!important}
+html[data-aspeto="odoo"] .card{border:1px solid var(--bd)!important;border-radius:4px!important;box-shadow:0 1px 2px rgba(0,0,0,.04)!important;padding:16px!important;margin-bottom:14px!important}
+html[data-aspeto="odoo"] label{font-weight:500;font-size:.85rem;color:#212529!important}
+html[data-aspeto="odoo"] input:not([type=checkbox]):not([type=radio]):not([type=color]):not([type=file]):not([type=range]),html[data-aspeto="odoo"] select,html[data-aspeto="odoo"] textarea{background:transparent!important;border:0!important;border-bottom:1px solid #ced4da!important;border-radius:0!important;padding:5px 2px!important;box-shadow:none}
+html[data-aspeto="odoo"] input:not([type=checkbox]):not([type=radio]):not([type=color]):not([type=file]):hover,html[data-aspeto="odoo"] select:hover,html[data-aspeto="odoo"] textarea:hover{border-bottom-color:#6c757d!important}
+html[data-aspeto="odoo"] input:not([type=checkbox]):not([type=radio]):not([type=color]):not([type=file]):focus,html[data-aspeto="odoo"] select:focus,html[data-aspeto="odoo"] textarea:focus{outline:0!important;border-bottom:1px solid #017e84!important;box-shadow:0 1px 0 #017e84!important}
+html[data-aspeto="odoo"] textarea{border:1px solid #ced4da!important;border-radius:3px!important;padding:6px 8px!important}
+html[data-aspeto="odoo"] input[readonly]{background:#f1f3f5!important}
+html[data-aspeto="odoo"] .btn{background:#714b67;color:#fff;border-radius:3px!important;padding:6px 14px;font-weight:500;box-shadow:none;border:1px solid #714b67}
+html[data-aspeto="odoo"] .btn:hover{background:#5c3c54;color:#fff}
+html[data-aspeto="odoo"] .btn.ghost{background:#e7e9ed;color:#212529;border:1px solid #e7e9ed}
+html[data-aspeto="odoo"] .btn.ghost:hover{background:#d8dadd;color:#212529}
+html[data-aspeto="odoo"] th{background:transparent;color:#212529;font-weight:600;border-bottom:2px solid #d8dadd}
+html[data-aspeto="odoo"] td{border-bottom:1px solid #e9ecef}
+html[data-aspeto="odoo"] .tab,html[data-aspeto="odoo"] .hit{border-radius:3px!important}
+html[data-aspeto="odoo"] .tab[aria-pressed=true]{background:#714b67;border-color:#714b67;color:#fff}
+html[data-aspeto="odoo"] .res{background:#f3eaf1;color:#212529;border-radius:3px}
+html[data-aspeto="odoo"] .kpi{border:1px solid var(--bd)!important;border-radius:4px!important;box-shadow:none!important}
+html[data-aspeto="odoo"] .kv{color:#714b67}
+html[data-aspeto="odoo"] a{color:#017e84}
+html[data-aspeto="odoo"] .oc.editing,html[data-aspeto="odoo"] #fbanner{border-left-color:#017e84}
+html[data-aspeto="odoo"] .cal .d.s,html[data-aspeto="odoo"] .cal .d.t{background:#f3eaf1}
+html[data-aspeto="odoo"] .hbar i{background:#017e84}
+#aspBtn{background:transparent;border:0;color:var(--mu);padding:2px 0;font-size:.72rem;cursor:pointer;text-align:center;text-decoration:underline}
+@media(max-width:900px){html[data-aspeto="odoo"] h1{height:auto;padding:12px 14px}html[data-aspeto="odoo"] nav#tabs{border-right:0;border-bottom:1px solid var(--bd)}html[data-aspeto="odoo"] nav#tabs button{border-left:0!important;border-bottom:3px solid transparent!important}html[data-aspeto="odoo"] nav#tabs button[aria-pressed=true]{border-bottom-color:#714b67!important}}
 </style>
 </head>
 <body>
@@ -1274,6 +1313,7 @@ if("serviceWorker" in navigator&&/^https?:/.test(location.protocol)){navigator.s
 
 rLines();
 startApp();
+(function(){var b=document.createElement("button");b.id="aspBtn";b.type="button";var sb=document.getElementById("sbar");if(!sb)return;sb.appendChild(b);function r(){var a=document.documentElement.getAttribute("data-aspeto");b.textContent=a==="odoo"?"Aspeto: Odoo (carregar para o antigo)":"Aspeto: antigo (carregar para Odoo)"}r();b.onclick=function(){var a=document.documentElement.getAttribute("data-aspeto")==="odoo"?"antigo":"odoo";document.documentElement.setAttribute("data-aspeto",a);try{localStorage.setItem("mc_aspeto",a)}catch(e){}r()}})();
 </script>
 </body>
 </html>
