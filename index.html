@@ -1275,5 +1275,35 @@ if("serviceWorker" in navigator&&/^https?:/.test(location.protocol)){navigator.s
 rLines();
 startApp();
 </script>
+<style id="qmodal">
+#qov{position:fixed;inset:0;z-index:60;background:rgba(20,20,12,.5);overflow-y:auto;overscroll-behavior:contain;padding:28px 16px}
+#qov.hide{display:none}
+#qpanel{position:relative;max-width:980px;margin:0 auto;background:var(--bg);border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.35);padding:0 28px 0}
+#qphd{position:sticky;top:-28px;z-index:13;display:flex;align-items:center;gap:12px;margin:0 -28px 6px;padding:16px 28px 12px;background:var(--bg);border-bottom:1px solid var(--bd);border-radius:12px 12px 0 0}
+#qphd b{flex:1;font-size:1.15rem}
+#qpx{border:1px solid var(--bd);background:var(--card);color:var(--tx);width:38px;height:38px;border-radius:50%;font-size:1.4rem;line-height:1;cursor:pointer}
+#qpx:hover{background:var(--tot)}
+#qpanel #qed{padding-bottom:20px}
+#qpanel #qbar{margin-left:-28px;margin-right:-28px;border-radius:0 0 12px 12px}
+body.qopen{overflow:hidden}
+@media(max-width:700px){#qov{padding:0}#qpanel{border-radius:0;min-height:100%;padding:0 12px}#qphd{top:0;margin:0 -12px 6px;padding:12px;border-radius:0}#qpanel #qbar{margin-left:-12px;margin-right:-12px;border-radius:0}}
+</style>
+<script>
+/* Orçamento numa janela por cima da página */
+(function(){var ed=document.getElementById("qed");if(!ed)return;
+ var ov=document.createElement("div");ov.id="qov";ov.className="hide";ov.setAttribute("role","dialog");ov.setAttribute("aria-modal","true");ov.setAttribute("aria-labelledby","qptt");
+ ov.innerHTML='<div id="qpanel"><div id="qphd"><b id="qptt">Novo orçamento</b><button type="button" id="qpx" aria-label="Fechar" title="Fechar (Esc)">×</button></div></div>';
+ document.body.appendChild(ov);var pn=document.getElementById("qpanel");pn.appendChild(ed);
+ var oldV=qView,oldT=qTitle;
+ function sync(){var on=QV==="edit";ov.classList.toggle("hide",!on);document.body.classList.toggle("qopen",on);var t=S.cur&&S.cur.id&&S.cur.num?"Orçamento n.º "+S.cur.num:"Novo orçamento";document.getElementById("qptt").textContent=t}
+ qView=function(v){var was=QV==="edit";oldV(v);sync();if(v==="edit"&&!was){ov.scrollTop=0;if(window.innerWidth>700)setTimeout(function(){var i=document.getElementById("q_cli");if(i&&!i.value)i.focus()},50)}};
+ qTitle=function(){oldT();if(document.getElementById("qptt"))sync()};
+ function close(){qView("home")}
+ document.getElementById("qpx").onclick=close;
+ ov.addEventListener("mousedown",function(e){if(e.target===ov)close()});
+ document.addEventListener("keydown",function(e){if(e.key==="Escape"&&QV==="edit"&&!ov.classList.contains("hide")){var a=document.activeElement;if(a&&a.closest&&a.closest("details[open]"))return;close()}});
+ document.querySelectorAll("#tabs button").forEach(function(b){b.addEventListener("click",function(){if(QV==="edit"&&b.dataset.t!=="calc"){ov.classList.add("hide");document.body.classList.remove("qopen")}else if(b.dataset.t==="calc")sync()})});
+ sync()})();
+</script>
 </body>
 </html>
