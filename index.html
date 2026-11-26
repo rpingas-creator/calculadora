@@ -1411,7 +1411,7 @@ function rChat(){var el=$("#qchat");if(!el)return;var q=S.cur&&S.cur.id?S.quotes
 (function(){var c=document.createElement("div");c.className="card";c.id="qchat";$("#qed").appendChild(c);
  c.addEventListener("click",function(e){var q=S.cur&&S.cur.id?S.quotes.find(function(z){return z.id===S.cur.id}):null;if(!q)return;if(e.target.id==="ch_b"){var t=$("#ch_t").value.trim();if(!t)return;qLog(q,"nota",t);save();rChat()}else if(e.target.dataset.del!=null){if(confirm("Apagar esta nota?")){q.log.splice(+e.target.dataset.del,1);save();rChat()}}})})();
 
-(function(){var b=document.createElement("button");b.id="aspBtn";b.type="button";var sb=document.getElementById("sbar");if(!sb)return;sb.appendChild(b);function r(){var a=document.documentElement.getAttribute("data-aspeto");b.textContent=a==="odoo"?"Aspeto: Odoo (carregar para o antigo)":"Aspeto: antigo (carregar para Odoo)"}r();b.onclick=function(){var a=document.documentElement.getAttribute("data-aspeto")==="odoo"?"antigo":"odoo";document.documentElement.setAttribute("data-aspeto",a);try{localStorage.setItem("mc_aspeto",a)}catch(e){}r()}})();
+(function(){var b=document.createElement("button");b.id="aspBtn";b.type="button";var sb=document.getElementById("sbar");if(!sb)return;sb.appendChild(b);function r(){var a=document.documentElement.getAttribute("data-aspeto");b.textContent=a==="odoo"?"Aspeto: Odoo · versão 41 (carregar para o antigo)":"Aspeto: antigo · versão 41 (carregar para Odoo)"}r();b.onclick=function(){var a=document.documentElement.getAttribute("data-aspeto")==="odoo"?"antigo":"odoo";document.documentElement.setAttribute("data-aspeto",a);try{localStorage.setItem("mc_aspeto",a)}catch(e){}r()}})();
 </script>
 </body>
 </html>
