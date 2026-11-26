@@ -362,41 +362,47 @@ html[data-aspeto="odoo"] .hbar i{background:#017e84}
 @media(max-width:900px){.qrow{grid-template-columns:1fr auto;grid-auto-flow:row}.qhead{display:none!important}.qrow .qa{grid-column:1/-1;justify-content:flex-start}.kan{grid-template-columns:repeat(5,230px)}}
 </style>
 <style id="moloni">
-html[data-aspeto="moloni"]{--bg:#f4f4fb;--card:#fff;--tx:#23233a;--mu:#6e6e8a;--bd:#e2e2ef;--ac:#6c63ff;--ac2:#ff6fb5;--dk:#5047e6;--sb:#1f1f33;--lt:#ececff;--on:#fff;--tot:#ececff;--inp:#fff;--sh:0 1px 3px rgba(35,35,58,.08);--r:10px;--r2:8px;--ring:0 0 0 3px rgba(108,99,255,.2)}
-html[data-aspeto="moloni"] body{font:14px/1.5 Poppins,"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;letter-spacing:0;color:var(--tx);background:var(--bg)}
-html[data-aspeto="moloni"] h1{position:fixed;top:0;left:0;right:0;width:auto;height:56px;justify-content:flex-start;padding:0 20px 0 84px;background:linear-gradient(90deg,#7c74ff,#8d86ff)!important;color:#fff!important;font-size:1.02rem;font-weight:600;border:0;z-index:25}
-html[data-aspeto="moloni"] nav#tabs{top:56px;width:64px;background:#1f1f33!important;border:0;padding:8px 0!important;gap:2px!important;overflow:hidden;transition:width .18s;z-index:24;align-items:stretch}
-html[data-aspeto="moloni"] nav#tabs:hover,html[data-aspeto="moloni"] nav#tabs:focus-within{width:250px;overflow-y:auto;box-shadow:6px 0 24px rgba(0,0,0,.25)}
-html[data-aspeto="moloni"] nav#tabs button{font-size:0!important;color:#b9b9d6!important;background:transparent!important;border:0!important;border-radius:0!important;padding:0!important;height:48px;width:100%;display:flex;align-items:center;gap:0!important;justify-content:flex-start;white-space:nowrap;box-shadow:none!important}
-html[data-aspeto="moloni"] nav#tabs button::before{width:22px;height:22px;margin:0 21px;flex:none}
-html[data-aspeto="moloni"] nav#tabs:hover button,html[data-aspeto="moloni"] nav#tabs:focus-within button{font-size:.92rem!important}
-html[data-aspeto="moloni"] nav#tabs:hover button::before,html[data-aspeto="moloni"] nav#tabs:focus-within button::before{margin-right:14px}
-html[data-aspeto="moloni"] nav#tabs button:hover{background:rgba(255,255,255,.08)!important;color:#fff!important}
-html[data-aspeto="moloni"] nav#tabs button[aria-pressed=true]{background:rgba(124,116,255,.28)!important;color:#fff!important;box-shadow:inset 3px 0 0 #8d86ff!important}
-html[data-aspeto="moloni"] main{margin-left:64px;padding:76px 28px 40px!important}
-html[data-aspeto="moloni"] #sbar{position:fixed!important;left:0;bottom:0;top:auto!important;width:64px;margin:0!important;padding:8px 6px!important;background:#1f1f33!important;border:0!important;z-index:24;align-items:center!important}
-html[data-aspeto="moloni"] #sbar #sst,html[data-aspeto="moloni"] #sbar #aspBtn{display:none!important}
-html[data-aspeto="moloni"] #sbar .menu>summary{background:rgba(255,255,255,.1)!important;color:#fff!important;font-size:0!important;width:40px;height:40px;border-radius:50%!important;padding:0!important;display:flex;align-items:center;justify-content:center}
-html[data-aspeto="moloni"] #sbar .menu>summary::before{content:"\1F464";font-size:18px}
-html[data-aspeto="moloni"] #sbar .mpop{left:8px;right:auto;min-width:230px;bottom:calc(100% + 6px)}
-html[data-aspeto="moloni"] .card{border:1px solid var(--bd)!important;border-radius:12px!important;box-shadow:var(--sh)!important;background:#fff}
-html[data-aspeto="moloni"] label{font-weight:500;font-size:.8rem;color:var(--mu)!important}
-html[data-aspeto="moloni"] input:not([type=checkbox]):not([type=radio]):not([type=color]):not([type=file]),html[data-aspeto="moloni"] select,html[data-aspeto="moloni"] textarea{background:#fff!important;border:1px solid #d9d9ea!important;border-radius:8px!important;padding:9px 12px!important}
-html[data-aspeto="moloni"] input:focus,html[data-aspeto="moloni"] select:focus,html[data-aspeto="moloni"] textarea:focus{outline:0!important;border-color:#6c63ff!important;box-shadow:0 0 0 3px rgba(108,99,255,.18)!important}
-html[data-aspeto="moloni"] input[readonly]{background:#f4f4fb!important}
-html[data-aspeto="moloni"] .btn{background:#6c63ff;color:#fff;border:0;border-radius:8px!important;padding:9px 16px;font-weight:500;box-shadow:none}
-html[data-aspeto="moloni"] .btn:hover{background:#5047e6;color:#fff}
-html[data-aspeto="moloni"] .btn.ghost{background:#fff;color:#23233a;border:1px solid #d9d9ea}
-html[data-aspeto="moloni"] .btn.ghost:hover{background:#ececff;color:#23233a}
-html[data-aspeto="moloni"] th{background:#f4f4fb;color:#23233a;font-weight:600}
-html[data-aspeto="moloni"] .tab[aria-pressed=true],html[data-aspeto="moloni"] .vsw button[aria-pressed=true],html[data-aspeto="moloni"] .stp1.on{background:#6c63ff;border-color:#6c63ff;color:#fff}
-html[data-aspeto="moloni"] .kv{color:#6c63ff}
-html[data-aspeto="moloni"] .fac{background:#ececff;color:#5047e6}
-html[data-aspeto="moloni"] .hbar i{background:#ff6fb5}
-html[data-aspeto="moloni"] a{color:#5047e6}
-html[data-aspeto="moloni"] .res,html[data-aspeto="moloni"] .cal .d.s,html[data-aspeto="moloni"] .cal .d.t{background:#ececff;color:#23233a}
-html[data-aspeto="moloni"] .stp>span,html[data-aspeto="moloni"] h2.stp span{background:#6c63ff}
-@media(max-width:900px){html[data-aspeto="moloni"] h1{position:fixed;padding:0 16px;height:52px}html[data-aspeto="moloni"] nav#tabs{position:fixed;top:52px;left:0;right:0;width:auto;height:52px;flex-direction:row;overflow-x:auto;overflow-y:hidden;box-shadow:none}html[data-aspeto="moloni"] nav#tabs:hover,html[data-aspeto="moloni"] nav#tabs:focus-within{width:auto;box-shadow:none}html[data-aspeto="moloni"] nav#tabs button{width:60px;flex:none;height:52px;justify-content:center}html[data-aspeto="moloni"] nav#tabs button::before{margin:0!important}html[data-aspeto="moloni"] nav#tabs:hover button,html[data-aspeto="moloni"] nav#tabs:focus-within button{font-size:0!important}html[data-aspeto="moloni"] nav#tabs button[aria-pressed=true]{box-shadow:inset 0 -3px 0 #8d86ff!important}html[data-aspeto="moloni"] main{margin-left:0;padding:52px 12px 80px!important}html[data-aspeto="moloni"] nav#tabs{position:static!important;margin:0 -12px 12px!important}html[data-aspeto="moloni"] #sbar{width:auto;right:0;left:auto;bottom:10px;right:10px;background:transparent!important;padding:0!important}}
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Open+Sans:wght@400;600&display=swap");
+html[data-aspeto="moloni"]{--bg:#f3f5f7;--card:#fff;--tx:#232b38;--mu:#6b7686;--bd:#e3e7ec;--ac:#0b83e6;--ac2:#22c58b;--dk:#0a6bc0;--sb:#2b3444;--lt:#e8f2fb;--on:#fff;--tot:#e8f2fb;--inp:#fff;--sh:0 1px 2px rgba(35,43,56,.06);--r:4px;--r2:4px;--ring:0 0 0 3px rgba(11,131,230,.18)}
+html[data-aspeto="moloni"] body{font:14px/1.5 "Open Sans",Poppins,"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;letter-spacing:0;color:var(--tx);background:var(--bg)}
+html[data-aspeto="moloni"] h1,html[data-aspeto="moloni"] nav#tabs button,html[data-aspeto="moloni"] .btn,html[data-aspeto="moloni"] h2,html[data-aspeto="moloni"] h3{font-family:Poppins,"Open Sans","Segoe UI",system-ui,sans-serif}
+html[data-aspeto="moloni"] h1{position:fixed;top:0;left:0;right:0;width:auto;height:54px;justify-content:flex-start;padding:0 20px;background:#2b3444!important;color:#fff!important;font-size:1rem;font-weight:500;border:0;z-index:25}
+html[data-aspeto="moloni"] nav#tabs{position:fixed;top:54px;left:0;right:0;bottom:auto;width:auto;height:46px;flex-direction:row;flex-wrap:nowrap;background:#fff!important;border:0;border-bottom:1px solid var(--bd);padding:0 8px!important;gap:0!important;overflow-x:auto;overflow-y:hidden;z-index:24;align-items:stretch;box-shadow:none}
+html[data-aspeto="moloni"] nav#tabs button{font-size:.85rem!important;color:#2b3444!important;background:transparent!important;border:0!important;border-bottom:3px solid transparent!important;border-radius:0!important;padding:0 14px!important;height:46px;width:auto;display:flex;align-items:center;gap:8px!important;white-space:nowrap;box-shadow:none!important;font-weight:400}
+html[data-aspeto="moloni"] nav#tabs button::before{width:18px;height:18px;margin:0;flex:none}
+html[data-aspeto="moloni"] nav#tabs button:hover{background:#f1f6fb!important;color:#0b83e6!important}
+html[data-aspeto="moloni"] nav#tabs button[aria-pressed=true]{background:#0b83e6!important;color:#fff!important;border-bottom-color:#0b83e6!important}
+html[data-aspeto="moloni"] main{margin:0 auto;max-width:1500px;padding:122px 22px 40px!important}html[data-aspeto="moloni"] #sbar{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+html[data-aspeto="moloni"] #sbar{position:fixed!important;right:0;top:0!important;bottom:auto!important;left:auto!important;width:auto!important;height:54px;min-height:0!important;margin:0!important;padding:0 16px!important;background:transparent!important;border:0!important;z-index:26;flex-direction:row!important;align-items:center!important;gap:14px!important;box-shadow:none!important}
+html[data-aspeto="moloni"] #sbar #sst{display:none!important}
+html[data-aspeto="moloni"] #sbar #aspBtn{color:#b8c2d3;font-size:.72rem;text-decoration:none;border:1px solid rgba(255,255,255,.2);border-radius:3px;padding:3px 8px}
+html[data-aspeto="moloni"] #sbar .menu>summary{background:rgba(255,255,255,.12)!important;color:#fff!important;font-size:0!important;width:34px;height:34px;border-radius:50%!important;padding:0!important;display:flex;align-items:center;justify-content:center;border:0!important}
+html[data-aspeto="moloni"] #sbar .menu>summary::before{content:"\1F464";font-size:16px}
+html[data-aspeto="moloni"] #sbar .mpop{top:calc(100% + 8px);bottom:auto;left:auto;right:0;min-width:230px}
+html[data-aspeto="moloni"] .card{border:1px solid var(--bd)!important;border-radius:4px!important;box-shadow:var(--sh)!important;background:#fff;padding:16px!important}
+html[data-aspeto="moloni"] label{font-weight:600;font-size:.78rem;color:#232b38!important}
+html[data-aspeto="moloni"] input:not([type=checkbox]):not([type=radio]):not([type=color]):not([type=file]),html[data-aspeto="moloni"] select,html[data-aspeto="moloni"] textarea{background:#fff!important;border:1px solid #cfd6df!important;border-radius:3px!important;padding:8px 10px!important}
+html[data-aspeto="moloni"] input:focus,html[data-aspeto="moloni"] select:focus,html[data-aspeto="moloni"] textarea:focus{outline:0!important;border-color:#0b83e6!important;box-shadow:0 0 0 2px rgba(11,131,230,.16)!important}
+html[data-aspeto="moloni"] input[readonly]{background:#f3f5f7!important}
+html[data-aspeto="moloni"] .btn{background:#0b83e6;color:#fff;border:1px solid #0b83e6;border-radius:3px!important;padding:8px 16px;font-weight:500;box-shadow:none;font-size:.85rem}
+html[data-aspeto="moloni"] .btn:hover{background:#0a6bc0;border-color:#0a6bc0;color:#fff}
+html[data-aspeto="moloni"] .btn.ghost{background:#fff;color:#0b83e6;border:1px solid #0b83e6}
+html[data-aspeto="moloni"] .btn.ghost:hover{background:#e8f2fb;color:#0a6bc0}
+html[data-aspeto="moloni"] #qsave,html[data-aspeto="moloni"] #qbg,html[data-aspeto="moloni"] #sbar .menu>summary.btn{background:#2b3444;border-color:#2b3444}
+html[data-aspeto="moloni"] th{background:transparent;color:#232b38;font-weight:600;font-size:.82rem;border-bottom:1px solid #cfd6df}
+html[data-aspeto="moloni"] tbody tr:nth-child(even) td{background:#eef4f8}
+html[data-aspeto="moloni"] .tab[aria-pressed=true],html[data-aspeto="moloni"] .vsw button[aria-pressed=true],html[data-aspeto="moloni"] .stp1.on{background:#0b83e6;border-color:#0b83e6;color:#fff}
+html[data-aspeto="moloni"] .kv{color:#0b83e6}
+html[data-aspeto="moloni"] .fac{background:#e8f2fb;color:#0a6bc0}
+html[data-aspeto="moloni"] .hbar i{background:#22c58b}
+html[data-aspeto="moloni"] a{color:#0b83e6}
+html[data-aspeto="moloni"] .res,html[data-aspeto="moloni"] .cal .d.s,html[data-aspeto="moloni"] .cal .d.t{background:#e8f2fb;color:#232b38}
+html[data-aspeto="moloni"] .qrow:not(.qhead):nth-child(even){background:#eef4f8}
+html[data-aspeto="moloni"] .grph,html[data-aspeto="moloni"] .kh{background:#eef0f3}
+html[data-aspeto="moloni"] h2.stp{background:#eef0f3;border:1px solid var(--bd);border-radius:4px 4px 0 0;padding:9px 14px;margin:18px 0 0;font-size:.95rem}
+html[data-aspeto="moloni"] h2.stp span{background:#0b83e6}
+html[data-aspeto="moloni"] h2.stp+.card,html[data-aspeto="moloni"] h2.stp+*{border-top-left-radius:0!important;border-top-right-radius:0!important}
+@media(max-width:900px){html[data-aspeto="moloni"] h1{height:50px;padding:0 12px;font-size:.92rem;padding-right:60px;overflow:hidden;white-space:nowrap}html[data-aspeto="moloni"] nav#tabs{top:50px;height:44px}html[data-aspeto="moloni"] nav#tabs button{height:44px;padding:0 12px!important}html[data-aspeto="moloni"] nav#tabs button::before{margin:0}html[data-aspeto="moloni"] main{padding:50px 12px 80px!important}html[data-aspeto="moloni"] nav#tabs{position:static!important;margin:0 -12px 12px!important;top:auto}html[data-aspeto="moloni"] #sbar{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}html[data-aspeto="moloni"] #sbar{padding:0 10px!important}html[data-aspeto="moloni"] #sbar #aspBtn{display:none!important}}
 </style>
 </head>
 <body>
@@ -1450,7 +1456,7 @@ function rChat(){var el=$("#qchat");if(!el)return;var q=S.cur&&S.cur.id?S.quotes
 
 (function(){var b=document.createElement("button");b.id="aspBtn";b.type="button";var sb=document.getElementById("sbar");if(!sb)return;sb.appendChild(b);var O=["moloni","odoo","antigo"],N={moloni:"Moloni",odoo:"Odoo",antigo:"antigo"};
 function cur(){var a=document.documentElement.getAttribute("data-aspeto");return O.indexOf(a)<0?"moloni":a}
-function r(){var a=cur();b.textContent="Aspeto: "+N[a]+" · versão 42 (mudar)"}
+function r(){var a=cur();b.textContent="Aspeto: "+N[a]+" · versão 43 (mudar)"}
 document.querySelectorAll("#tabs button").forEach(function(x){x.title=x.textContent.trim()});
 r();b.onclick=function(){var a=O[(O.indexOf(cur())+1)%O.length];document.documentElement.setAttribute("data-aspeto",a);try{localStorage.setItem("mc_aspeto",a)}catch(e){}r()}})();
 </script>
