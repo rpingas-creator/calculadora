@@ -574,7 +574,9 @@ if(d.p==="tid"){save();rLines();return}}else return;save();upd()};
 $("#lines").onclick=function(e){var b=e.target.closest("[data-a]");if(!b)return;var c=b.closest(".card"),l=S.lines[+c.dataset.i],a=b.dataset.a;
 if(a==="fold"){FOLD[l.id]=!FOLD[l.id];c.classList.toggle("fold",!!FOLD[l.id]);return}
 if(a==="del")S.lines.splice(+c.dataset.i,1);else if(a==="tab")l.tab=+b.dataset.k;else if(a==="addg")grid(l).push({c:"",q:{}});else if(a==="delg"){var gl=grid(l);gl.splice(+b.closest(".gp").dataset.j,1);if(!gl.length)gl.push({c:"",q:{}});gsync(l)}else if(a==="addv")vrows(l).push({c:"",s:"",n:""});else if(a==="delv")vrows(l).splice(+b.closest(".vr").dataset.j,1);else if(a==="addpos"){l.pos.push(blank("Posição "+(l.pos.length+1)));l.tab=l.pos.length-1}save();rLines()};
-$("#copy").onclick=function(){if(noQty())return;var t=(S.cur.siva?"Orçamento":"Orçamento (valores sem IVA)")+"\n\n",gt=0,gcur=null,gsum=0;S.lines.forEach(function(l){var r=calc(l);if(!r.p)return;gt+=r.tot;var gi=l.grp?l.grp.id:null;if(gcur&&gi!==gcur){t+="  Total do pack: "+eur(gsum)+"\n\n";gcur=null}if(gi&&!gcur){gcur=gi;gsum=0;t+="▸ PACK: "+l.grp.name+(l.grp.n>1?" ("+l.grp.n+" packs)":"")+"\n"}if(gcur)gsum+=r.tot;t+="• "+r.p.name+" ("+r.p.ref+")\n  "+r.q+" un. · "+eur(r.unit)+"/un. · total "+eur(r.tot)+"\n"+(l.color?"  Cor: "+l.color+"\n":"")+vtxt(l,r)+(r.dsc>0?"  Desconto: "+r.dl+"\n":"");r.det.forEach(function(d){t+="  - "+d.x.name+": "+(d.t?d.t.name:"personalização")+(d.t&&WH(d.t)?" ("+num(d.x.w)+" × "+num(d.x.h)+" cm)":d.t&&d.t.kind==="bordado"?" ("+num(d.x.pts)+" pontos)":"")+"\n"})});if(gcur)t+="  Total do pack: "+eur(gsum)+"\n";var T=totals();t+="\n"+(T.td>0?"Subtotal sem IVA: "+eur(T.sub)+"\nDesconto ("+T.dl+"): − "+eur(T.td)+"\n":"")+(S.cur.siva?"TOTAL: "+eur(T.gb):"Total sem IVA: "+eur(T.gb)+"\nIVA ("+T.iva+"%): "+eur(T.iv)+"\nTOTAL com IVA: "+eur(T.gt))+"\n";
+function quoteText(){var t=(S.cur.siva?"Orçamento":"Orçamento (valores sem IVA)")+"\n\n",gt=0,gcur=null,gsum=0;S.lines.forEach(function(l){var r=calc(l);if(!r.p)return;gt+=r.tot;var gi=l.grp?l.grp.id:null;if(gcur&&gi!==gcur){t+="  Total do pack: "+eur(gsum)+"\n\n";gcur=null}if(gi&&!gcur){gcur=gi;gsum=0;t+="▸ PACK: "+l.grp.name+(l.grp.n>1?" ("+l.grp.n+" packs)":"")+"\n"}if(gcur)gsum+=r.tot;t+="• "+r.p.name+" ("+r.p.ref+")\n  "+r.q+" un. · "+eur(r.unit)+"/un. · total "+eur(r.tot)+"\n"+(l.color?"  Cor: "+l.color+"\n":"")+vtxt(l,r)+(r.dsc>0?"  Desconto: "+r.dl+"\n":"");r.det.forEach(function(d){t+="  - "+d.x.name+": "+(d.t?d.t.name:"personalização")+(d.t&&WH(d.t)?" ("+num(d.x.w)+" × "+num(d.x.h)+" cm)":d.t&&d.t.kind==="bordado"?" ("+num(d.x.pts)+" pontos)":"")+"\n"})});if(gcur)t+="  Total do pack: "+eur(gsum)+"\n";var T=totals();t+="\n"+(T.td>0?"Subtotal sem IVA: "+eur(T.sub)+"\nDesconto ("+T.dl+"): − "+eur(T.td)+"\n":"")+(S.cur.siva?"TOTAL: "+eur(T.gb):"Total sem IVA: "+eur(T.gb)+"\nIVA ("+T.iva+"%): "+eur(T.iv)+"\nTOTAL com IVA: "+eur(T.gt))+"\n";
+return t}
+$("#copy").onclick=function(){if(noQty())return;var t=quoteText();
 function done(){$("#cm").textContent="Copiado."}
 try{navigator.clipboard.writeText(t).then(done,function(){fb()})}catch(e){fb()}
 function fb(){var a=document.createElement("textarea");a.value=t;document.body.appendChild(a);a.select();try{document.execCommand("copy");done()}catch(e){$("#cm").textContent="Não foi possível copiar."}a.remove()}};
@@ -1283,6 +1285,8 @@ startApp();
 #qphd b{flex:1;font-size:1.15rem}
 #qpx{border:1px solid var(--bd);background:var(--card);color:var(--tx);width:38px;height:38px;border-radius:50%;font-size:1.4rem;line-height:1;cursor:pointer}
 #qpx:hover{background:var(--tot)}
+#qphd{flex-wrap:wrap}.qpb{display:flex;gap:8px;flex-wrap:wrap}.qpb .btn{padding:8px 16px}#qsend{flex-basis:100%;margin-top:4px;padding:12px 14px;background:var(--card);border:1px solid var(--bd);border-radius:10px}#qsend.hide{display:none}.qsb{display:flex;gap:8px;flex-wrap:wrap}.qsb a.btn{text-decoration:none;display:inline-flex;align-items:center}
+@media(max-width:700px){#qphd b{flex-basis:calc(100% - 50px)}.qpb{order:3;flex-basis:100%}#qsend{order:4}.qpb .btn{flex:1}}
 #qpanel #qed{padding-bottom:20px}
 #qpanel #qbar{margin-left:-28px;margin-right:-28px;border-radius:0 0 12px 12px}
 body.qopen{overflow:hidden}
@@ -1292,13 +1296,32 @@ body.qopen{overflow:hidden}
 /* Orçamento numa janela por cima da página */
 (function(){var ed=document.getElementById("qed");if(!ed)return;
  var ov=document.createElement("div");ov.id="qov";ov.className="hide";ov.setAttribute("role","dialog");ov.setAttribute("aria-modal","true");ov.setAttribute("aria-labelledby","qptt");
- ov.innerHTML='<div id="qpanel"><div id="qphd"><b id="qptt">Novo orçamento</b><button type="button" id="qpx" aria-label="Fechar" title="Fechar (Esc)">×</button></div></div>';
+ ov.innerHTML='<div id="qpanel"><div id="qphd"><b id="qptt">Novo orçamento</b><div class="qpb"><button type="button" class="btn ghost" id="qpc">Cancelar</button><button type="button" class="btn ghost" id="qpg">Guardar</button><button type="button" class="btn" id="qpe">Enviar</button></div><button type="button" id="qpx" aria-label="Fechar" title="Fechar (Esc)">×</button><div id="qsend" class="hide"></div></div></div>';
  document.body.appendChild(ov);var pn=document.getElementById("qpanel");pn.appendChild(ed);
  var oldV=qView,oldT=qTitle;
  function sync(){var on=QV==="edit";ov.classList.toggle("hide",!on);document.body.classList.toggle("qopen",on);var t=S.cur&&S.cur.id&&S.cur.num?"Orçamento n.º "+S.cur.num:"Novo orçamento";document.getElementById("qptt").textContent=t}
- qView=function(v){var was=QV==="edit";oldV(v);sync();if(v==="edit"&&!was){ov.scrollTop=0;if(window.innerWidth>700)setTimeout(function(){var i=document.getElementById("q_cli");if(i&&!i.value)i.focus()},50)}};
+ qView=function(v){var was=QV==="edit";oldV(v);sync();if(v==="edit"&&!was){snap();hideSend();ov.scrollTop=0;if(window.innerWidth>700)setTimeout(function(){var i=document.getElementById("q_cli");if(i&&!i.value)i.focus()},50)}};
  qTitle=function(){oldT();if(document.getElementById("qptt"))sync()};
- function close(){qView("home")}
+ function close(){hideSend();qView("home")}
+ var SNAP=null;function cl(o){return o==null?o:JSON.parse(JSON.stringify(o))}
+ function snap(){var q=S.cur&&S.cur.id?S.quotes.find(function(x){return x.id===S.cur.id}):null;SNAP={lines:cl(S.lines),cur:cl(S.cur),q:cl(q)}}
+ function changed(){return !SNAP||JSON.stringify(SNAP.lines)!==JSON.stringify(S.lines)||JSON.stringify(SNAP.cur)!==JSON.stringify(S.cur)}
+ document.getElementById("qpc").onclick=function(){if(changed()&&!confirm(S.cur.id?"Descartar as alterações feitas a este orçamento?":"Descartar este orçamento novo?"))return;
+  if(SNAP){S.lines=cl(SNAP.lines);S.cur=cl(SNAP.cur);if(SNAP.q){var i=S.quotes.findIndex(function(x){return x.id===SNAP.q.id});if(i>=0)S.quotes[i]=cl(SNAP.q)}save();curLoad();rLines();qmsg("")}close()};
+ document.getElementById("qpg").onclick=function(){hideSend();$("#qsave").click()};
+ var sd=document.getElementById("qsend");function hideSend(){sd.classList.add("hide");sd.innerHTML=""}
+ function sent(){if(S.cur.est!=="Enviado"&&S.cur.est!=="Aceite"){S.cur.est="Enviado";$("#q_est").value="Enviado"}if(!S.cur.dsend)S.cur.dsend=today();save();updateCurQuote();badge();snap();var m=document.getElementById("qsm");if(m)m.textContent="Orçamento marcado como Enviado."}
+ function pdfOf(){var q=S.quotes.find(function(x){return x.id===S.cur.id})||{};return {blob:pdfOrc({num:S.cur.num,cli:S.cur.cli,clube:S.cur.clube,contacto:S.cur.contacto,dv:S.cur.dv,disc:S.cur.disc,dtype:S.cur.dtype,siva:S.cur.siva,date:q.date||today()},S.lines),name:pdfName("Orcamento",S.cur.num,S.cur.cli)}}
+ document.getElementById("qpe").onclick=function(){if(!sd.classList.contains("hide")){hideSend();return}if(!S.lines.length){qmsg("Adicione pelo menos um produto ao orçamento.",1);$("#qmsg").scrollIntoView({block:"center"});return}if(noQty())return;if(!saveQuote(true)){$("#qmsg").scrollIntoView({block:"center"});return}snap();
+  var ct=String(S.cur.contacto||""),em=ct.match(/[^\s,;]+@[^\s,;]+\.[^\s,;]+/),dg=ct.replace(/[^\d+]/g,""),ph=dg.match(/^(?:\+?351)?(9\d{8})$/),txt="Olá"+(S.cur.cli?" "+S.cur.cli:"")+",\n\nSegue o orçamento n.º "+S.cur.num+(S.cfg.empresa?" de "+S.cfg.empresa:"")+".\n\n"+quoteText(),sub="Orçamento n.º "+S.cur.num+(S.cfg.empresa?" — "+S.cfg.empresa:"");
+  var canFile=false;try{canFile=!!(navigator.canShare&&navigator.canShare({files:[new File(["x"],"a.pdf",{type:"application/pdf"})]}))}catch(e){}
+  sd.innerHTML='<p style="margin:0 0 8px"><b>Enviar o orçamento n.º '+esc(S.cur.num)+'</b>'+(S.cur.cli?' a '+esc(S.cur.cli):'')+'</p><div class="qsb">'+(canFile?'<button type="button" class="btn" data-s="share">Partilhar PDF…</button>':'')+'<a class="btn'+(canFile?' ghost':'')+'" data-s="wa" target="_blank" rel="noopener" href="https://wa.me/'+(ph?"351"+ph[1]:"")+'?text='+encodeURIComponent(txt)+'">WhatsApp</a><a class="btn ghost" data-s="em" href="mailto:'+(em?esc(em[0]):"")+'?subject='+encodeURIComponent(sub)+'&body='+encodeURIComponent(txt)+'">Email</a><button type="button" class="btn ghost" data-s="pdf">Descarregar PDF</button><button type="button" class="btn ghost" data-s="cp">Copiar texto</button></div><p class="mu" id="qsm" style="margin:8px 0 0">'+(canFile?'“Partilhar PDF” envia o PDF diretamente pela app que escolher. ':'')+'O WhatsApp e o email abrem com o resumo escrito; para juntar o PDF, descarregue-o e anexe-o. '+(ph||em?'':'Não encontrei telemóvel nem email no contacto do cliente, por isso terá de escolher o destinatário.')+'</p>';
+  sd.classList.remove("hide");
+  sd.onclick=function(e){var a=e.target.closest("[data-s]");if(!a)return;var k=a.dataset.s;
+   if(k==="share"){var f=pdfOf();navigator.share({files:[new File([f.blob],f.name,{type:"application/pdf"})],title:sub,text:txt}).then(sent,function(){})}
+   else if(k==="pdf"){var f2=pdfOf();dlBlob(f2.blob,f2.name);sent()}
+   else if(k==="cp"){try{navigator.clipboard.writeText(txt).then(function(){sent();document.getElementById("qsm").textContent="Texto copiado. Orçamento marcado como Enviado."})}catch(x){}}
+   else sent()}};
  document.getElementById("qpx").onclick=close;
  ov.addEventListener("mousedown",function(e){if(e.target===ov)close()});
  document.addEventListener("keydown",function(e){if(e.key==="Escape"&&QV==="edit"&&!ov.classList.contains("hide")){var a=document.activeElement;if(a&&a.closest&&a.closest("details[open]"))return;close()}});
