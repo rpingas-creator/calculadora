@@ -441,6 +441,17 @@ html[data-aspeto="moloni"] .pl{list-style:none;margin:0;padding:0}html[data-aspe
 html[data-aspeto="moloni"] .bad{color:#e5484d}html[data-aspeto="moloni"] .good{color:#22a46d}
 @media(max-width:1200px){html[data-aspeto="moloni"] #maside{display:none}html[data-aspeto="moloni"] main{margin-right:16px!important}}
 @media(max-width:900px){html[data-aspeto="moloni"] #mnav{top:50px;height:44px;overflow:visible}html[data-aspeto="moloni"] .mb{height:44px;padding:0 10px}html[data-aspeto="moloni"] .mb span{font-size:.78rem}html[data-aspeto="moloni"] .mmenu{position:fixed;top:94px;left:0;right:0;grid-auto-flow:row;max-height:70vh;overflow:auto;gap:14px}html[data-aspeto="moloni"] .mi{position:static}html[data-aspeto="moloni"] main{margin:94px 0 0!important;padding:12px 12px 80px!important}html[data-aspeto="moloni"] .p3{grid-template-columns:1fr}html[data-aspeto="moloni"] .rng{float:none;display:block}}
+
+html[data-aspeto="moloni"] .psh{font:400 1.15rem Poppins,sans-serif;color:#7fb7e6;margin:6px 0 8px}
+html[data-aspeto="moloni"] .cpnl{background:#eef0f3;padding:10px 14px;border-radius:2px}
+html[data-aspeto="moloni"] .pl1{font:600 .82rem Poppins,sans-serif;color:#232b38;white-space:nowrap}
+html[data-aspeto="moloni"] .cpnl .srch{background:#fff;border:1px solid #cfd6df!important;border-radius:3px;padding:0 6px;min-height:38px}
+html[data-aspeto="moloni"] .rrow{display:flex;justify-content:space-between;align-items:center;margin:14px 0 8px;gap:10px;flex-wrap:wrap}
+html[data-aspeto="moloni"] #qbox{border:0!important;box-shadow:none!important;padding:0!important}
+html[data-aspeto="moloni"] .btn.dk{background:#2b3444!important;border-color:#2b3444!important;color:#fff!important}html[data-aspeto="moloni"] .btn.dk:hover{background:#1f2733}
+html[data-aspeto="moloni"] .btn.ico{border:0!important;background:transparent!important;color:#6b7686!important;padding:4px 6px}html[data-aspeto="moloni"] .btn.ico:hover{background:#e8f2fb!important;color:#0b83e6!important}
+html[data-aspeto="moloni"] .qrow{border-bottom:1px solid #eef0f3}
+html[data-aspeto="moloni"] .qrow:not(.qhead){font-size:.88rem}
 </style>
 </head>
 <body>
@@ -1444,17 +1455,17 @@ function qFiltered(){var f=cname(QL.q),ks=Object.keys(QL.flt).filter(function(k)
   if(QL.flt.fo&&!S.orders.some(function(o){return o.quoteId===q.id}))return false;
   if(QL.flt.mes&&String(q.date||"").slice(0,7)!==cm)return false;return true}).sort(function(a,b){return (parseInt(b.num,10)||0)-(parseInt(a.num,10)||0)})}
 function qCtl(){var bx=$("#qbox");if(!bx||bx.dataset.odoo)return;bx.dataset.odoo="1";var old=bx.querySelector(".ocnt");if(old)old.remove();var oldn=$("#ql_n");if(oldn)oldn.remove();
- var h='<div class="cpnl"><div class="srch" id="qs_box"><span id="qs_fac"></span><input id="qs_in" placeholder="Pesquisar cliente, empresa, n.º…" autocomplete="off" aria-label="Pesquisar orçamentos"></div>'
+ var h='<div class="psh">Pesquisa simples</div><div class="cpnl"><span class="pl1">Insira palavras para pesquisar</span><div class="srch" id="qs_box"><span id="qs_fac"></span><input id="qs_in" placeholder="Pesquisar cliente, empresa, n.º…" autocomplete="off" aria-label="Pesquisar orçamentos"></div>'
  +'<details class="dd" id="qs_f"><summary>Filtros ▾</summary><div class="ddp">'+QFILT.map(function(x){return '<label class="ck"><input type="checkbox" data-f="'+x[0]+'"> '+esc(x[1])+'</label>'}).join("")+'</div></details>'
  +'<details class="dd" id="qs_g"><summary>Agrupar por ▾</summary><div class="ddp">'+QGRP.map(function(x){return '<label class="ck"><input type="radio" name="qgrp" data-g="'+x[0]+'"> '+esc(x[1])+'</label>'}).join("")+'</div></details>'
- +'<div class="vsw"><button type="button" data-v="lista" title="Lista" aria-label="Vista em lista">☰ Lista</button><button type="button" data-v="kanban" title="Kanban" aria-label="Vista kanban">▦ Kanban</button></div></div><p class="mu" id="qs_n" style="margin:8px 2px"></p>';
+ +'<div class="vsw"><button type="button" data-v="lista" title="Lista" aria-label="Vista em lista">☰ Lista</button><button type="button" data-v="kanban" title="Kanban" aria-label="Vista kanban">▦ Kanban</button></div></div><div class="rrow"><span class="mu" id="qs_n"></span><span class="rr"><button type="button" class="btn" id="qs_add">Adicionar Orçamento</button></span></div>';
  bx.insertAdjacentHTML("afterbegin",h);
- $("#qs_in").oninput=function(){QL.q=this.value;rQl()};
+ $("#qs_in").oninput=function(){QL.q=this.value;rQl()};$("#qs_add").onclick=function(){$("#qnew").click()};
  bx.querySelector(".cpnl").addEventListener("change",function(e){var t=e.target;if(t.dataset.f){QL.flt[t.dataset.f]=t.checked;rQl()}else if(t.dataset.g!=null&&t.name==="qgrp"){QL.grp=t.dataset.g;qlSave();rQl()}});
  bx.querySelector(".cpnl").addEventListener("click",function(e){var v=e.target.closest("[data-v]");if(v){QL.view=v.dataset.v;qlSave();rQl();return}var x=e.target.closest("[data-x]");if(x){var k=x.dataset.x;if(k==="grp"){QL.grp="";qlSave()}else QL.flt[k]=false;rQl()}});
  document.addEventListener("click",function(e){["qs_f","qs_g"].forEach(function(id){var d=$("#"+id);if(d&&d.open&&!d.contains(e.target))d.open=false})})}
 function qRowH(q){var st=qState(q),has=S.orders.some(function(o){return o.quoteId===q.id});
- return '<div class="fl qrow" data-qid="'+q.id+'" data-a="qopen"><b>'+esc(q.num)+'</b><span class="qc"><b>'+esc(q.cli||"sem cliente")+'</b><small class="mu">'+esc(q.clube||"")+(has?(q.clube?" · ":"")+"tem folha de obra":"")+'</small></span><span class="mu">'+fdate(q.date)+'</span><span class="num">'+eur(num(q.tot))+'</span><span class="num mu">'+eur(num(q.totiva))+'</span><span><span class="tag pg'+qCls(st)+'">'+st+'</span></span><span class="qa"><button class="btn ghost" data-a="qpdf" title="Descarregar PDF">PDF</button> <button class="btn ghost" data-a="qdup" title="Duplicar">Duplicar</button> <button class="btn ghost" data-a="qdel" title="Apagar">✕</button></span></div>'}
+ return '<div class="fl qrow" data-qid="'+q.id+'" data-a="qopen"><b>'+esc(q.num)+'</b><span class="qc"><b>'+esc(q.cli||"sem cliente")+'</b><small class="mu">'+esc(q.clube||"")+(has?(q.clube?" · ":"")+"tem folha de obra":"")+'</small></span><span class="mu">'+fdate(q.date)+'</span><span class="num">'+eur(num(q.tot))+'</span><span class="num mu">'+eur(num(q.totiva))+'</span><span><span class="tag pg'+qCls(st)+'">'+st+'</span></span><span class="qa"><button class="btn ghost ico" data-a="qpdf" title="Descarregar PDF" aria-label="Descarregar PDF"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 15h8M8 18h5"/></svg></button> <button class="btn ghost ico" data-a="qdup" title="Duplicar" aria-label="Duplicar"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg></button> <button class="btn ghost ico" data-a="qdel" title="Apagar" aria-label="Apagar"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button></span></div>'}
 function rQl(){qCtl();var list=qFiltered();
  var fac=[];Object.keys(QL.flt).forEach(function(k){if(QL.flt[k]){var n=QFILT.filter(function(x){return x[0]===k})[0];fac.push('<span class="fac">'+esc(n?n[1]:k)+' <button type="button" data-x="'+k+'" aria-label="Remover filtro">×</button></span>')}});
  if(QL.grp&&QL.view==="lista")fac.push('<span class="fac g">Agrupar: '+esc(QGRP.filter(function(x){return x[0]===QL.grp})[0][1])+' <button type="button" data-x="grp" aria-label="Remover agrupamento">×</button></span>');
@@ -1462,7 +1473,7 @@ function rQl(){qCtl();var list=qFiltered();
  document.querySelectorAll('#qs_f [data-f]').forEach(function(c){c.checked=!!QL.flt[c.dataset.f]});document.querySelectorAll('#qs_g [data-g]').forEach(function(c){c.checked=c.dataset.g===QL.grp});
  document.querySelectorAll('.vsw [data-v]').forEach(function(b){b.setAttribute("aria-pressed",b.dataset.v===QL.view)});
  var tot=list.reduce(function(a,q){return a+num(q.tot)},0);
- $("#qs_n").textContent=S.quotes.length+" orçamentos guardados"+(list.length!==S.quotes.length?" · "+list.length+" correspondem":"")+" · "+eur(tot)+" s/ IVA";
+ $("#qs_n").textContent="Registo(s) "+(list.length?"1 a "+list.length:"0")+" de um total de "+S.quotes.length+" · "+eur(tot)+" s/ IVA";
  var out=$("#ql");out.className=QL.view==="kanban"?"kan":"";
  if(!list.length){out.innerHTML='<p class="mu" style="padding:14px">Nenhum orçamento corresponde.</p>';return}
  if(QL.view==="kanban"){var cols=["Por enviar","Enviado","Aceite","Recusado","Expirado"];
@@ -1482,9 +1493,9 @@ $("#ql").onchange=function(e){var t=e.target;if(t.dataset.a!=="qest")return;var 
 /* barra de estados + ações no formulário */
 function rQStat(){var el=$("#qstat");if(!el)return;var cur=S.cur&&S.cur.est||"Por enviar",steps=["Por enviar","Enviado","Aceite"],ix=steps.indexOf(cur);
  el.innerHTML='<div class="stbar">'+steps.map(function(s,i){return '<button type="button" class="stp1'+(s===cur?" on":"")+(ix>i?" done":"")+'" data-st="'+s+'">'+s+'</button>'}).join("")+'<button type="button" class="stp1 rec'+(cur==="Recusado"?" on":"")+'" data-st="Recusado">Recusado</button></div>'
- +'<div class="stact">'+(cur==="Por enviar"?'<button type="button" class="btn" data-sa="env">Marcar como enviado</button>':cur==="Enviado"?'<button type="button" class="btn" data-sa="ace">Marcar como aceite</button>':'')+'<button type="button" class="btn ghost" data-sa="fo">Criar folha de obra</button><button type="button" class="btn ghost" data-sa="pdf">PDF</button></div>'}
+ +'<div class="stact"><button type="button" class="btn ghost" data-sa="canc">Cancelar</button><button type="button" class="btn dk" data-sa="save">Guardar orçamento</button>'+(cur==="Por enviar"?'<button type="button" class="btn" data-sa="env">Marcar como enviado</button>':cur==="Enviado"?'<button type="button" class="btn" data-sa="ace">Marcar como aceite</button>':'')+'<button type="button" class="btn ghost" data-sa="fo">Criar folha de obra</button><button type="button" class="btn ghost" data-sa="pdf">PDF</button></div>'}
 $("#qstat").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;if(b.dataset.st){$("#q_est").value=b.dataset.st;$("#q_est").dispatchEvent(new Event("change"));return}
- var a=b.dataset.sa;if(a==="env"){$("#q_est").value="Enviado";$("#q_est").dispatchEvent(new Event("change"))}else if(a==="ace"){$("#q_est").value="Aceite";$("#q_est").dispatchEvent(new Event("change"))}else if(a==="fo")$("#mko").click();else if(a==="pdf")$("#qpdf").click()});
+ var a=b.dataset.sa;if(a==="env"){$("#q_est").value="Enviado";$("#q_est").dispatchEvent(new Event("change"))}else if(a==="ace"){$("#q_est").value="Aceite";$("#q_est").dispatchEvent(new Event("change"))}else if(a==="fo")$("#mko").click();else if(a==="pdf")$("#qpdf").click();else if(a==="canc")qView("list");else if(a==="save")$("#qsave").click()});
 /* notas e histórico */
 function rChat(){var el=$("#qchat");if(!el)return;var q=S.cur&&S.cur.id?S.quotes.find(function(z){return z.id===S.cur.id}):null;
  if(!q){el.innerHTML='<h3>Notas e histórico</h3><p class="mu" style="margin:0">Guarde o orçamento para registar notas e ver o histórico.</p>';return}
@@ -1566,7 +1577,7 @@ function rPainel(){var el=$("#painel_b");if(!el)return;var d=pData(),t=PT,body="
 
 (function(){var b=document.createElement("button");b.id="aspBtn";b.type="button";var sb=document.getElementById("sbar");if(!sb)return;sb.appendChild(b);var O=["moloni","odoo","antigo"],N={moloni:"Moloni",odoo:"Odoo",antigo:"antigo"};
 function cur(){var a=document.documentElement.getAttribute("data-aspeto");return O.indexOf(a)<0?"moloni":a}
-function r(){var a=cur();b.textContent="Aspeto: "+N[a]+" · versão 44 (mudar)"}
+function r(){var a=cur();b.textContent="Aspeto: "+N[a]+" · versão 45 (mudar)"}
 document.querySelectorAll("#tabs button").forEach(function(x){x.title=x.textContent.trim()});
 r();b.onclick=function(){var a=O[(O.indexOf(cur())+1)%O.length];document.documentElement.setAttribute("data-aspeto",a);try{localStorage.setItem("mc_aspeto",a)}catch(e){}r()}})();
 </script>
