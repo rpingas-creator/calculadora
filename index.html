@@ -1399,5 +1399,71 @@ body.qopen{overflow:hidden}
  /* a nota DTF vazia é apagada ao sair do texto: não fechar a janela por isso */
 })();
 </script>
+<style id="posv">
+.pvbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 10px}.pvbar .seg{display:inline-flex;border:1px solid var(--bd);border-radius:10px;overflow:hidden}.pvbar .seg button{border:0;background:var(--card);color:var(--tx);padding:8px 14px;font:inherit;cursor:pointer}.pvbar .seg button[aria-pressed=true]{background:var(--ac,#2f6b3a);color:#fff}
+.pchips{display:flex;gap:6px;overflow-x:auto;padding:2px 0 6px;flex:1 1 300px;scrollbar-width:thin}.pchips button{flex:none;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:20px;padding:6px 12px;font:inherit;font-size:.86rem;cursor:pointer;white-space:nowrap}.pchips button.on{background:var(--tx);color:var(--bg);border-color:var(--tx)}
+.posg{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.post{display:flex;flex-direction:column;border:1px solid var(--bd);border-radius:12px;background:var(--card);overflow:hidden;cursor:pointer;text-align:left;padding:0;font:inherit;color:inherit;transition:box-shadow .15s,transform .15s}
+.post:hover,.post:focus-visible{box-shadow:0 6px 18px rgba(0,0,0,.14);transform:translateY(-2px)}
+.post .pi{aspect-ratio:1/1;background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden;border-bottom:1px solid var(--bd)}
+.post .pi img{width:100%;height:100%;object-fit:contain}
+.post .pi .ini{font-size:1.6rem;font-weight:700;color:var(--mu);letter-spacing:.05em}
+.post .pt{padding:8px 10px 10px;display:flex;flex-direction:column;gap:2px;flex:1}
+.post .pt b{font-size:.9rem;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.post .pt small{color:var(--mu);font-size:.76rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.post .pt .pp{margin-top:auto;font-weight:600;font-size:.9rem}
+#posd{position:fixed;inset:0;z-index:58;background:rgba(20,20,12,.5);display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:28px 16px}#posd.hide{display:none}
+#posd .pdw{background:var(--bg);border-radius:14px;max-width:900px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.35);display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:0;overflow:hidden;position:relative}
+#posd .pdi{background:#fff;display:flex;align-items:center;justify-content:center;min-height:360px;padding:12px}#posd .pdi img{max-width:100%;max-height:70vh;object-fit:contain}
+#posd .pdb{padding:22px 22px 18px;display:flex;flex-direction:column;gap:10px}
+#posd .pdb h3{margin:0;font-size:1.2rem;padding-right:36px}
+#posd .pdx{position:absolute;top:10px;right:10px;width:38px;height:38px;border-radius:50%;border:1px solid var(--bd);background:var(--card);color:var(--tx);font-size:1.4rem;cursor:pointer;z-index:2}
+#posd .pdc{display:flex;flex-wrap:wrap;gap:6px}#posd .pdc button{border:1px solid var(--bd);background:var(--card);border-radius:8px;padding:3px;cursor:pointer;width:54px;height:54px}#posd .pdc button img{width:100%;height:100%;object-fit:contain}#posd .pdc button.on{border-color:var(--tx);box-shadow:0 0 0 2px var(--tx)}
+#posd dl{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:0;font-size:.9rem}#posd dt{color:var(--mu)}#posd dd{margin:0}
+#posd .pda{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:6px}
+@media(max-width:700px){.posg{grid-template-columns:repeat(2,1fr);gap:8px}#posd{padding:0}#posd .pdw{grid-template-columns:1fr;border-radius:0;min-height:100%}#posd .pdi{min-height:260px}}
+</style>
+<script>
+/* Ecrã de produtos com fotografias (estilo POS) */
+(function(){
+ var FOTOS=null,FBASE="https://rpingas-creator.github.io/catalogo/",PV="foto",CAT="",PSF=60;
+ try{PV=localStorage.getItem("mc_pv")||"foto"}catch(e){}
+ function chave(sup,ref){return String(sup||"").replace(/\s+/g,"").toLowerCase()+"|"+String(ref||"").trim().toLowerCase()}
+ function foto(p){var f=FOTOS&&FOTOS[chave(p.sup,p.ref)];if(f&&f[0])return FBASE+f[0];return imgOk(p.img)?p.img:""}
+ function coresF(p){var f=FOTOS&&FOTOS[chave(p.sup,p.ref)];return f&&f[1]?f[1]:{}}
+ function load(){if(FOTOS)return;FOTOS={};fetch(FBASE+"fotos.json",{cache:"no-cache"}).then(function(r){return r.ok?r.json():{}}).then(function(j){FOTOS=j||{};if(PV==="foto"&&CV==="prod")rCat()}).catch(function(){})}
+ var box=$("#tb").closest(".card"),bar=document.createElement("div");bar.className="pvbar";
+ bar.innerHTML='<div class="seg" role="group" aria-label="Vista"><button type="button" data-pv="foto">▦ Fotografias</button><button type="button" data-pv="lista">☰ Lista</button></div><div class="pchips" id="pchips"></div>';
+ box.insertBefore(bar,box.firstChild);
+ function seg(){bar.querySelectorAll("[data-pv]").forEach(function(b){b.setAttribute("aria-pressed",b.dataset.pv===PV)})}
+ function chips(){var c={};S.products.forEach(function(p){var k=String(p.cat||"").trim();if(k)c[k]=(c[k]||0)+1});var L=Object.keys(c).sort(function(a,b){return c[b]-c[a]}).slice(0,24).sort(function(a,b){return a.localeCompare(b,"pt")});CAT=$("#c_c").value;
+  $("#pchips").innerHTML='<button type="button" data-cat=""'+(CAT?'':' class="on"')+'>Todas</button>'+L.map(function(k){return '<button type="button" data-cat="'+esc(k)+'"'+(CAT.toLowerCase()===k.toLowerCase()?' class="on"':'')+'>'+esc(k)+'</button>'}).join("")}
+ bar.addEventListener("click",function(e){var b=e.target.closest("[data-pv]");if(b){PV=b.dataset.pv;try{localStorage.setItem("mc_pv",PV)}catch(x){}CP=0;rCat();return}var c=e.target.closest("[data-cat]");if(c){$("#c_c").value=c.dataset.cat;if(c.dataset.cat){var f=document.querySelector("#cv_prod details.flt");if(f)f.open=false}CP=0;rCat()}});
+ var old=rCat;
+ rCat=function(){seg();chips();if(PV!=="foto"){return old.apply(this,arguments)}load();
+  var list=csort(cfilter()),pages=Math.max(1,Math.ceil(list.length/PSF));if(CP>=pages)CP=pages-1;if(CP<0)CP=0;var from=CP*PSF,P=list.slice(from,from+PSF);
+  $("#tb").innerHTML=P.length?'<div class="posg">'+P.map(function(p){var u=foto(p),ini=String(p.name||p.ref||"?").replace(/[^A-Za-zÀ-ÿ0-9 ]/g,"").split(/\s+/).filter(Boolean).slice(0,2).map(function(w){return w[0]}).join("").toUpperCase();
+   return '<button type="button" class="post" data-pos="'+p.id+'" title="'+esc(p.name||"")+'"><span class="pi">'+(u?'<img loading="lazy" alt="" src="'+esc(u)+'" onerror="this.replaceWith(Object.assign(document.createElement(\'span\'),{className:\'ini\',textContent:\''+esc(ini)+'\'}))">':'<span class="ini">'+esc(ini)+'</span>')+'</span><span class="pt"><b>'+esc(p.name||"(sem nome)")+'</b><small>'+esc([p.ref,p.sup].filter(Boolean).join(" · "))+'</small><span class="pp">'+eur(num(p.cost))+'</span></span></button>'}).join("")+'</div>':'<p class="mu">Sem produtos.</p>';
+  $("#cn").textContent=list.length===S.products.length?S.products.length+" produtos no catálogo.":list.length+" de "+S.products.length+" produtos correspondem à pesquisa.";
+  var lb=list.length?"A mostrar "+(from+1)+"–"+Math.min(from+PSF,list.length)+" de "+list.length+" · página "+(CP+1)+" de "+pages:"Sem produtos";
+  document.querySelectorAll(".pgl").forEach(function(e){e.textContent=lb});document.querySelectorAll(".pgp").forEach(function(e){e.disabled=CP<=0});document.querySelectorAll(".pgn").forEach(function(e){e.disabled=CP>=pages-1})};
+ /* ficha do produto */
+ var dv=document.createElement("div");dv.id="posd";dv.className="hide";dv.setAttribute("role","dialog");dv.setAttribute("aria-modal","true");document.body.appendChild(dv);var CUR=null;
+ function abrir(p){CUR=p;var u=foto(p),cf=coresF(p),cs=Object.keys(cf),pv="";try{pv=eur(calc({pid:p.id,qty:1}).unit)}catch(e){}
+  dv.innerHTML='<div class="pdw"><button type="button" class="pdx" data-pd="x" aria-label="Fechar">×</button><div class="pdi">'+(u?'<img id="pdimg" alt="" src="'+esc(u)+'">':'<span class="mu">Sem fotografia</span>')+'</div><div class="pdb"><h3>'+esc(p.name||"(sem nome)")+'</h3><dl><dt>Referência</dt><dd>'+esc(p.ref||"—")+'</dd><dt>Fornecedor</dt><dd>'+esc(p.sup||"—")+'</dd>'+(p.cat?'<dt>Categoria</dt><dd>'+esc(p.cat)+'</dd>':'')+'<dt>Custo</dt><dd><b>'+eur(num(p.cost))+'</b></dd>'+(pv?'<dt>Preço un. (1 peça)</dt><dd>'+pv+'</dd>':'')+(p.sizes?'<dt>Tamanhos</dt><dd>'+esc(p.sizes)+'</dd>':'')+(p.colors&&!cs.length?'<dt>Cores</dt><dd>'+esc(p.colors)+'</dd>':'')+'</dl>'+
+   (cs.length?'<div><span class="mu" style="font-size:.85rem">Cores ('+cs.length+') — carregue para ver</span><div class="pdc">'+cs.map(function(n){return '<button type="button" data-pc="'+esc(cf[n])+'" title="'+esc(n)+'"><img loading="lazy" alt="'+esc(n)+'" src="'+esc(FBASE+cf[n])+'"></button>'}).join("")+'</div><span class="mu" id="pdcn" style="font-size:.85rem"></span></div>':'')+
+   '<div class="pda"><button type="button" class="btn" data-pd="add">+ Adicionar ao orçamento</button><button type="button" class="btn ghost" data-pd="ed">Editar produto</button></div></div></div>';
+  dv.classList.remove("hide");document.body.classList.add("qopen");dv.scrollTop=0;var b=dv.querySelector('[data-pd="add"]');if(b&&window.innerWidth>700)b.focus()}
+ function fechar(){dv.classList.add("hide");dv.innerHTML="";CUR=null;if(document.getElementById("qov")&&!document.getElementById("qov").classList.contains("hide"))return;if(!document.querySelector(".inmodal"))document.body.classList.remove("qopen")}
+ $("#tb").addEventListener("click",function(e){var t=e.target.closest("[data-pos]");if(!t)return;var p=S.products.find(function(x){return x.id===t.dataset.pos});if(p)abrir(p)});
+ dv.addEventListener("click",function(e){if(e.target===dv){fechar();return}var c=e.target.closest("[data-pc]");if(c){var im=document.getElementById("pdimg");if(im)im.src=FBASE+c.dataset.pc;dv.querySelectorAll("[data-pc]").forEach(function(x){x.classList.toggle("on",x===c)});var n=document.getElementById("pdcn");if(n)n.textContent=c.title;return}
+  var a=e.target.closest("[data-pd]");if(!a)return;var p=CUR;
+  if(a.dataset.pd==="x"){fechar();return}
+  if(a.dataset.pd==="add"&&p){S.lines.push(norm({id:uid(),pid:p.id,qty:"",iva:String(S.cfg.iva)}));save();fechar();document.querySelector('#tabs button[data-t="calc"]').click();rLines();qView("edit");return}
+  if(a.dataset.pd==="ed"&&p){fechar();PV="lista";try{localStorage.setItem("mc_pv",PV)}catch(x){}$("#c_q").value=p.ref||p.name||"";CP=0;COPN[p.id]=true;rCat();var el=document.querySelector('#tb .pdc[data-pid="'+p.id+'"]');if(el)el.scrollIntoView({block:"center"})}});
+ document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!dv.classList.contains("hide")){e.stopPropagation();fechar()}},true);
+ if(CV==="prod")rCat();
+})();
+</script>
 </body>
 </html>
